@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Registration</title>
+    
+    <!-- Link to CSS -->
+    <link rel="stylesheet" href="/static/login.css">
+    
+    <!-- Google Fonts (Optional) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="materialContainer">
+    <div class="box">
+        <div class="title">LOGIN</div>
+        
+        <form action="/auth/login/" method="post">
+            <div class="input">
+                <label for="name">Full Name</label>
+                <input type="text" name="username" id="name">
+                <span class="spin"></span>
+            </div>
+
+            <div class="input">
+                <label for="pass">Password</label>
+                <input type="password" name="password" id="pass">
+                <span class="spin"></span>
+            </div>
+
+            <div class="button login">
+                <button type="submit"><span>GO</span> <i class="fa fa-check"></i></button>
+            </div>
+        </form>
+
+        <a href="#" class="pass-forgot">Forgot your password?</a>
+    </div>
+
+    <div class="overbox">
+        <div class="material-button alt-2"><span class="shape"></span></div>
+
+        <form action="/auth/register/" method="post">
+            <div class="input">
+                <label for="regname">Username</label>
+                <input type="text" name="username" id="regname" required>
+                <span class="spin"></span>
+            </div>
+            <div class="input">
+                <label for="email">Email Address</label>
+                <input type="email" name="email" id="email" required>
+                <span class="spin"></span>
+            </div>
+            <div class="input">
+                <label for="tl_email">TL Email Address</label>
+                <input type="email" name="tl_email" id="tl_email" required>
+                <span class="spin"></span>
+            </div>
+            <div class="input">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required>
+                <span class="spin"></span>
+            </div>
+            <div class="input">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" name="confirm_password" id="confirm_password" required>
+                <span class="spin"></span>
+            </div>
+            <div class="button">
+                <button type="submit"><span>NEXT</span></button>
+            </div>
+        </form>
+        
+    </div>
+</div>
+
+<!-- Link to JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/static/login.js"></script>
+
+</body>
+</html>

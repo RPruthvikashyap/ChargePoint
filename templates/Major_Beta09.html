@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Log</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/cpp.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background-color: #333333;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar .logo {
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .user-menu {
+            position: relative;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+        }
+
+        .user-menu:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #fff;
+            min-width: 150px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<!-- Taskbar -->
+<div class="navbar">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/ChargePoint_logo.svg/284px-ChargePoint_logo.svg.png" alt="ChargePoint Logo" class="logo">
+    <div class="user-menu">
+        <span id="userName">{{ username }}</span> <!-- Display the username directly from the template variable -->
+        <div class="dropdown-content">
+            <a href="#">Profile</a>
+            <a href="#">Ask Me</a>
+            <a href="/auth/logout">Logout</a>
+        </div>
+    </div>
+</div>
+
+
+<div class="header">
+    <h1>Call Logging System for NA Owner Support</h1>
+</div>
+
+<!-- Input fields -->
+<div class="container">
+    <label for="text1">Case Number:</label>
+    <input type="text" id="text1" maxlength="8" pattern="\d*" placeholder="8-digit number"><br><br>
+
+    <!-- New Phone Number field -->
+    <label for="phoneNumber">Phone Number:</label>
+    <input type="text" id="phoneNumber" placeholder="Enter phone number"><br><br>
+
+    <!-- New Station Name field for FT Call -->
+    <label for="stationName">Station Name:</label>
+    <input type="text" id="stationName" placeholder="Enter station name"><br><br>
+
+    <label for="text2">Customer Name:</label>
+    <input type="text" id="text2"><br><br>
+
+    <label for="dropdownCallType">Call Type:</label>
+    <select id="dropdownCallType">
+        <option value="Standard Call">Assigned Case</option>
+        <option value="FT Call">FT Call</option>
+        <option value="New">New</option>
+        <option value="Existing">Existing</option>
+    </select><br><br>
+
+    <!-- New and Existing Call Fields (conditionally shown for New/Existing calls only) -->
+    <div id="newExistingCallFields" class="hidden">
+        <label for="sdi">SDI:</label>
+        <select id="sdi">
+            <option value="N/A">N/A</option>
+            <option value="Available">Available</option>
+        </select><br><br>
+
+        <label for="issueType">Issue Type:</label>
+        <select id="issueType">
+            <option value="General">General</option>
+            <option value="Station Hardware">Station Hardware</option>
+            <option value="Station Software">Station Software</option>
+            <option value="Configuration Request">Configuration Request</option>
+        </select><br><br>
+    </div>
+
+    <!-- FT Call Specific Fields -->
+    <div id="ftCallFields" class="hidden">
+        <label>Work Scope:</label>
+        <div class="workScopeContainer">
+            <label><input type="checkbox" class="workScopeCheckbox" value="Cellular Survey"> Cellular Survey</label>
+            <label><input type="checkbox" class="workScopeCheckbox" value="Wiring and Voltage verification"> Wiring and Voltage verification</label>
+            <label><input type="checkbox" class="workScopeCheckbox" value="Head Swap"> Head Swap</label>
+        </div><br>
+
+        <div id="countryFields" class="hidden">
+            <label for="country">Country:</label>
+            <select id="country">
+                <option value="">Select the Country</option>
+                <option value="US">US</option>
+                <option value="Canada">Canada</option>
+            </select><br><br>
+
+            <!-- dBm Values for US Carriers -->
+            <div id="usCarriers" class="hidden">
+                <label for="tMobileDbm">T-Mobile dBm:</label>
+                <input type="text" id="tMobileDbm" placeholder="-23 dBm"><br>
+
+                <label for="attDbm">AT&T dBm:</label>
+                <input type="text" id="attDbm" placeholder="-90 dBm"><br>
+
+                <label for="verizonDbm">Verizon dBm:</label>
+                <input type="text" id="verizonDbm" placeholder="-80 dBm"><br>
+            </div>
+
+            <!-- dBm Values for Canada Carriers -->
+            <div id="canadaCarriers" class="hidden">
+                <label for="bellDbm">Bell dBm:</label>
+                <input type="text" id="bellDbm" placeholder="-30 dBm"><br>
+
+                <label for="rogersDbm">Rogers dBm:</label>
+                <input type="text" id="rogersDbm" placeholder="-85 dBm"><br>
+
+                <label for="telusDbm">Telus dBm:</label>
+                <input type="text" id="telusDbm" placeholder="-75 dBm"><br>
+            </div>
+        </div>
+
+        <!-- Wiring and Voltage verification fields -->
+        <div id="wiringVoltageFields" class="hidden">
+            <label for="wireSetup">Is this a 3-wire or 5-wire setup?</label>
+            <select id="wireSetup">
+                <option value="">Select wire setup</option>
+                <option value="3-wire">3-wire</option>
+                <option value="5-wire">5-wire</option>
+            </select><br><br>
+
+            <!-- 3-wire setup fields -->
+            <div id="threeWireFields" class="hidden">
+                <label for="threeBreakers">Condition of Breakers:</label>
+                <input type="text" id="threeBreakers"><br><br>
+
+                <!--label for="threeVoltageAtBreakers">Voltage Readings at Breakers:</label>
+                <input type="text" id="threeVoltageAtBreakers"><br><br-->
+
+                <label for="threeJumpersConnected">Are Jumpers Connected:</label>
+                <select id="threeJumpersConnected">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select><br><br>
+
+                <label for="threeConnectorCondition">Condition of Electrical Connector and Power Plate:</label>
+                <input type="text" id="threeConnectorCondition"><br><br>
+
+                <!--label for="threeNeutralBonding">Neutral Bonding Status:</label>
+                <input type="text" id="threeNeutralBonding"><br><br-->
+
+                <h4>Voltage Readings</h4>
+                <label for="threeL1RL2R">L1R-L2R:</label>
+                <input type="text" id="threeL1RL2R"><br><br>
+
+                <label for="threeL1RGND">L1R-GND:</label>
+                <input type="text" id="threeL1RGND"><br><br>
+
+                <label for="threeL2RGND">L2R-GND:</label>
+                <input type="text" id="threeL2RGND"><br><br>
+
+                <label for="threeImpedance">Impedance Between Breaker Ground and Station Ground:</label>
+                <input type="text" id="threeImpedance"><br><br>
+
+                <label for="threeWireGauge">Wire Gauge Used:</label>
+                <input type="text" id="threeWireGauge"><br><br>
+            </div>
+
+            <!-- 5-wire setup fields -->
+            <div id="fiveWireFields" class="hidden">
+                <label for="fiveBreakers">Condition of Breakers:</label>
+                <input type="text" id="fiveBreakers"><br><br>
+
+                <!--label for="fiveVoltageAtBreakers">Voltage Readings at Breakers:</label>
+                <input type="text" id="fiveVoltageAtBreakers"><br><br-->
+
+                <label for="fiveConnectorCondition">Condition of Electrical Connectorand Power Plate:</label>
+                <input type="text" id="fiveConnectorCondition"><br><br>
+
+                <!--label for="fiveNeutralBonding">Neutral Bonding Status:</label>
+                <input type="text" id="fiveNeutralBonding"><br><br-->
+
+                <h4>Voltage Readings</h4>
+                <label for="fiveL1RL2R">L1R-L2R:</label>
+                <input type="text" id="fiveL1RL2R"><br><br>
+
+                <label for="fiveL1LL2L">L1L-L2L:</label>
+                <input type="text" id="fiveL1LL2L"><br><br>
+
+                <label for="fiveL1RGND">L1R-GND:</label>
+                <input type="text" id="fiveL1RGND"><br><br>
+
+                <label for="fiveL2RGND">L2R-GND:</label>
+                <input type="text" id="fiveL2RGND"><br><br>
+
+                <label for="fiveL1LGND">L1L-GND:</label>
+                <input type="text" id="fiveL1LGND"><br><br>
+
+                <label for="fiveL2LGND">L2L-GND:</label>
+                <input type="text" id="fiveL2LGND"><br><br>
+
+                <label for="fiveImpedance">Impedance Between Breaker Ground and Station Ground:</label>
+                <input type="text" id="fiveImpedance"><br><br>
+
+                <label for="fiveWireGauge">Wire Gauge Used:</label>
+                <input type="text" id="fiveWireGauge"><br><br>
+            </div>
+        </div>
+
+        <!-- Head Swap Specific Fields -->
+        <div id="headSwapFields" class="hidden">
+            <label for="callerInfo">Caller Info:</label>
+            <input type="text" id="callerInfo"><br><br>
+
+            <label for="oldMac">Old MAC:</label>
+            <input type="text" id="oldMac"><br><br>
+
+            <label for="newMac">New MAC:</label>
+            <input type="text" id="newMac"><br><br>
+
+            <label for="swapCompleted">Swap Completed in NOS?:</label>
+            <select id="swapCompleted">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select><br><br>
+
+            <label for="simActivated">SIM Activated?:</label>
+            <select id="simActivated">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select><br><br>
+
+            <label for="stationStatus">Station Status:</label>
+            <select id="stationStatus">
+                <option value="Unavailable">Unavailable</option>
+                <option value="Available">Available</option>
+            </select><br><br>
+
+            <label for="networkStatus">Network Status:</label>
+            <select id="networkStatus">
+                <option value="Reachable">Reachable</option>
+                <option value="Unreachable">Unreachable</option>
+            </select><br><br>
+
+            <label for="signalStrength">Signal Strength:</label>
+            <input type="text" id="signalStrength"><br><br>
+        </div>
+    </div>
+
+    <!-- Standard Call Fields -->
+    <div id="standardCallFields" class="hidden">
+        <label for="dropdown1">SDI:</label>
+        <input type="text" id="dropdown1"><br><br>
+
+        <label for="dropdownIssueType">Issue Type:</label>
+        <input type="text" id="dropdownIssueType"><br><br>
+    </div>
+
+    <!-- Issue Description -->
+    <label for="issueDescription">Issue Description:</label>
+    <div id="issueDescription"></div><br>
+
+    <!-- Action Buttons -->
+    <button id="addToTable">Add to Table</button>
+    <button id="generateSummary">Generate Summary</button>
+    <button id="generateExcel">Generate Excel</button>
+    <button id="clearFields">Clear Fields</button>
+    <button id="doneButton" class="hidden">Done</button> <!-- New Done button for FT Calls -->
+    <br>
+</br>
+</div>
+
+<!-- Output Section (Initially Hidden) -->
+<div class="container hidden" id="summaryContainer">
+    <h2>Summary</h2>
+    <pre id="output" style="white-space: pre-wrap; word-wrap: break-word;"></pre>
+</div>
+
+<!-- Table -->
+<h2>Call Log</h2>
+<table id="dataTable" border="1">
+    <thead>
+        <tr>
+            <th>Remove</th>
+            <th>Timestamp</th>
+            <th>Case Number</th>
+            <th>Phone Number</th> <!-- Added phone number column -->
+            <th>Station Name</th> <!-- New Station Name column -->
+            <th>Customer Name</th>
+            <th>Call Type</th>
+            <th>SDI</th>
+            <th>Issue Description</th>
+            <th>Points</th> <!-- New column for Points -->
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- Button to Calculate Total Productivity -->
+<div style="margin-top: 20px;">
+    <button id="calculateProductivity">Calculate Total Productivity</button>
+    <p id="productivityOutput" style="font-weight: bold; margin-top: 10px;"></p>
+</div>
+
+<!-- Script to handle functionalities including saving table data, generating Excel, etc. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script src="static/cpp.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/auth/current_user/', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch user data");
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.username) {
+                document.getElementById('userName').textContent = data.username;
+            } else {
+                document.getElementById('userName').textContent = "Guest";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching username:", error);
+            document.getElementById('userName').textContent = "Guest";
+        });
+    });
+</script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<script>
+    var quill = new Quill('#issueDescription', {
+        theme: 'snow'
+    });
+</script>
+</body>
+</html>
