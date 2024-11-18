@@ -574,9 +574,25 @@ document.getElementById('generateSummary').addEventListener('click', function ()
     `;
 
     // Display the summary container with formatted content
-    document.getElementById('summaryContainer').classList.remove('hidden');
-    document.getElementById('output').innerHTML = summary;  // Display summary with HTML formatting
+    const summaryContainer = document.getElementById('summaryContainer');
+    summaryContainer.classList.remove('hidden');
+    document.getElementById('output').innerHTML = summary; // Display summary with HTML formatting
+
+    // Show the Copy Summary button
+    const copyButton = document.getElementById('copySummaryButton');
+    copyButton.classList.remove('hidden');
 });
+
+// Copy Summary functionality
+document.getElementById('copySummaryButton').addEventListener('click', function () {
+    const summaryText = document.getElementById('output').innerText; // Get plain text version of the summary
+    navigator.clipboard.writeText(summaryText).then(() => {
+        alert('Summary copied to clipboard!');
+    }).catch(err => {
+        console.error('Could not copy summary: ', err);
+    });
+});
+
 
 
 // Clear all fields and delete all logs in the backend for the user
