@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 # Update to fetch the DATABASE_URL from environment variables
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://chargepoint_db_user:lt0pTaCKsbNJrStedAyosNjzkpXDo6xC@dpg-cst90rl6l47c73eivml0-a/chargepoint_db"
+    "postgresql://chargepointdb_user:PR5SEAIneA1XKwtdxIvje8aJlU9kdo9X@dpg-cth3su52ng1s739k1uug-a/chargepointdb"
 )  # Default to the internal Render DB URL if not set in the environment.
 
 # Create the engine
