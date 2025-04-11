@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # Use the internal Render database URL
-DATABASE_URL = "postgresql://postgres:root@localhost:5432/ChargePoint"
+DATABASE_URL = "SQLALCHEMY_DATABASE_URL = "postgresql://<user>:<password>@localhost:<forwarded_port>/<name>"
 
 # Ensure SSL mode for Render database
 if "?" in DATABASE_URL:
