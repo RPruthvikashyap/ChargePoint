@@ -1,0 +1,161 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    padding: 20px 0;
+    background-color: #007bff;
+    color: white;
+}
+
+.filters {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.filters label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.filters input {
+    margin-right: 10px;
+    padding: 5px;
+}
+
+.filters button {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.filters button:hover {
+    background-color: #0056b3;
+}
+
+.user-call-logs {
+    display: flex;
+    flex-wrap: wrap; /* Wrap tables to the next row if there are more than 3 */
+    gap: 20px; /* Space between tables */
+    margin-top: 20px;
+}
+
+.user-table {
+    flex: 1 1 calc(33.333% - 20px); /* Each table takes 1/3rd of the row width, minus gap space */
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-width: 300px; /* Minimum width for smaller screens */
+    box-sizing: border-box;
+}
+
+.user-table h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+table th {
+    background-color: #007bff;
+    color: white;
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Highlight the total productivity row */
+.total-row td {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f9;
+}
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #333;
+}
+
+.filter-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+table th {
+    background-color: #4CAF50;
+    color: white;
+    text-transform: uppercase;
+}
+
+.user-tables-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.user-table {
+    flex: 1 1 calc(33% - 20px);
+    background: #fff;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.user-table h3 {
+    margin-bottom: 10px;
+}
+
+.total-row td {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}

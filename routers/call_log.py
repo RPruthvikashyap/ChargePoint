@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 import schemas, crud, database
 from typing import List
-from models import CallLog
+from models import User, CallLog
+
 
 router = APIRouter()
 
@@ -55,3 +56,4 @@ async def delete_call_log(call_log_id: int, request: Request, db: Session = Depe
         raise HTTPException(status_code=404, detail="Call log entry not found or not authorized")
     
     return {"message": "Call log entry deleted successfully"}
+

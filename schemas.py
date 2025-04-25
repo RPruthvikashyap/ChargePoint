@@ -22,7 +22,7 @@ class UserResponse(BaseModel):
     tl_email: str
 
     class Config:
-        orm_mode = True  # Enables parsing ORM objects to Pydantic models
+        orm_mode = True 
 
 class CallLogEntry(BaseModel):
     id: Optional[int] = None  

@@ -326,13 +326,14 @@
 
 .overbox {
   width: 100%;
-  height: 100%;
+  height: 110%;
   position: absolute;
   top: 0;
-  left: 0;
   overflow: inherit;
-  border-radius: 10px;
-  padding: 60px 50px 40px 50px;
+  border-radius: 30px;
+  padding: 30px;
+
+
 
   .title, .button, .input {
     z-index: 111;
@@ -389,8 +390,8 @@
   content: "";
   background: #fff;
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 35%;
+  left: 36%;
   transform: translate(-50%, -50%) rotate(360deg);
   -webkit-transform: translate(-50%, -50%) rotate(360deg);
   -ms-transform: translate(-50%, -50%) rotate(360deg);
@@ -460,3 +461,49 @@ html {
     outline: none;
   }
 }
+/* Dropdown styling */
+.input select {
+  width: 100%;
+  height: 60px;
+  padding: 0 15px;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: transparent;
+  font-family: 'Roboto', sans-serif;
+  font-size: 24px;
+  color: white;
+  font-weight: 300;
+  appearance: none;
+  outline: none;
+}
+
+.input select:focus {
+  border-bottom: 1px solid #7a9ba9;
+}
+
+.input select option {
+  background-color: #fff;
+  color: #000;
+  font-size: 18px;
+  padding: 5px;
+}
+
+/* Fix for dropdown alignment */
+.input {
+  position: relative;
+  margin-top: 30px;
+  height: 70px;
+}
+
+.input label {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  font-size: 24px;
+  line-height: 60px;
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 300;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+

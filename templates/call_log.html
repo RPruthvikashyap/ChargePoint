@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/cpp.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+/* General Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+/* Navbar Styling */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background-color: #222;
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.navbar .logo {
+    height: 40px;
+    cursor: pointer;
+}
+
+.user-menu {
+    position: relative;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+}
+
+.user-menu:hover .dropdown-content {
+    display: block;
+}
+
+/* Dropdown Menu */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+}
+
+.dropdown-content a:hover {
+    background-color: #f2f2f2;
+}
+
+/* Call Log Title */
+h2 {
+    color: #ee7313;
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+/* Date Picker */
+#filterDate {
+    display: block;
+    width: 250px;
+    padding: 10px;
+    margin: 15px auto;
+    border: 2px solid #ee7313;
+    border-radius: 6px;
+    font-size: 16px;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+#filterDate:hover {
+    background-color: #ffebd2;
+}
+
+/* Table Container */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Table Headers */
+th {
+    background-color: #ee7313;
+    color: white;
+    padding: 15px;
+    text-transform: uppercase;
+    font-size: 15px;
+    text-align: center;
+}
+
+/* Table Cells */
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* Alternate Row Colors */
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Hover Effect */
+tr:hover {
+    background-color: #ffebd2;
+    transition: 0.3s;
+}
+
+/* Remove Button */
+.delete-btn {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: #ff1a1a;
+    transform: scale(1.05);
+}
+
+/* Responsive Table */
+@media screen and (max-width: 768px) {
+    table {
+        font-size: 12px;
+    }
+    th, td {
+        padding: 10px;
+    }
+
+    #filterDate {
+        width: 200px;
+        font-size: 14px;
+    }
+
+    .delete-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
+
+    </style>
+</head>
+<link rel="stylesheet" href="static/cpp.css">
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/ChargePoint_logo.svg/284px-ChargePoint_logo.svg.png" 
+         alt="ChargePoint Logo" class="logo">
+    <div class="user-menu">
+        <span id="userName">{{ username }}</span>
+        <div class="dropdown-content">
+            <a href="/profile">Profile</a>
+            <a href="#">Ask Me</a>
+            <a href="/logs/call-log">Cases</a>  
+            <a href="/auth/logout">Logout</a>
+        </div>
+    </div>
+</div>
+
+<h2>Case Tracker</h2>
+<input type="date" id="filterDate">
+
+<table id="dataTable" border="1">
+    <thead>
+        <tr>
+            <th>Remove</th>
+            <th>Timestamp</th>
+            <th>Case Number</th>
+            <th>Phone Number</th>
+            <th>Station Name</th>
+            <th>Customer Name</th>
+            <th>Call Type</th>
+            <th>SDI</th>
+            <th>Issue Description</th>
+            <th>Points</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- Button to Calculate Total Productivity
+<div style="margin-top: 20px;">
+    <button id="calculateProductivity">Calculate Total Productivity</button>
+    <p id="productivityOutput" style="font-weight: bold; margin-top: 10px;"></p>
+</div-->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script src="/static/cpp.js"></script>
+
+<script>
+// 🚀 Load table data when the page loads
+document.addEventListener('DOMContentLoaded', function () {
+    loadTableDataFromDatabase();
+});
+
+// 🗓 Filter logs by selected date
+document.getElementById('filterDate').addEventListener('change', function () {
+    const selectedDate = this.value;
+    loadTableDataFromDatabase(selectedDate);
+});
+
+// 🎯 Fetch and load call log data dynamically
+async function loadTableDataFromDatabase(selectedDate = null) {
+    try {
+        console.log("Fetching call logs...");
+
+        const response = await fetch('/logs/call_log/', { 
+            method: 'GET', 
+            headers: { 'Content-Type': 'application/json' },
+            cache: "no-cache"
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch call logs");
+
+        let callLogs = await response.json();
+        const tbody = document.querySelector('#dataTable tbody');
+        tbody.innerHTML = ''; // Clear existing rows
+
+        if (selectedDate) {
+            callLogs = callLogs.filter(log => {
+                const logDate = new Date(log.timestamp).toISOString().split('T')[0];
+                return logDate === selectedDate;
+            });
+        }
+
+        callLogs.forEach(log => {
+            addRowToTable(log);  // Call function to add row
+        });
+
+        console.log("Table updated successfully!");
+    } catch (error) {
+        console.error("Error loading call logs:", error);
+    }
+}
+
+// ✨ Function to add a row to the table without reloading
+function addRowToTable(log) {
+    const tbody = document.querySelector('#dataTable tbody');
+    const row = document.createElement('tr');
+
+    row.innerHTML = `
+        <td><button class="delete-btn" onclick="removeRow(this)" data-id="${log.id}">−</button></td>
+        <td>${log.timestamp || ''}</td>
+        <td>${log.case_number}</td>
+        <td>${log.phone_number}</td>
+        <td>${log.station_name}</td>
+        <td>${log.customer_name}</td>
+        <td>${log.call_type}</td>
+        <td>${log.sdi || ''}</td>
+        <td>${log.issue_description || ''}</td>
+        <td>${log.points}</td>
+    `;
+
+    tbody.prepend(row); // ✅ Add the new row at the top of the table
+}
+
+// 📝 Add new call log entry and dynamically update table
+document.getElementById('addToTable').addEventListener('click', async function () {
+    const caseNumber = document.getElementById('text1').value.trim();
+    const customerName = document.getElementById('text2').value.trim();
+    const callType = document.getElementById('dropdownCallType').value.trim();
+    const phoneNumber = document.getElementById('phoneNumber').value.trim();
+    const stationName = document.getElementById('stationName').value.trim();
+    let sdi = '';
+    let issueDescription = quill.root.innerHTML.trim();
+
+    if (!caseNumber || !phoneNumber || !stationName || !callType) {
+        alert("Please enter all required fields.");
+        return;
+    }
+
+    const now = new Date();
+    const timestamp = now.toISOString().slice(0, 19).replace("T", " ");
+
+    sdi = (callType === "New" || callType === "Existing") ? document.getElementById('sdi').value : 'N/A';
+    let points = (callType === "New") ? 1 : (callType === "Existing") ? 0.25 : 1;
+
+    const callLogEntry = {
+        timestamp,
+        case_number: caseNumber,
+        phone_number: phoneNumber,
+        station_name: stationName,
+        customer_name: customerName,
+        call_type: callType,
+        sdi: sdi,
+        issue_description: issueDescription,
+        points: points
+    };
+
+    try {
+        const response = await fetch('/logs/call_log/update_or_create/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(callLogEntry)
+        });
+
+        if (response.ok) {
+            alert("Call log entry added successfully");
+
+            const newLog = await response.json();  // ✅ Fetch the new log entry from the server
+
+            addRowToTable(newLog);  // ✅ Dynamically add the new row to the table without refresh
+
+            // ✅ Optional: Clear input fields after adding entry
+            document.getElementById('text1').value = '';
+            document.getElementById('text2').value = '';
+            document.getElementById('phoneNumber').value = '';
+            document.getElementById('stationName').value = '';
+            document.getElementById('dropdownCallType').value = '';
+            document.getElementById('sdi').value = 'N/A';
+            quill.root.innerHTML = '';  // Clear Quill editor
+
+        } else {
+            alert("Failed to add call log entry");
+        }
+    } catch (error) {
+        console.error("Error adding call log entry:", error);
+    }
+});
+
+</script>
+</body>
+</html>

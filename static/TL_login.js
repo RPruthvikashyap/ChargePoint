@@ -13,9 +13,7 @@ $(function () {
             });
         });
     }).blur(function () {
-        $(".spin").css({
-            "width": "0px",
-        });
+        $(".spin").css({ "width": "0px" });
         if ($(this).val() === "") {
             $(this).parent(".input").each(function () {
                 $("label", this).css({
@@ -46,6 +44,7 @@ $(function () {
                 (pY - oY) +
                 'px;"></span>'
         );
+
         $(".x-" + oX + ".y-" + oY + "").animate(
             {
                 width: "500px",
@@ -55,6 +54,7 @@ $(function () {
             },
             600
         );
+
         $("button", this).addClass("active");
     });
 
@@ -68,9 +68,7 @@ $(function () {
             });
 
             setTimeout(function () {
-                $(".overbox").css({
-                    "overflow": "initial",
-                });
+                $(".overbox").css({ "overflow": "initial" });
             }, 600);
 
             $(this).animate(
@@ -96,17 +94,14 @@ $(function () {
     $(".material-button").click(function () {
         if ($(this).hasClass("material-button")) {
             setTimeout(function () {
-                $(".overbox").css({
-                    overflow: "hidden",
-                });
+                $(".overbox").css({ overflow: "hidden" });
                 $(".box").addClass("back");
             }, 200);
-            $(this)
-                .addClass("active")
-                .animate({
-                    width: "700px",
-                    height: "700px",
-                });
+
+            $(this).addClass("active").animate({
+                width: "700px",
+                height: "700px",
+            });
 
             setTimeout(function () {
                 $(".shape").css({
@@ -124,8 +119,7 @@ $(function () {
         }
 
         if ($(".alt-2").hasClass("material-buton")) {
-            $(".alt-2").removeClass("material-buton");
-            $(".alt-2").addClass("material-button");
+            $(".alt-2").removeClass("material-buton").addClass("material-button");
         }
     });
 
@@ -133,26 +127,26 @@ $(function () {
         console.log("Material button clicked");
     });
 
-    // ✅ Handle Login Form Submission
+    // ✅ TL Login Form Submission (posts to /auth/tl-login/)
     $("#loginForm").submit(function (e) {
         e.preventDefault();
-        $.post("/auth/login/", $(this).serialize())
+        $.post("/auth/tl-login/", $(this).serialize())
             .done(function () {
                 alert("Login successful! Redirecting...");
-                window.location.href = "/call-log";  // ✅ Fixed Redirect
+                window.location.href = "/demo.html";
             })
             .fail(function (xhr) {
                 alert("Error: " + (xhr.responseJSON?.detail || "Login failed!"));
             });
     });
 
-    // ✅ Handle Registration Form Submission
+    // ✅ User Registration Submission
     $("#registerForm").submit(function (e) {
         e.preventDefault();
         $.post("/auth/register/", $(this).serialize())
             .done(function () {
                 alert("Registration successful! Redirecting...");
-                window.location.href = "/call-log";  // ✅ Fixed Redirect
+                window.location.href = "/call-log";
             })
             .fail(function (xhr) {
                 alert("Error: " + (xhr.responseJSON?.detail || "Registration failed!"));
@@ -165,7 +159,7 @@ $(function () {
         $.post("/auth/forgot-password/", $(this).serialize())
             .done(function () {
                 alert("Password reset successful! Check your email.");
-                window.location.href = "/"; // ✅ Redirect to Login Page
+                window.location.href = "/";
             })
             .fail(function (xhr) {
                 alert("Error: " + (xhr.responseJSON?.detail || "Failed to reset password."));

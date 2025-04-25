@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Station Unreachable Diagnostic</title>
+    <style>
+        body {
+            background-color: #ee7313;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: white;
+        }
+        .hidden {
+            display: none;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        button {
+            padding: 12px 24px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #ADD8E6;
+            color: white;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #87CEFA;
+        }
+        .solution-box {
+            background-color: white;
+            color: black;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 400px;
+            margin: 20px auto;
+            text-align: left;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>Station Unreachable Diagnostic</h1>
+    
+    <div id="question1" class="fade-in">
+        <p>What type of station is this?</p>
+        <button onclick="showNext('question1', 'question2_ct4000')">CT4000</button>
+        <button onclick="showNext('question1', 'question2_cpf')">CPF Station</button>
+    </div>
+
+    <div id="question2_ct4000" class="hidden fade-in">
+        <p>Is the station a Gateway or Non-Gateway?</p>
+        <button onclick="showNext('question2_ct4000', 'question3_gateway')">Gateway</button>
+        <button onclick="showNext('question2_ct4000', 'question3_non_gateway')">Non-Gateway</button>
+    </div>
+
+    <!-- Gateway Path -->
+    <div id="question3_gateway" class="hidden fade-in">
+        <p>Is the station in an enclosed area or open area? (Using Google Maps Data)</p>
+        <button onclick="showNext('question3_gateway', 'question4_open')">Open</button>
+        <button onclick="showNext('question3_gateway', 'question4_enclosed')">Enclosed</button>
+    </div>
+
+    <div id="question4_open" class="hidden fade-in">
+        <p>What type of Gateway station is this?</p>
+        <button onclick="showNext('question4_open', 'question5_unreachable')">Legacy Station with MUK</button>
+        <button onclick="showNext('question4_open', 'question5_unreachable')">Legacy Station</button>
+        <button onclick="showNext('question4_open', 'question5_unreachable')">Macaw</button>
+    </div>
+
+    <div id="question5_unreachable" class="hidden fade-in">
+        <p>Check for unreachability alarms for the last 15 days. Is the station frequently going unreachable?</p>
+        <button onclick="showNext('question5_unreachable', 'solution_frequent_unreachable')">Frequently Going Unreachable</button>
+        <button onclick="showNext('question5_unreachable', 'solution_not_frequent_unreachable')">Not Frequently Going Unreachable</button>
+    </div>
+
+    <div id="solution_frequent_unreachable" class="hidden solution-box fade-in">
+        <p><strong>Scenario 1:</strong> Ask the point of contact to power cycle the station. If the station is back online, monitor it for 48 hours.</p>
+        <ul>
+            <li>If further unreachability alarms occur, recommend a replacement as the permanent solution.</li>
+            <li>If the station remains stable for 48 hours, inform the point of contact and close the case.</li>
+        </ul>
+ 	<p><strong>Scenario 2:</strong> If the power cycle does not work or the station is stuck in installation:</p>
+        <ul>
+            <li>Ask the customer to enter the three-digit hardware PIN from NOS.</li>
+            <li>If the station remains offline, proceed with replacement options.</li>
+        </ul>
+        <button>Done</button>
+    </div>
+
+    <div id="solution_not_frequent_unreachable" class="hidden solution-box fade-in">
+        <p><strong>Scenario 1:</strong> Power cycle the station and monitor it for 48 hours.</p>
+        <ul>
+            <li>If during this period the station starts going frequently unreachable, proceed with replacement options.</li>
+            <li>If no further alarms or issues arise, close the case and inform the point of contact.</li>
+        </ul>
+ 	<p><strong>Scenario 2:</strong> lookout for other stations nearby and check whether they are reachable or not.</p>
+        <ul>
+            <li> if they are reachable proceed with power cycle and check if station comes back online or not.</li>
+            <li> if all stations are down most probably there could be a network issue in the area or an outage in the complete vicinity and lookout for this issue if there is an outage with a cellular carrier.</li>
+        </ul>
+        <button>Done</button>
+    </div>
+
+    <!-- Non-Gateway Path -->
+    <div id="question3_non_gateway" class="hidden fade-in">
+        <p>Is the station online?</p>
+        <button onclick="showNext('question3_non_gateway', 'solution_gateway_unreachable')">Not Reachable</button>
+        <button onclick="showNext('question3_non_gateway', 'question4_gateway_status')">Reachable</button>
+    </div>
+
+    <div id="solution_gateway_unreachable" class="hidden solution-box fade-in">
+        <p>The Gateway station is offline, preventing the Non-Gateway station from connecting. Troubleshoot the Gateway first.</p>
+        <button>Done</button>
+    </div>
+
+    <div id="question4_gateway_status" class="hidden fade-in">
+        <p>Are other Non-Gateway stations also unreachable?</p>
+        <button onclick="showNext('question4_gateway_status', 'solution_some_stations_unreachable')">Some Stations Not Reachable</button>
+        <button onclick="showNext('question4_gateway_status', 'solution_all_stations_reachable')">All Stations Reachable</button>
+    </div>
+
+    <div id="solution_some_stations_unreachable" class="hidden solution-box fade-in">
+        <p>Check for obstacles and ensure the station is within 100 feet of the Gateway. If issues persist, consider replacement.</p>
+        <button>Done</button>
+    </div>
+
+    <div id="solution_all_stations_reachable" class="hidden solution-box fade-in">
+        <p>Since all other stations are online, check the line of sight and look for obstructions.</p>
+        <p>If the station is frequently going unreachable, try power cycling.</p>
+        <p>If the issue persists, consider replacement.</p>
+        <button>Done</button>
+    </div>
+
+    <script>
+        function showNext(currentId, nextId) {
+            document.getElementById(currentId).classList.add('hidden');
+            document.getElementById(nextId).classList.remove('hidden');
+            document.getElementById(nextId).classList.add('fade-in');
+        }
+    </script>
+</body>
+</html>
