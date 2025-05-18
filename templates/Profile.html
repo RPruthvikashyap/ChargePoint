@@ -6,7 +6,73 @@
     <title>User Profile</title>
     <link rel="stylesheet" href="/static/cpp.css">
 </head>
+<style>
+    .navbar {
+        background-color: #222;
+        overflow: hidden;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 10px 20px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+    }
+    .navbar a {
+        color: #fff;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 18px;
+    }
+    .navbar a:hover {
+        background-color: #575757;
+    }
+    .navbar a.active {
+        background-color: #ff6600;
+    }
+    .navbar .logo {
+    margin-right: auto;
+      height: 40px;
+      cursor: pointer;
+    }
+</style>
 <body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script src="static/cpp.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/auth/current_user/', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch user data");
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.username) {
+                document.getElementById('userName').textContent = data.username;
+            } else {
+                document.getElementById('userName').textContent = "Guest";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching username:", error);
+            document.getElementById('userName').textContent = "Guest";
+        });
+    });
+</script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <div class="navbar">
+        <img alt="Logo" class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/ChargePoint_logo.svg/284px-ChargePoint_logo.svg.png"/>
+        <a href="/call-log">Home</a>
+        <a href="/logs/call-log">Cases</a>
+        <a href="/ask-me">Ask Me</a>
+        <a href="/auth/logout/">Log Out</a>
+        <a  href="/profile" id="userName" class="active">{{ username }}</a>
+    </div>
+
     <div class="container">
         <h1>Profile</h1>
 

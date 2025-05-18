@@ -309,23 +309,52 @@
     #pivot-table-wrapper tr:nth-child(even) {
       background-color: #f9f9f9;
     }
+  
+        .navbar {
+            background-color: #222;
+            overflow: hidden;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        .navbar a {
+            color: #fff;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        .navbar a:hover {
+            background-color: #575757;
+        }
+        .navbar a.active {
+            background-color: #ff6600;
+        }
+        .navbar .logo {
+            margin-right: auto;
+            color: #ff6600;
+            font-weight: bold;
+            font-size: 24px;
+        }
     </style>
 </head>
 <body>
+  <div class="navbar">
+        <img alt="Logo" class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/ChargePoint_logo.svg/284px-ChargePoint_logo.svg.png"/>
+        <a class="active" href="#">Home</a>
+        <!--a href="/ask-me">Ask Me</a-->
+        <a href="/auth/tl-logout/">Log Out</a>
+        <a href="/tl-profile" id="user-name">{{ name }}</a>
+    </div>
 <!-- Taskbar / Navbar -->
-<div class="navbar">
-<img alt="Logo" class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/ChargePoint_logo.svg/284px-ChargePoint_logo.svg.png"/>
-<div class="user-menu">
-<span id="userName">{{ name }}</span>
-<div class="dropdown-content">
-<a href="/profile">Profile</a>
-<a href="#">Ask Me</a>
-<a href="/demo.html">Dashboard</a>
-<a href="/auth/tl-logout/">Logout</a>
+<!-- div class="navbar" -->
 </div>
 </div>
-</div>
+<!-- /div -->
 <div class="dashboard-container">
+
 <h1>Team Leader Dashboard</h1>
 <!-- TL Email Dropdown (if needed in future) -->
 <!-- Master Summary Table -->
@@ -346,10 +375,12 @@
 </table>
 </div>
 <!-- Analytics Charts -->
-<div class="charts-container">
+<div class="charts-container" >
 <h2>Analytics Overview</h2>
-<div class="chart-grid">
+<div class="chart-grid" style="height: 50%; width: 50%; border: 15px solid green; padding: 50px; margin: 20px;">
 <canvas id="casesPerUserChart"></canvas>
+</div>
+<div class="chart-grid" style="height: 50%; width: 50%; border: 15px solid green; padding: 50px; margin: 20px;">
 <canvas id="callTypesChart"></canvas>
 </div>
 <div class="chart-fullwidth">

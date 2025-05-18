@@ -229,6 +229,9 @@ function generateWiringVoltageDetails() {
 
         result += `
             <ul>
+            <h4>Voltage and Wiring checks:</h4>
+                <li>Is this a 3-wire or 5-wire setup?: 3 wire setup</li>
+                <li>Voltage at Jumpers: ${jumpersConnected}</li>
                 <li>Condition of Breakers: ${breakers}</li>
                 <li>Jumpers Connected: ${jumpersConnected}</li>
                 <li>Electrical Connector Condition: ${connectorCondition}</li>
@@ -255,6 +258,8 @@ function generateWiringVoltageDetails() {
 
         result += `
             <ul>
+             <h4>Voltage and Wiring checks:</h4>
+                <li>Is this a 3-wire or 5-wire setup?: 5 wire setup</li>
                 <li>Condition of Breakers: ${breakers}</li>
                 <li>Electrical Connector Condition: ${connectorCondition}</li>
                 <li>Voltage Readings (L1R-L2R): ${l1rL2r}</li>
@@ -265,6 +270,7 @@ function generateWiringVoltageDetails() {
                 <li>Voltage Readings (L2L-GND): ${l2lGND}</li>
                 <li>Impedance Measurement: ${impedance}</li>
                 <li>Wire Gauge Used: ${wireGauge}</li>
+                <>
             </ul>
         `;
     }
@@ -304,13 +310,15 @@ document.getElementById('addToTable').addEventListener('click', async function (
     }
 
     // Generate current timestamp in local system time
-    const now = new Date();
-    const timestamp = now.getFullYear() + "-" +
-                      String(now.getMonth() + 1).padStart(2, '0') + "-" +
-                      String(now.getDate()).padStart(2, '0') + " " +
-                      String(now.getHours()).padStart(2, '0') + ":" +
-                      String(now.getMinutes()).padStart(2, '0') + ":" +
-                      String(now.getSeconds()).padStart(2, '0');
+const pstDateStr = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+const pstDate = new Date(pstDateStr);
+
+const timestamp = pstDate.getFullYear() + "-" +
+                  String(pstDate.getMonth() + 1).padStart(2, '0') + "-" +
+                  String(pstDate.getDate()).padStart(2, '0') + " " +
+                  String(pstDate.getHours()).padStart(2, '0') + ":" +
+                  String(pstDate.getMinutes()).padStart(2, '0') + ":" +
+                  String(pstDate.getSeconds()).padStart(2, '0');
 
     // Check call type and get appropriate fields
     if (callType === 'FT Call') {
@@ -448,42 +456,6 @@ document.addEventListener('DOMContentLoaded', function () {
     loadTableDataFromDatabase();
 });
 
-// Function to load data from the database and display it in the table
-//async function loadTableDataFromDatabase() {
-  //  try {
-    //    const response = await fetch('/logs/call_log/', {
-      //      method: 'GET',
-        //    headers: { 'Content-Type': 'application/json' }
-        //});
-
-        //if (!response.ok) throw new Error("Failed to fetch call logs");
-
-        //const callLogs = await response.json();
-        //const tbody = document.querySelector('#dataTable tbody');
-        //tbody.innerHTML = '';  // Clear existing rows
-
-        //callLogs.forEach(log => {
-          //  const row = document.createElement('tr');
-            //row.innerHTML = `
-              //  <td><button class="delete-btn" onclick="removeRow(this)" data-id="${log.id}">−</button></td>
-                //<td>${log.timestamp || ''}</td>
-                //<td>${log.case_number}</td>
-                //<td>${log.phone_number}</td>
-                //<td>${log.station_name}</td>
-                //<td>${log.customer_name}</td>
-                //<td>${log.call_type}</td>
-                //<td>${log.sdi || ''}</td>
-                //<td>${log.issue_description || ''}</td>
-                //<td>${log.points}</td>
-            //`;
-            //tbody.appendChild(row);
-        //});
-    //} catch (error) {
-      //  console.error("Error loading call logs:", error);
-    //}
-//}
-
-// "Done" button functionality for FT calls (only refresh for FT Call when clicking Done)
 document.getElementById('doneButton').addEventListener('click', function () {
     const caseNumber = document.getElementById('text1').value;
     if (caseNumber !== '') {
@@ -563,15 +535,16 @@ document.getElementById('generateSummary').addEventListener('click', function ()
 
     // Construct the summary with formatted Issue Description
     const summary = `
-        <strong>Case Number:</strong> ${caseNumber}<br>
-        <strong>Phone Number:</strong> ${phoneNumber}<br>
-        <strong>Station Name:</strong> ${stationName}<br>
-        <strong>Customer Name:</strong> ${customerName}<br>
-        <strong>Call Type:</strong> ${callType}<br>
-        <strong>SDI:</strong> ${sdi}<br>
-        <strong>Issue Type:</strong> ${issueType}<br>
-        <strong>Issue Description:</strong><br>${issueDescription}
-    `;
+        <b>Case Number:</b> ${caseNumber}<br>
+        <b>Phone Number:</b> ${phoneNumber}<br>
+        <b>Station Name:</b> ${stationName}<br>
+        <b>Customer Name:</b> ${customerName}<br>
+        <b>Call Type:</b> ${callType}<br>
+        <b>SDI:</b> ${sdi}<br>
+        <b>Issue Type:</b> ${issueType}<br>
+        <b>Issue Description:</b><br>${issueDescription}
+    `.trim();
+
 
     // Display the summary container with formatted content
     document.getElementById('summaryContainer').classList.remove('hidden');

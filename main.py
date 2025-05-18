@@ -7,6 +7,7 @@ from database import engine, Base, get_db
 from routers import auth, call_log
 from models import User, CallLog, TeamLeader
 from passlib.context import CryptContext
+from fastapi import Cookie
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 Base.metadata.create_all(bind=engine)
@@ -86,6 +87,8 @@ async def tl_logout():
     response.delete_cookie("tl_id")
     return response
 
+
+
 @app.get("/call-log", response_class=HTMLResponse)
 async def call_log_page(request: Request, db: Session = Depends(get_db)):
     user_id = request.cookies.get("user_id")
@@ -99,6 +102,12 @@ async def call_log_page(request: Request, db: Session = Depends(get_db)):
     if not user:
         return RedirectResponse(url="/", status_code=302)
     return templates.TemplateResponse("Major_Beta09.html", {"request": request, "username": user.username})
+
+@app.get("/auth/logout/")
+async def logout():
+    response = RedirectResponse(url="/user-login?toast=info&message=You have been logged out successfully", status_code=302)
+    response.delete_cookie("user_id")
+    return response
 
 @app.get("/demo.html", response_class=HTMLResponse)
 async def demo_page(request: Request, db: Session = Depends(get_db)):
@@ -176,3 +185,13 @@ async def call_log_cookie_page(request: Request, db: Session = Depends(get_db)):
     if not user:
         return RedirectResponse(url="/", status_code=302)
     return templates.TemplateResponse("call_log.html", {"request": request, "username": user.username})
+
+@app.get("/ask-me", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("ask_me_page.html", {"request": request})
+
+@app.get("/relay-stuck-closed", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("relay_stuck_closed.html", {"request": request})
+
+
