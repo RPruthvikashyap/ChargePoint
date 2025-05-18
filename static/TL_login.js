@@ -156,10 +156,10 @@ $(function () {
     // ✅ Forgot Password Submission
     $("#forgotPasswordForm").submit(function (e) {
         e.preventDefault();
-        $.post("/auth/forgot-password/", $(this).serialize())
+        $.post("/auth/tl-forgot-password/", $(this).serialize())
             .done(function () {
                 alert("Password reset successful! Check your email.");
-                window.location.href = "/";
+                window.location.href = "/tl-login";
             })
             .fail(function (xhr) {
                 alert("Error: " + (xhr.responseJSON?.detail || "Failed to reset password."));

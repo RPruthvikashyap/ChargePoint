@@ -172,6 +172,10 @@ async def get_users_by_tl_email(
 async def forgot_password_page(request: Request):
     return templates.TemplateResponse("forgot_password.html", {"request": request})
 
+@app.get("/tl-forgot-password", response_class=HTMLResponse)
+async def tl_forgot_password_page(request: Request):
+    return templates.TemplateResponse("TL_forgot_password.html", {"request": request})
+
 @app.get("/logs/call-log", response_class=HTMLResponse)
 async def call_log_cookie_page(request: Request, db: Session = Depends(get_db)):
     user_id = request.cookies.get("user_id")

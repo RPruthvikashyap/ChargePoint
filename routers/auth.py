@@ -4,7 +4,7 @@ from fastapi import status
 from sqlalchemy.orm import Session
 from schemas import UserCreate
 from crud import get_user_by_username, create_user
-from models import User
+from models import User, TeamLeader
 from database import get_db
 from passlib.context import CryptContext
 from fastapi.templating import Jinja2Templates
@@ -168,3 +168,28 @@ async def forgot_password(
     db.commit()
 
     return RedirectResponse(url="/?message=Password reset successfully", status_code=status.HTTP_302_FOUND)
+
+# ✅ Fixed Forgot Password Page Route (Using `TemplateResponse`)
+@router.get("/tl-forgot-password/", response_class=HTMLResponse)
+async def forgot_password_page(request: Request):
+    return templates.TemplateResponse("TL_forgot_password.html", {"request": request})
+
+# ✅ Fixed Forgot Password Logic
+@router.post("/tl-forgot-password/")
+async def forgot_password(
+    email: str = Form(...),
+    new_password: str = Form(...),
+    confirm_password: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    if new_password != confirm_password:
+        return RedirectResponse(url="/forgot-password?message=Passwords do not match", status_code=status.HTTP_302_FOUND)
+
+    user = db.query(TeamLeader).filter(TeamLeader.email == email).first()
+    if not user:
+        return RedirectResponse(url="/forgot-password?message=Email not found", status_code=status.HTTP_302_FOUND)
+
+    user.password = pwd_context.hash(new_password)
+    db.commit()
+
+    return RedirectResponse(url="/tl-login?message=Password reset successfully", status_code=status.HTTP_302_FOUND)

@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Relay Stuck Closed Diagnostic</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .intro img {
+      display: block;
+      max-width: 100%;
+      margin: 1rem auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (max-width: 600px) {
+      header {
+        font-size: 1.6rem;
+      }
+
+      p {
+        font-size: 1.1rem;
+      }
+
+      button {
+        font-size: 1rem;
+        padding: 0.6rem 1rem;
+      }
+
+      .card {
+        padding: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>Relay Stuck Closed Diagnostic</header>
+  <div class="container">
+
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is Relay Stuck Closed?</button>
+    </div>
+
+    <div class="intro" id="introSection">
+      <h2>What is a Relay Stuck Closed (RSC) Fault?</h2>
+      <p>
+        A Relay Stuck Closed (RSC) fault occurs when the electrical relay inside the station mechanically adheres or "sticks"
+        in the closed position. This relay is the component that acts like a switch to turn power on or off to the vehicle
+        connector. If it's stuck closed, it may continue supplying power even when it's not supposed to, violating
+        the J1772 standard for safe EV charging.
+      </p>
+      <p>
+        In simpler terms, think of the relay as a light switch. If it gets jammed in the ON position and you can’t turn it off,
+        it becomes a safety issue. If the station shows this fault repeatedly, the station head usually needs to be replaced.
+      </p>
+      <img src="6c97fd0c-bb08-4549-b7b0-f01c25631f8f.png" alt="Burn marks on relay contact - RSC fault">
+    </div>
+
+    <div id="question1" class="card">
+      <p><strong>Step 1:</strong> Pull the latest status from NOS.<br>Does the outlet show <em>OUT_OF_SERVICE</em>?</p>
+      <button onclick="nextStep('question2')">Yes</button>
+      <button onclick="nextStep('solution_replace')">No</button>
+      <div class="progress">Step <span class="step-count">1</span> of 3</div>
+    </div>
+
+    <div id="question2" class="card hidden">
+      <p><strong>Step 2:</strong> Reboot the station in NOS.<br>Wait 3-5 minutes and pull the latest status again.</p>
+      <button onclick="nextStep('question3')">Done</button>
+      <button onclick="nextStep('question1')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 3</div>
+    </div>
+
+    <div id="question3" class="card hidden">
+      <p><strong>Step 3:</strong> Does the outlet now show "Available"?</p>
+      <button onclick="nextStep('solution_check_log')">Yes</button>
+      <button onclick="nextStep('solution_replace')">No</button>
+      <button onclick="nextStep('question2')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 3</div>
+    </div>
+
+    <div id="solution_check_log" class="card hidden">
+      <p><strong>Review Alarm Log:</strong> Check the alarm log for RSC errors in the last 90 days.</p>
+      <div class="solution-box">
+        <ul>
+          <li>If multiple RSC errors are found, replace the station head.</li>
+          <li>If no previous RSC errors exist, continue monitoring for future incidents.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="solution_replace" class="card hidden">
+      <p><strong>Action Required:</strong> The Relay Stuck Closed fault persists.</p>
+      <div class="solution-box">
+        <p>Proceed with replacing the station head. If the issue recurs after head replacement, escalate for deeper hardware inspection.</p>
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+    }
+
+    function resetFlow() {
+      nextStep('question1');
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>
