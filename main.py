@@ -9,6 +9,9 @@ from models import User, CallLog, TeamLeader
 from passlib.context import CryptContext
 from fastapi import Cookie
 
+templates = Jinja2Templates(directory="templates")
+templates.env.auto_reload = True
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 Base.metadata.create_all(bind=engine)
 
