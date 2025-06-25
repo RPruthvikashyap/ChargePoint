@@ -125,7 +125,7 @@ async def demo_page(request: Request, db: Session = Depends(get_db)):
 
 @app.get("/profile", response_class=HTMLResponse)
 async def profile_page(request: Request):
-    return templates.TemplateResponse("profile.html", {"request": request})
+    return templates.TemplateResponse("Profile.html", {"request": request})
 
 @app.get("/success", response_class=HTMLResponse)
 async def success_page(message: str = "Success"):
