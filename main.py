@@ -10,12 +10,11 @@ from passlib.context import CryptContext
 from fastapi import Cookie
 
 templates = Jinja2Templates(directory="templates")
-templates.env.auto_reload = True
+templates.env.auto_reload = True  # Ensure Jinja2 reflects changes automatically
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 Base.metadata.create_all(bind=engine)
 
-# ✅ Insert default TLs if missing (with password = 123456)
 def create_default_team_leaders():
     from sqlalchemy.orm import sessionmaker
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -43,7 +42,6 @@ create_default_team_leaders()
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(call_log.router, prefix="/logs", tags=["call_log"])
@@ -64,9 +62,7 @@ async def tl_login(
     db: Session = Depends(get_db)
 ):
     tl = db.query(TeamLeader).filter(TeamLeader.email == email).first()
-    if not tl:
-        raise HTTPException(status_code=401, detail="Invalid email or password")
-    if not pwd_context.verify(password, tl.password):
+    if not tl or not pwd_context.verify(password, tl.password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
     resp = RedirectResponse(url="/demo.html", status_code=302)
@@ -89,8 +85,6 @@ async def tl_logout():
     response = RedirectResponse(url="/tl-login?toast=info&message=You have been logged out successfully", status_code=302)
     response.delete_cookie("tl_id")
     return response
-
-
 
 @app.get("/call-log", response_class=HTMLResponse)
 async def call_log_page(request: Request, db: Session = Depends(get_db)):
@@ -135,10 +129,7 @@ async def success_page(message: str = "Success"):
     return RedirectResponse(url="/call-log", status_code=302)
 
 @app.get("/logs/team_leader_users/")
-async def get_users_by_tl_email(
-    request: Request,
-    db: Session = Depends(get_db)
-):
+async def get_users_by_tl_email(request: Request, db: Session = Depends(get_db)):
     tl_id = request.cookies.get("tl_id")
     if not tl_id:
         return JSONResponse(content={"message": "Team Leader authentication required"}, status_code=401)
@@ -194,11 +185,9 @@ async def call_log_cookie_page(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse("call_log.html", {"request": request, "username": user.username})
 
 @app.get("/ask-me", response_class=HTMLResponse)
-async def profile_page(request: Request):
+async def ask_me_page(request: Request):
     return templates.TemplateResponse("ask_me_page.html", {"request": request})
 
 @app.get("/relay-stuck-closed", response_class=HTMLResponse)
-async def profile_page(request: Request):
+async def relay_stuck_page(request: Request):
     return templates.TemplateResponse("relay_stuck_closed.html", {"request": request})
-
-
