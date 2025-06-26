@@ -198,3 +198,7 @@ async def profile_page(request: Request):
 @app.get("/relay-stuck-closed", response_class=HTMLResponse)
 async def profile_page(request: Request):
     return templates.TemplateResponse("relay_stuck_closed.html", {"request": request})
+
+@app.get("/egf", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("EGF_Complete_Question_Based_202-EF.html", {"request": request})
