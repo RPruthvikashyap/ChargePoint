@@ -90,8 +90,6 @@ async def tl_logout():
     response.delete_cookie("tl_id")
     return response
 
-
-
 @app.get("/call-log", response_class=HTMLResponse)
 async def call_log_page(request: Request, db: Session = Depends(get_db)):
     user_id = request.cookies.get("user_id")
@@ -200,5 +198,3 @@ async def profile_page(request: Request):
 @app.get("/relay-stuck-closed", response_class=HTMLResponse)
 async def profile_page(request: Request):
     return templates.TemplateResponse("relay_stuck_closed.html", {"request": request})
-
-
