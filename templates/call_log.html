@@ -454,12 +454,15 @@ function updateProductivityTable(callLogs) {
     const dateCounts = {};
     callLogs.forEach(log => {
         const dateKey = new Date(log.timestamp).toISOString().split('T')[0];
-        dateCounts[dateKey] = (dateCounts[dateKey] || 0) + 1;
+        const points = parseFloat(log.points || 0);
+        dateCounts[dateKey] = (dateCounts[dateKey] || 0) + points;
     });
+
     const tbody = document.getElementById('productivityBody');
     tbody.innerHTML = '';
+
     Object.keys(dateCounts).sort().reverse().forEach(date => {
-        const row = `<tr><td>${date}</td><td>${dateCounts[date]}</td></tr>`;
+        const row = `<tr><td>${date}</td><td>${dateCounts[date].toFixed(2)}</td></tr>`;
         tbody.innerHTML += row;
     });
 }
