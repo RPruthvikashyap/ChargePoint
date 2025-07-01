@@ -26,7 +26,8 @@ def create_default_team_leaders():
             {"email": "dennis.r@chargepoint.com", "password": "123456"},
             {"email": "ragin.rajan@chargepoint.com", "password": "123456"},
             {"email": "c.joseph@chargepoint.com", "password": "123456"},
-            {"email": "adam.agundez@chargepoint.com", "password": "123456"},
+            {"email": "gowtham.j@chargepoint.com", "password": "123456"},
+            {"email": "shatish.shukla@chargepoint.com", "password": "123456"},
         ]
 
         for tl_data in default_tls:
