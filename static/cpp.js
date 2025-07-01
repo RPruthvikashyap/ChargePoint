@@ -309,16 +309,34 @@ document.getElementById('addToTable').addEventListener('click', async function (
         return;
     }
 
-    // Generate current timestamp in local system time
-const pstDateStr = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
-const pstDate = new Date(pstDateStr);
+ const manualDateInput = document.getElementById('manualDate').value;
+let timestamp = "";
 
-const timestamp = pstDate.getFullYear() + "-" +
-                  String(pstDate.getMonth() + 1).padStart(2, '0') + "-" +
-                  String(pstDate.getDate()).padStart(2, '0') + " " +
-                  String(pstDate.getHours()).padStart(2, '0') + ":" +
-                  String(pstDate.getMinutes()).padStart(2, '0') + ":" +
-                  String(pstDate.getSeconds()).padStart(2, '0');
+if (manualDateInput) {
+    // Parse local datetime and convert it to PST by formatting in UTC and offsetting manually
+    const localDate = new Date(manualDateInput);
+    const pstDate = new Date(localDate.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
+
+    timestamp = pstDate.getFullYear() + '-' +
+        String(pstDate.getMonth() + 1).padStart(2, '0') + '-' +
+        String(pstDate.getDate()).padStart(2, '0') + ' ' +
+        String(pstDate.getHours()).padStart(2, '0') + ':' +
+        String(pstDate.getMinutes()).padStart(2, '0') + ':' +
+        String(pstDate.getSeconds()).padStart(2, '0');
+
+} else {
+    // Use current PST time if no input
+    const now = new Date();
+    const pstNow = new Date(now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" }));
+
+    timestamp = pstNow.getFullYear() + '-' +
+        String(pstNow.getMonth() + 1).padStart(2, '0') + '-' +
+        String(pstNow.getDate()).padStart(2, '0') + ' ' +
+        String(pstNow.getHours()).padStart(2, '0') + ':' +
+        String(pstNow.getMinutes()).padStart(2, '0') + ':' +
+        String(pstNow.getSeconds()).padStart(2, '0');
+}
+
 
     // Check call type and get appropriate fields
     if (callType === 'FT Call') {
@@ -457,12 +475,18 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.getElementById('doneButton').addEventListener('click', function () {
+    const confirmDataAdded = confirm("Have you added the data to the table?");
+    if (!confirmDataAdded) {
+        return; // Exit if user says No/Cancel
+    }
+
     const caseNumber = document.getElementById('text1').value;
     if (caseNumber !== '') {
         alert('Work scopes for FT Call completed. All fields will be cleared.');
-        document.getElementById('text1').value = '';  // Clear case number
+        document.getElementById('text1').value = ''; // Clear case number
     }
-    window.location.reload(); // Refresh the page when Done is clicked for FT Call
+
+    window.location.reload(); // Refresh the page after Done
 });
 
 // Generate summary
@@ -565,6 +589,7 @@ document.getElementById('clearFields').addEventListener('click', async function 
         document.getElementById('sdi').value = 'N/A';
         document.getElementById('issueType').value = 'General';
         document.getElementById('issueDescription').value = '';
+        document.getElementById('manualDate').value = '';
         
         // Clear table and localStorage
         document.querySelector('#dataTable tbody').innerHTML = '';
