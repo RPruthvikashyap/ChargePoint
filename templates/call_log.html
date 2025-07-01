@@ -66,10 +66,9 @@ h2 {
 
 /* Date Picker */
 #filterDate {
-    display: block;
+    display: inline-block;
     width: 250px;
     padding: 10px;
-    margin: 15px auto;
     border: 2px solid #ee7313;
     border-radius: 6px;
     font-size: 16px;
@@ -78,6 +77,8 @@ h2 {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: 0.3s ease-in-out;
+    color: black;
+    margin: 0; /* override default spacing */
 }
 
 #filterDate:hover {
@@ -198,6 +199,47 @@ tr:hover {
       height: 40px;
       cursor: pointer;
     }
+    #filterContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+#dailyProductivityBtn {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ee7313;
+    border-radius: 6px;
+    background-color: #fff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    text-align: center;
+    height: 44px;
+    color: black;
+    margin: 0; /* keep buttons inline */
+}
+
+#dailyProductivityBtn:hover {
+    background-color: #ffebd2;
+}
+#productivityDropdown {
+    display: none;
+    width: 60%;
+    margin: 0 auto;
+    margin-top: 20px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+#productivityDropdown th {
+    background-color: #ee7313;
+    color: white;
+}
 
     </style>
 </head>
@@ -215,7 +257,22 @@ tr:hover {
 </div>
 
 <h2>Case Tracker</h2>
-<input type="date" id="filterDate">
+<div id="filterContainer">
+    <input type="date" id="filterDate">
+    <button id="dailyProductivityBtn">Daily Productivity ▼</button>
+</div>
+
+<div id="productivityDropdown">
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Cases Count</th>
+            </tr>
+        </thead>
+        <tbody id="productivityBody"></tbody>
+    </table>
+</div>
 
 <table id="dataTable" border="1">
     <thead>
@@ -245,6 +302,8 @@ tr:hover {
 <script src="/static/cpp.js"></script>
 
 <script>
+let globalLogs = []; // used globally for productivity dropdown
+
 // 🚀 Load table data when the page loads
 document.addEventListener('DOMContentLoaded', function () {
     loadTableDataFromDatabase();
@@ -269,7 +328,8 @@ async function loadTableDataFromDatabase(selectedDate = null) {
 
         if (!response.ok) throw new Error("Failed to fetch call logs");
 
-        let callLogs = await response.json();
+        globalLogs = await response.json(); // ⬅️ Save to global variable
+        let callLogs = [...globalLogs];
         const tbody = document.querySelector('#dataTable tbody');
         tbody.innerHTML = ''; // Clear existing rows
 
@@ -281,8 +341,10 @@ async function loadTableDataFromDatabase(selectedDate = null) {
         }
 
         callLogs.forEach(log => {
-            addRowToTable(log);  // Call function to add row
+            addRowToTable(log);
         });
+
+        updateProductivityTable(globalLogs); // ⬅️ Always update the dropdown
 
         console.log("Table updated successfully!");
     } catch (error) {
@@ -308,11 +370,11 @@ function addRowToTable(log) {
         <td>${log.points}</td>
     `;
 
-    tbody.prepend(row); // ✅ Add the new row at the top of the table
+    tbody.prepend(row);
 }
 
 // 📝 Add new call log entry and dynamically update table
-document.getElementById('addToTable').addEventListener('click', async function () {
+document.getElementById('addToTable')?.addEventListener('click', async function () {
     const caseNumber = document.getElementById('text1').value.trim();
     const customerName = document.getElementById('text2').value.trim();
     const callType = document.getElementById('dropdownCallType').value.trim();
@@ -354,19 +416,18 @@ document.getElementById('addToTable').addEventListener('click', async function (
         if (response.ok) {
             alert("Call log entry added successfully");
 
-            const newLog = await response.json();  // ✅ Fetch the new log entry from the server
+            const newLog = await response.json();
+            addRowToTable(newLog);
+            globalLogs.unshift(newLog); // Add to globalLogs for dropdown update
+            updateProductivityTable(globalLogs);
 
-            addRowToTable(newLog);  // ✅ Dynamically add the new row to the table without refresh
-
-            // ✅ Optional: Clear input fields after adding entry
             document.getElementById('text1').value = '';
             document.getElementById('text2').value = '';
             document.getElementById('phoneNumber').value = '';
             document.getElementById('stationName').value = '';
             document.getElementById('dropdownCallType').value = '';
             document.getElementById('sdi').value = 'N/A';
-            quill.root.innerHTML = '';  // Clear Quill editor
-
+            quill.root.innerHTML = '';
         } else {
             alert("Failed to add call log entry");
         }
@@ -375,6 +436,33 @@ document.getElementById('addToTable').addEventListener('click', async function (
     }
 });
 
+// 🟧 Daily Productivity Toggle
+const productivityBtn = document.getElementById('dailyProductivityBtn');
+const productivityDiv = document.getElementById('productivityDropdown');
+productivityBtn.addEventListener('click', () => {
+    updateProductivityTable(globalLogs); // Always update fresh
+    productivityDiv.style.display = productivityDiv.style.display === 'none' ? 'block' : 'none';
+});
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('#dailyProductivityBtn') && !e.target.closest('#productivityDropdown')) {
+        productivityDiv.style.display = 'none';
+    }
+});
+
+// 📊 Populate Daily Productivity Table
+function updateProductivityTable(callLogs) {
+    const dateCounts = {};
+    callLogs.forEach(log => {
+        const dateKey = new Date(log.timestamp).toISOString().split('T')[0];
+        dateCounts[dateKey] = (dateCounts[dateKey] || 0) + 1;
+    });
+    const tbody = document.getElementById('productivityBody');
+    tbody.innerHTML = '';
+    Object.keys(dateCounts).sort().reverse().forEach(date => {
+        const row = `<tr><td>${date}</td><td>${dateCounts[date]}</td></tr>`;
+        tbody.innerHTML += row;
+    });
+}
 </script>
 </body>
 </html>
