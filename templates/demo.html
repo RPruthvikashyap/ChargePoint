@@ -373,6 +373,7 @@
 <!-- Rows will be populated dynamically -->
 </tbody>
 </table>
+    <button id="download-all-users" class="download-btn" style="display:block; margin-top: 15px;">Download Excel</button>
 </div>
 <!-- Analytics Charts -->
 <div class="charts-container" >
@@ -656,6 +657,38 @@
     const usersData = await response.json();
     renderPivotTable(usersData);
   });
+
+    document.getElementById("download-all-users").addEventListener("click", async () => {
+  try {
+    const response = await fetch("/logs/team_leader_users/?tl_email=auto");
+    if (!response.ok) throw new Error("Failed to fetch users data.");
+    const usersData = await response.json();
+
+    const ws_data = [["Username", "Email", "Timestamp", "Case Number", "Call Type", "Points"]];
+
+    usersData.forEach(user => {
+      user.call_logs.forEach(log => {
+        ws_data.push([
+          user.username,
+          user.email,
+          log.timestamp || '',
+          log.case_number,
+          log.call_type,
+          log.points
+        ]);
+      });
+    });
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(ws_data);
+    XLSX.utils.book_append_sheet(wb, ws, "All Users Cases");
+    XLSX.writeFile(wb, "All_Users_Case_Data.xlsx");
+
+  } catch (error) {
+    console.error("Error generating Excel file:", error);
+    alert("Failed to download data. Please try again.");
+  }
+});
 </script>
 
 </body>
