@@ -299,8 +299,6 @@ document.getElementById('addToTable').addEventListener('click', async function (
     // Validation for required fields
     const missingFields = [];
     if (!caseNumber) missingFields.push("Case Number");
-    if (!phoneNumber) missingFields.push("Phone Number");
-    if (!stationName) missingFields.push("Station Name");
     if (!callType) missingFields.push("Call Type");
 
     // If there are missing fields, alert the user and stop execution
