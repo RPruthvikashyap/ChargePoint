@@ -338,6 +338,33 @@
             font-weight: bold;
             font-size: 24px;
         }
+    /* Styled input fields for date/month filters */
+input[type="date"], input[type="month"] {
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 2px solid #ee7313;
+  border-radius: 8px;
+  outline: none;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+  background-color: #fff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 180px;
+}
+
+input[type="date"]:focus,
+input[type="month"]:focus {
+  border-color: #7a9ba9;
+  box-shadow: 0 0 5px rgba(122, 155, 169, 0.5);
+}
+
+input[type="date"]::placeholder,
+input[type="month"]::placeholder {
+  color: #999;
+  font-weight: normal;
+}
+
     </style>
 </head>
 <body>
@@ -373,7 +400,15 @@
 <!-- Rows will be populated dynamically -->
 </tbody>
 </table>
-    <button id="download-all-users" class="download-btn" style="display:block; margin-top: 15px;">Download Excel</button>
+    <div style="margin-top: 20px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+  <label for="filter-date" style="font-weight: 500;">Filter by Date:</label>
+  <input type="date" id="filter-date" placeholder="dd-mm-yyyy">
+
+  <label for="filter-month" style="font-weight: 500;">or Month:</label>
+  <input type="month" id="filter-month" placeholder="mm-yyyy">
+
+  <button id="download-users-data" class="download-btn" style="display:block; margin-left: 10px;">Download Excel</button>
+</div>
 </div>
 <!-- Analytics Charts -->
 <div class="charts-container" >
@@ -658,36 +693,66 @@
     renderPivotTable(usersData);
   });
 
-    document.getElementById("download-all-users").addEventListener("click", async () => {
-  try {
-    const response = await fetch("/logs/team_leader_users/?tl_email=auto");
-    if (!response.ok) throw new Error("Failed to fetch users data.");
-    const usersData = await response.json();
+document.getElementById("download-users-data").addEventListener("click", async () => {
+  const filterDate = document.getElementById("filter-date").value;
+  const filterMonth = document.getElementById("filter-month").value;
 
-    const ws_data = [["Username", "Email", "Timestamp", "Case Number", "Call Type", "Points"]];
-
-    usersData.forEach(user => {
-      user.call_logs.forEach(log => {
-        ws_data.push([
-          user.username,
-          user.email,
-          log.timestamp || '',
-          log.case_number,
-          log.call_type,
-          log.points
-        ]);
-      });
-    });
-
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet(ws_data);
-    XLSX.utils.book_append_sheet(wb, ws, "All Users Cases");
-    XLSX.writeFile(wb, "All_Users_Case_Data.xlsx");
-
-  } catch (error) {
-    console.error("Error generating Excel file:", error);
-    alert("Failed to download data. Please try again.");
+  const response = await fetch("/logs/team_leader_users/?tl_email=auto");
+  if (!response.ok) {
+    alert("Failed to fetch user data.");
+    return;
   }
+
+  const usersData = await response.json();
+  const rows = [];
+
+  usersData.forEach(user => {
+    user.call_logs.forEach(log => {
+      if (log.timestamp) {
+        const logDate = new Date(log.timestamp);
+        const logISO = logDate.toISOString().split("T")[0];
+        const logMonth = logISO.slice(0, 7); // YYYY-MM
+
+        const include =
+          (filterDate && logISO === filterDate) ||
+          (filterMonth && logMonth === filterMonth) ||
+          (!filterDate && !filterMonth);
+
+        if (include) {
+          rows.push([
+            user.username,
+            user.email,
+            log.timestamp,
+            log.case_number,
+            log.call_type,
+            log.points
+          ]);
+        }
+      }
+    });
+  });
+
+  if (rows.length === 0) {
+    alert("No data found for selected filter.");
+    return;
+  }
+
+  const ws_data = [
+    ["Username", "Email", "Timestamp", "Case Number", "Call Type", "Points"],
+    ...rows
+  ];
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(ws_data);
+  XLSX.utils.book_append_sheet(wb, ws, "Filtered Data");
+
+  const fileName = filterDate
+    ? `Data_${filterDate}.xlsx`
+    : filterMonth
+    ? `Data_${filterMonth}.xlsx`
+    : `All_Users_Data.xlsx`;
+
+  XLSX.writeFile(wb, fileName);
 });
 </script>
 
