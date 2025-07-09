@@ -135,6 +135,29 @@
                 alert("Failed to update profile.");
             }
         });
+        document.getElementById('deleteAccount').addEventListener('click', async () => {
+    if (!confirm("Are you sure you want to delete the account? This action cannot be undone.")) {
+        return;
+    }
+
+    try {
+        const response = await fetch('/auth/delete-account/', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const result = await response.json();
+        if (result.status === 'success') {
+            alert(result.message);
+            window.location.href = '/';  // Redirects to login.html
+        } else {
+            alert(result.message || 'Failed to delete account.');
+        }
+    } catch (error) {
+        console.error("Deletion failed:", error);
+        alert("An error occurred while deleting the account.");
+    }
+});
     </script>
 </body>
 </html>
