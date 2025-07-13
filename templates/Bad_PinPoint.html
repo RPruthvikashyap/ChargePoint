@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Relay Stuck Closed Diagnostic</title>
+  <title>Bad PinPoint Diagnostic</title>
   <style>
     :root {
       --main-orange: #ee7313;
@@ -152,65 +152,73 @@
       word-wrap: break-word;
       overflow-wrap: break-word;
     }
+    .image-container {
+        margin: 1.5rem 0;
+        text-align: center;
+    }
+    .image-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
   </style>
 </head>
 <body>
-  <header>Relay Stuck Closed Diagnostic</header>
+  <header>Bad PinPoint Diagnostic</header>
   <div class="container">
     <div class="intro-toggle">
-      <button onclick="toggleIntro()">What is Relay Stuck Closed?</button>
+      <button onclick="toggleIntro()">What is Bad PinPoint?</button>
     </div>
     <div class="intro" id="introSection">
-      <h2>Relay Stuck Closed</h2>
-      <p>Relay Stuck Closed indicates that there is a mechanical adhesion in the relays that connect and disconnect the mains power which can prevent J1772 compliant operation. An electrical relay is a sort of electrically operated switch. In this case, it is the "switch" that closes to put power to the connector to charge a car.</p>
-      <p>Relay Stuck Closed faults **do not have a remote fix possible**.</p>
+      <h2>Bad PinPoint</h2>
+      <p>A "Bad PinPoint" refers to an incorrect geographical location displayed for the station on the map within the Network Operating System (NOS) Prop Sheet. This means the station's pinpoint is not accurately reflecting its physical location.</p>
     </div>
 
-    <div id="question1" class="card">
-      <p><strong>Step 1:</strong> Pull the latest status in the Status/Actions tab and check 'outlet' for the status of each port.</p>
-      <p>Example: <code>1,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,OUT_OF_SERVICE,NO_VEHICLE,IDLE,0,NONE,8,NONE,0xA1,NA</code></p>
-      <button onclick="nextStep('question2')">Status checked</button>
+    <div id="step1_config_edit" class="card">
+      <p><strong>Step 1: Login to NOS and Access Configuration</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>Log in to NOS and pull up the station prop-sheet.</li>
+          <li>Go to the **Configuration** tab.</li>
+          <li>Click on the **Edit** button.</li>
+        </ul>
+      </div>
+      <div class="image-container">
+        <img src="/static/9b6bc473-1953-4961-9e79-4274eefdd6cc.png" alt="Screenshot showing Configuration tab and Edit button in NOS.">
+      </div>
+      <button onclick="nextStep('step2_drag_pin')">Proceed to PinPoint Correction</button>
       <div class="progress">Step <span class="step-count">1</span> of 3</div>
     </div>
 
-    <div id="question2" class="card hidden">
-      <p><strong>Step 2:</strong> Reboot station in NOS. **DO NOT CLEAR THE MAINTENANCE FLAG** as it will falsify NOS to force a green pin. Wait 3-5 minutes for the station to process the reboot.</p>
-      <button onclick="nextStep('question3')">Reboot initiated</button>
-      <button onclick="nextStep('question1')">Back</button>
+    <div id="step2_drag_pin" class="card hidden">
+      <p><strong>Step 2: Drag the Pin to the Correct Location</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>In the MAP section where the wrong pinpoint is showing up, **drag the pin to the correct physical location** of the station.</li>
+          <li>Observe that the **Latitude** and **Longitude** values will automatically update as you drag the pin.</li>
+        </ul>
+      </div>
+      <div class="image-container">
+        <img src="/static/3dc50f82-67b7-4515-9e34-dd35e2b25ab2.png" alt="Screenshot showing map with draggable pin and updated Latitude/Longitude fields.">
+      </div>
+      <button onclick="nextStep('step3_save')">PinPoint Corrected</button>
+      <button onclick="nextStep('step1_config_edit')">Back</button>
       <div class="progress">Step <span class="step-count">2</span> of 3</div>
     </div>
 
-    <div id="question3" class="card hidden">
-      <p><strong>Step 3:</strong> Pull the latest status again and check if the "outlet" shows a good status "Available" on its port(s).</p>
-      <button onclick="nextStep('solution_cleared')">Fault cleared</button>
-      <button onclick="nextStep('solution_not_cleared')">Fault did NOT clear</button>
-      <button onclick="nextStep('question2')">Back</button>
+    <div id="step3_save" class="card hidden">
+      <p><strong>Step 3: Save the Updated Configuration</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>Scroll down to the bottom of the Configuration page.</li>
+          <li>Click on the **Save** button to apply the changes.</li>
+        </ul>
+      </div>
+      <p>The station's pinpoint should now be correctly updated in the system.</p>
+      <button onclick="resetFlow()">Complete</button>
+      <button onclick="nextStep('step2_drag_pin')">Back</button>
       <div class="progress">Step <span class="step-count">3</span> of 3</div>
-    </div>
-
-    <div id="solution_cleared" class="card hidden">
-      <div class="solution-box">
-        <p><strong>Fault Cleared after Reboot.</strong></p>
-        <ul>
-          <li>Check the **alarm log**. Scan through recent (approximately 90 days) alarms to see if the station has given a Relay Stuck Closed (RSC) error within that timeframe.</li>
-          <li>If there are other occurrences of the Relay Stuck Closed fault, the **head will need to be replaced.**</li>
-          <li>If no other occurrences, monitor for recurrence.</li>
-        </ul>
-      </div>
-      <button onclick="resetFlow()">Restart</button>
-    </div>
-
-    <div id="solution_not_cleared" class="card hidden">
-      <div class="solution-box">
-        <p><strong>Fault Did NOT Clear.</strong></p>
-        <ul>
-          <li>The **head will need to be replaced.**</li>
-        </ul>
-      </div>
-      <div class="note">
-        ⚠️ A persistent Relay Stuck Closed fault requires head unit replacement as there is no remote fix.
-      </div>
-      <button onclick="resetFlow()">Restart</button>
     </div>
 
   </div>
@@ -222,7 +230,7 @@
     }
 
     function resetFlow() {
-      nextStep('question1');
+      nextStep('step1_config_edit');
     }
 
     function toggleIntro() {

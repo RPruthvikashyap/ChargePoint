@@ -105,7 +105,7 @@
 </div>
 <!-- Input fields -->
 <div class="container">
-<label for="text1">Case Number*:</label>
+<label for="text1">Case Number:</label>
 <input id="text1" maxlength="8" pattern="\d*" placeholder="8-digit number" type="text"/><br/><br/>
 <!-- New Phone Number field -->
 <label for="phoneNumber">Phone Number:</label>
@@ -115,13 +115,15 @@
 <input id="stationName" placeholder="Enter station name" type="text"/><br/><br/>
 <label for="text2">Customer Name:</label>
 <input id="text2" type="text"/><br/><br/>
-<label for="dropdownCallType">Case Type*:</label>
+<label for="dropdownCallType">Case Type:</label>
 <select id="dropdownCallType">
-<option value="Assigned Case">Assigned Case</option>
-<option value="FT Call">FT Call</option>
-<option value="New">New</option>
-<option value="Existing">Existing</option>
-</select><br/><br/>
+  <option value="">Select Case Type</option>
+  <option value="Assigned Case">Assigned Case</option>
+  <option value="FT Call">FT Call</option>
+  <option value="New">New</option>
+  <option value="Existing">Existing</option>
+</select>
+<br/><br/>
 <!-- New and Existing Call Fields (conditionally shown for New/Existing calls only) -->
 <div class="hidden" id="newExistingCallFields">
 <label for="sdi">SDI:</label>
@@ -139,8 +141,25 @@
 </div>
 <!-- FT Call Specific Fields -->
 <div class="hidden" id="ftCallFields">
+
+<label for="stationType">Select Station Type:</label>
+<select id="stationType">
+  <option value="">-- Select Station Type --</option>
+  <option value="AC">AC Station</option>
+  <option value="DC">DC Station</option>
+</select><br/><br/>
+
+<div class="hidden" id="acStationOptions">
+  <label for="acStationModel">Select AC Station Model:</label>
+  <select id="acStationModel">
+    <option value="">-- Select Model --</option>
+    <option value="CT4000">CT4000</option>
+    <option value="CPF">CPF</option>
+    <option value="CP6000">CP6000</option>
+  </select><br/><br/>
+</div>
 <label>Work Scope:</label>
-<div class="workScopeContainer">
+<div class="workScopeContainer hidden">
 <label><input class="workScopeCheckbox" type="checkbox" value="Cellular Survey"/> Cellular Survey</label>
 <label><input class="workScopeCheckbox" type="checkbox" value="Wiring and Voltage verification"/> Wiring and Voltage verification</label>
 <label><input class="workScopeCheckbox" type="checkbox" value="Head Swap"/> Head Swap</label>
@@ -320,6 +339,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
 <script src="static/cpp.js"></script>
 <script>
+ var quill = new Quill('#issueDescription', { theme: 'snow' });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const dropdown = document.getElementById('dropdownCallType');
+    if (dropdown.value) {
+      const event = new Event('change');
+      dropdown.dispatchEvent(event);
+    }
+  });
+
     document.addEventListener('DOMContentLoaded', function () {
         fetch('/auth/current_user/', {
             method: 'GET',

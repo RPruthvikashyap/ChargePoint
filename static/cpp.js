@@ -1,3 +1,53 @@
+// === CLEAN FT CALL LOGIC ===
+
+function updateWorkScopeVisibility() {
+    const callType = document.getElementById('dropdownCallType').value;
+    const stationType = document.getElementById('stationType').value;
+    const acStationModel = document.getElementById('acStationModel').value;
+
+    const ftCallFields = document.getElementById('ftCallFields');
+    const standardCallFields = document.getElementById('standardCallFields');
+    const newExistingCallFields = document.getElementById('newExistingCallFields');
+    const acStationOptions = document.getElementById('acStationOptions');
+    const workScopeContainer = document.querySelector('.workScopeContainer');
+    const doneButton = document.getElementById('doneButton');
+
+    // Hide everything by default
+    ftCallFields.classList.add('hidden');
+    standardCallFields.classList.add('hidden');
+    newExistingCallFields.classList.add('hidden');
+    acStationOptions.classList.add('hidden');
+    workScopeContainer.classList.add('hidden');
+    doneButton.classList.add('hidden');
+
+    if (callType === 'FT Call') {
+        ftCallFields.classList.remove('hidden');
+
+        if (stationType === 'AC') {
+            acStationOptions.classList.remove('hidden');
+
+            if (acStationModel === 'CT4000' || acStationModel === 'CPF') {
+                workScopeContainer.classList.remove('hidden');
+                doneButton.classList.remove('hidden');
+            }
+        }
+    } else if (callType === 'Standard Call') {
+        standardCallFields.classList.remove('hidden');
+    } else if (['New', 'Existing', 'Assigned Case'].includes(callType)) {
+        newExistingCallFields.classList.remove('hidden');
+    }
+}
+
+// Bind cleanly
+['dropdownCallType', 'stationType', 'acStationModel'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', updateWorkScopeVisibility);
+});
+
+document.addEventListener('DOMContentLoaded', updateWorkScopeVisibility);
+// === END FT CALL LOGIC ===
+
+
 // Load saved table data from localStorage when the page loads
 document.addEventListener('DOMContentLoaded', function () {
     loadTableData();
@@ -92,32 +142,18 @@ document.getElementById('phoneNumber').addEventListener('input', function (e) {
     }
 });
 
-// Toggle fields based on Call Type
-document.getElementById('dropdownCallType').addEventListener('change', function () {
-    const callType = this.value;
-    const ftCallFields = document.getElementById('ftCallFields');
-    const standardCallFields = document.getElementById('standardCallFields');
-    const newExistingCallFields = document.getElementById('newExistingCallFields');
-    const doneButton = document.getElementById('doneButton');
-
-    // Show or hide fields based on the selected call type
-    if (callType === 'FT Call') {
-        ftCallFields.classList.remove('hidden');
-        newExistingCallFields.classList.add('hidden');  // Hide SDI and Issue Type for FT Call
-        standardCallFields.classList.add('hidden');
-        doneButton.classList.remove('hidden'); // Show Done button
-    } else if (callType === 'Standard Call') {
-        ftCallFields.classList.add('hidden');
-        newExistingCallFields.classList.add('hidden');  // Hide SDI and Issue Type for Standard Call
-        standardCallFields.classList.add('hidden');
-        doneButton.classList.add('hidden'); // Hide Done button
-    } else if (callType === 'New' || callType === 'Existing') {
-        ftCallFields.classList.add('hidden');
-        standardCallFields.classList.add('hidden');
-        newExistingCallFields.classList.remove('hidden');  // Show SDI and Issue Type for New/Existing Call
-        doneButton.classList.add('hidden'); // Hide Done button
-    }
+document.addEventListener('DOMContentLoaded', function () {
+    loadTableData();
+    // The line below was hiding the work scope container even when it should be visible.
+    // It's removed as updateWorkScopeVisibility handles the initial state correctly.
+    // document.querySelector('.workScopeContainer').classList.add('hidden');
 });
+
+
+
+
+
+// Run visibility check on all relevant changes
 
 // Toggle work scope fields based on checkbox selection
 document.querySelectorAll('.workScopeCheckbox').forEach(function (checkbox) {
@@ -387,6 +423,9 @@ if (manualDateInput) {
     } else if (callType === 'Existing') {
         sdi = document.getElementById('sdi').value;
         points = 0.25;
+    } else if (callType === 'Assigned Case') {
+        sdi = document.getElementById('sdi').value;
+        points = 1;
     } else {
         sdi = document.getElementById('dropdown1').value;
         points = 1;
@@ -547,7 +586,7 @@ document.getElementById('generateSummary').addEventListener('click', function ()
         }
         sdi = 'N/A';
         issueType = 'Work Order';
-    } else if (callType === 'New' || callType === 'Existing') {
+    } else if (callType === 'New' || callType === 'Existing' || callType === 'Assigned Case') {
         sdi = document.getElementById('sdi').value;
         issueType = document.getElementById('issueType').value;
     } else {
@@ -586,7 +625,10 @@ document.getElementById('clearFields').addEventListener('click', async function 
         document.getElementById('dropdownCallType').value = 'Standard Call';
         document.getElementById('sdi').value = 'N/A';
         document.getElementById('issueType').value = 'General';
-        document.getElementById('issueDescription').value = '';
+        // Clear Quill editor content
+        if (quill) {
+            quill.setContents([{ insert: '\n' }]);
+        }
         document.getElementById('manualDate').value = '';
         
         // Clear table and localStorage

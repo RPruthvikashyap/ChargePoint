@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Relay Stuck Closed Diagnostic</title>
+  <title>Pilot Unreachable Diagnostic</title>
   <style>
     :root {
       --main-orange: #ee7313;
@@ -155,60 +155,62 @@
   </style>
 </head>
 <body>
-  <header>Relay Stuck Closed Diagnostic</header>
+  <header>Pilot Unreachable Diagnostic</header>
   <div class="container">
     <div class="intro-toggle">
-      <button onclick="toggleIntro()">What is Relay Stuck Closed?</button>
+      <button onclick="toggleIntro()">What is Pilot Unreachable?</button>
     </div>
     <div class="intro" id="introSection">
-      <h2>Relay Stuck Closed</h2>
-      <p>Relay Stuck Closed indicates that there is a mechanical adhesion in the relays that connect and disconnect the mains power which can prevent J1772 compliant operation. An electrical relay is a sort of electrically operated switch. In this case, it is the "switch" that closes to put power to the connector to charge a car.</p>
-      <p>Relay Stuck Closed faults **do not have a remote fix possible**.</p>
+      <h2>Pilot Unreachable</h2>
+      <p>Pilot Unreachable is thrown on a CT4k station when the firmware monitoring the 12V Pilot signal sees a voltage outside of tolerance. E.g. 14V when it expects 12V.</p>
     </div>
 
     <div id="question1" class="card">
-      <p><strong>Step 1:</strong> Pull the latest status in the Status/Actions tab and check 'outlet' for the status of each port.</p>
-      <p>Example: <code>1,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,OUT_OF_SERVICE,NO_VEHICLE,IDLE,0,NONE,8,NONE,0xA1,NA</code></p>
+      <p><strong>Step 1:</strong> Pull the latest status in the Status/Actions tab and check 'outlet' for the status of each port. </p>
+      <p>Example of "OUT_OF_SERVICE" state: <code>1,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,OUT_OF_SERVICE,NO_VEHICLE,IDLE,0,NONE,8,NONE,0xA1,NA</code></p>
       <button onclick="nextStep('question2')">Status checked</button>
       <div class="progress">Step <span class="step-count">1</span> of 3</div>
     </div>
 
     <div id="question2" class="card hidden">
-      <p><strong>Step 2:</strong> Reboot station in NOS. **DO NOT CLEAR THE MAINTENANCE FLAG** as it will falsify NOS to force a green pin. Wait 3-5 minutes for the station to process the reboot.</p>
-      <button onclick="nextStep('question3')">Reboot initiated</button>
+      <p><strong>Step 2:</strong> Send a Reboot in the Status/Actions tab. Wait 5 minutes to make sure the station has rebooted or compare the last time the station made communication under the port status.</p>
+      <p>After reboot, pull the latest status in the Status/Actions tab again. </p>
+      <button onclick="nextStep('question3')">Reboot done, status re-checked</button>
       <button onclick="nextStep('question1')">Back</button>
       <div class="progress">Step <span class="step-count">2</span> of 3</div>
     </div>
 
     <div id="question3" class="card hidden">
-      <p><strong>Step 3:</strong> Pull the latest status again and check if the "outlet" shows a good status "Available" on its port(s).</p>
-      <button onclick="nextStep('solution_cleared')">Fault cleared</button>
-      <button onclick="nextStep('solution_not_cleared')">Fault did NOT clear</button>
+      <p><strong>Step 3:</strong> Did the fault clear? (i.e., 'lcd_state' shows "PortState[1,2]=Available,Available" and "outlet" shows "Enabled, Available")</p>
+      <button onclick="nextStep('solution_cleared')">Yes, fault cleared</button>
+      <button onclick="nextStep('solution_persists')">No, fault persists</button>
       <button onclick="nextStep('question2')">Back</button>
       <div class="progress">Step <span class="step-count">3</span> of 3</div>
     </div>
 
     <div id="solution_cleared" class="card hidden">
       <div class="solution-box">
-        <p><strong>Fault Cleared after Reboot.</strong></p>
+        <p><strong>Fault Cleared!</strong></p>
         <ul>
-          <li>Check the **alarm log**. Scan through recent (approximately 90 days) alarms to see if the station has given a Relay Stuck Closed (RSC) error within that timeframe.</li>
-          <li>If there are other occurrences of the Relay Stuck Closed fault, the **head will need to be replaced.**</li>
-          <li>If no other occurrences, monitor for recurrence.</li>
+          <li>The error cleared after a reboot, indicating it was likely spurious.</li>
+          <li>Monitor the station for consistent good sessions.</li>
         </ul>
       </div>
       <button onclick="resetFlow()">Restart</button>
     </div>
 
-    <div id="solution_not_cleared" class="card hidden">
+    <div id="solution_persists" class="card hidden">
       <div class="solution-box">
-        <p><strong>Fault Did NOT Clear.</strong></p>
+        <p><strong>Fault Persists. Further investigation required.</strong></p>
         <ul>
-          <li>The **head will need to be replaced.**</li>
+          <li>Check if it's a **legacy station or a MACAW station**. If it's a MACAW station, check how spurious the fault is.</li>
+          <li>Check when the station was last replaced using the **EVSE ID**.</li>
+          <li>If required, raise an **engineering ticket** for further investigation.</li>
+          <li>If the issue still persists after these steps, proceed with a **head replacement**.</li>
         </ul>
       </div>
       <div class="note">
-        ⚠️ A persistent Relay Stuck Closed fault requires head unit replacement as there is no remote fix.
+        ⚠️ Head replacement should be considered if the issue remains after all software and basic diagnostic steps.
       </div>
       <button onclick="resetFlow()">Restart</button>
     </div>

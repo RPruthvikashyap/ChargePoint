@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zero Energy Dispensed Diagnostic</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .solution-box ul {
+        list-style-type: disc;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .solution-box li {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .note {
+      background-color: #fff;
+      color: #000;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <header>Zero Energy Dispensed Diagnostic</header>
+  <div class="container">
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is Zero Energy Dispensed?</button>
+    </div>
+    <div class="intro" id="introSection">
+      <h2>Understanding & Identifying Zero Energy Sessions (ZES)</h2>
+      <p>A "Zero Energy Dispensed" session occurs when a driver initiates a session and connects their vehicle, but **no energy is delivered**, and the vehicle does not charge.</p>
+      <p>To identify if a zero energy session is a valid issue, focus on these data points in Historical Sessions:</p>
+      <ul>
+        <li><strong>Total Duration:</strong> Total time EV remained plugged in.</li>
+        <li><strong>Charging Time:</strong> Actual time EV received energy (should be 00:00 for ZES).</li>
+        <li><strong>Energy:</strong> Total energy delivered (should be 0.00kWh for ZES).</li>
+        <li><strong>Ended By:</strong> Reason for session termination.</li>
+        <li><strong>Plug-In Event ID:</strong> Indicates session initiation method (RFID tap: small, sequentially increasing number; Mobile App: large number like "1737826831" or "1000000001").</li>
+      </ul>
+      <h3>Validating ZES:</h3>
+      <ul>
+        <li>If **Total Duration ≤ 2 minutes** AND **Ended By = Timeout**, this is usually NOT a valid Zero Energy Session. It means no plugin was detected within 2 minutes.</li>
+        <li>**Timeouts** with a **large Plug-In Event ID** (e.g., app initiated) can generally be **Disregarded**. This often happens when a driver attempts to start a session at a different station in a crowded lot.</li>
+        <li>**Timeouts** with a **small, sequentially increasing Plug-In Event ID** should **NOT be ignored if frequent**. It's unlikely a driver would tap their RFID and take >2 minutes to plug in.</li>
+      </ul>
+    </div>
+
+    <div id="step1_understand_identify_zes" class="card">
+      <p><strong>Step 1: Understand & Identify Zero Energy Sessions</strong></p>
+      <div class="solution-box">
+        <p>Review the detailed information in the "What is Zero Energy Dispensed?" section above. Familiarize yourself with how to identify a true Zero Energy Dispense issue from historical session data, considering "Total Duration", "Charging Time", "Energy", "Ended By", and "Plug-In Event ID".</p>
+      </div>
+      <button onclick="nextStep('step2_analyze_historical_data')">Understood, Next: Analyze Data</button>
+      <div class="progress">Step <span class="step-count">1</span> of 5</div>
+    </div>
+
+    <div id="step2_analyze_historical_data" class="card hidden">
+      <p><strong>Step 2: Analyze Historical Session Data for Consistency</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>Analyze historical session data to determine whether zero energy dispensed occurs consistently across all sessions or is specific to certain vehicles (Make, Model, and Year). This helps identify whether the issue stems from the vehicle itself.</li>
+          <li>Analyze historical session data and look for the **Port Number** column as well. This will help identify if the station is experiencing zero energy dispense on both ports or just one of them.</li>
+        </ul>
+      </div>
+      <p>Have you validated a consistent Zero Energy Dispense issue on one or both ports?</p>
+      <button onclick="nextStep('step3_check_station_status')">Yes, consistent ZES found</button>
+      <button onclick="nextStep('solution_monitor_or_no_issue')">No, ZES not consistent / not validated</button>
+      <button onclick="nextStep('step1_understand_identify_zes')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 5</div>
+    </div>
+
+    <div id="step3_check_station_status" class="card hidden">
+      <p><strong>Step 3: Retrieve Latest Station Status & Alarm Log</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>Retrieve the latest **station status** and review the **outlet information** for each port. A **faulted port** will be marked as **OUT_OF_SERVICE**, indicated by an entry such as: <br><code>1,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,OUT_OF_SERVICE,NO_VEHICLE,IDLE,0,NONE,8,NONE,0xA1,NA.</code></li>
+          <li>In such cases, go to the **alarms section** and review the **alarm log** for the past few weeks or around the time the issue was first noticed. If a fault alarm has been triggered for the station, refer to the specific **fault troubleshooting guide** for that alarm.</li>
+        </ul>
+      </div>
+      <p>Are there any fault alarms or 'OUT_OF_SERVICE' indications relevant to the affected port(s)?</p>
+      <button onclick="nextStep('solution_refer_fault_guide')">Yes, fault found (follow specific guide)</button>
+      <button onclick="nextStep('step4_inspect_physical_damage')">No, no relevant faults/OOS found</button>
+      <button onclick="nextStep('step2_analyze_historical_data')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 5</div>
+    </div>
+
+    <div id="step4_inspect_physical_damage" class="card hidden">
+      <p><strong>Step 4: Inspect for Physical Damage</strong></p>
+      <div class="solution-box">
+        <p>If no faults are found that could be causing the energy dispense issue, inspect the station for any **physical damage**.</p>
+        <ul>
+          <li>**Damaged Charging Cables or Connector:** Damage to the station’s charging cables, connector, or connector latch can result in zero energy dispense on the affected port. Request the customer to provide photos of these components.
+            <ul>
+              <li>On **CT4000 stations**, if the charging cable(s) or connector are damaged, the entire station head must be replaced.</li>
+              <li>On **CPF** and **CP6K stations**, the charging cables can be replaced individually.</li>
+            </ul>
+          </li>
+          <li>**Damaged Latches:** If the **connector latch** is found to be damaged, initiate a dispatch to replace it. Before doing so, identify the **latch type**:
+            <ul>
+              <li>A **J1772 connector** with **three slotted holes** on the side has a **J1772-GCC latch**.</li>
+              <li>A **J1772 connector** with a **smooth finish** and **no slotted holes** on the side has a **J1772-SINBON latch**.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <p>Is there physical damage to cables, connectors, or latches that needs addressing?</p>
+      <button onclick="nextStep('solution_issue_resolved_monitor')">Yes, physical damage found and addressed</button>
+      <button onclick="nextStep('step5_replace_proximity_latch')">No, no physical damage found</button>
+      <button onclick="nextStep('step3_check_station_status')">Back</button>
+      <div class="progress">Step <span class="step-count">4</span> of 5</div>
+    </div>
+
+    <div id="step5_replace_proximity_latch" class="card hidden">
+      <p><strong>Step 5: Replace Proximity Latch & Escalation</strong></p>
+      <div class="solution-box">
+        <p>If no faults or physical damage are found on the affected station, proceed with replacing the **PROXIMITY LATCH** based on the warranty status.</p>
+        <p><strong>If Zero Energy Sessions (ZES) continue after swapping the plastic latch with a metal latch, follow this process:</strong></p>
+        <ol>
+          <li>TSE to escalate via **SUPPESC** to Engineering, advise leader, and provide Jira, add Jira to case.</li>
+          <li>Engineering will confirm there are no additional issues causing ZES, and will suggest next steps.</li>
+          <li>TSE to discuss Engineering’s suggestion(s) with their leader.</li>
+          <li>Leader will double check NOS, session history, and Jira with TSE.</li>
+          <li>TSE to proceed with fix as discussed with Engineering and their Leader.</li>
+        </ol>
+      </div>
+      <p>Has the proximity latch been replaced, and if so, has ZES persisted?</p>
+      <button onclick="nextStep('solution_issue_resolved_monitor')">ZES resolved after latch replacement</button>
+      <button onclick="nextStep('solution_escalate_engineering')">ZES persists after latch replacement</button>
+      <button onclick="nextStep('step4_inspect_physical_damage')">Back</button>
+      <div class="progress">Step <span class="step-count">5</span> of 5</div>
+    </div>
+
+    <div id="solution_issue_resolved_monitor" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Issue Resolved!</strong></p>
+        <ul>
+          <li>The Zero Energy Dispensed issue appears to be resolved. Monitor the station for stable operation and successful charging sessions.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart Diagnostic</button>
+    </div>
+
+    <div id="solution_refer_fault_guide" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Action: Refer to Specific Fault Troubleshooting Guide</strong></p>
+        <ul>
+          <li>A relevant fault alarm or "OUT_OF_SERVICE" status was identified.</li>
+          <li>Please refer to the specific troubleshooting guide for that particular fault code to address the underlying issue, which is likely causing the Zero Energy Dispense.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart Diagnostic</button>
+    </div>
+
+    <div id="solution_monitor_or_no_issue" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Issue Not Consistent or Not Validated:</strong></p>
+        <ul>
+          <li>The Zero Energy Dispensed issue does not appear consistent across sessions/vehicles, or it falls under the "disregarded" categories (short timeouts, app-initiated timeouts).</li>
+          <li>Continue to monitor the station, or re-evaluate the initial assessment of the problem. The issue might be intermittent, vehicle-specific, or not a true ZES fault.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart Diagnostic</button>
+    </div>
+
+    <div id="solution_escalate_engineering" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Action: Escalation to Engineering Required</strong></p>
+        <ul>
+          <li>Zero Energy Sessions are persisting even after proximity latch replacement.</li>
+          <li>Follow the escalation process:
+            <ol>
+              <li>TSE to escalate via **SUPPESC** to Engineering, advise leader, and provide Jira, add Jira to case.</li>
+              <li>Engineering will confirm no additional issues causing ZES, and suggest next steps.</li>
+              <li>TSE to discuss Engineering’s suggestion(s) with their leader.</li>
+              <li>Leader will double check NOS, session history, and Jira with TSE.</li>
+              <li>TSE to proceed with fix as discussed with Engineering and their Leader.</li>
+            </ol>
+          </li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart Diagnostic</button>
+    </div>
+
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+    }
+
+    function resetFlow() {
+      nextStep('step1_understand_identify_zes'); 
+      document.getElementById('introSection').style.display = 'none'; // Hide intro on reset
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+
+    // Initial state: Show the first step
+    document.addEventListener('DOMContentLoaded', () => {
+        resetFlow(); // Initialize by showing the first step card and hiding others
+    });
+  </script>
+</body>
+</html>

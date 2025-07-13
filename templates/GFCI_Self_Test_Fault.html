@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Relay Stuck Closed Diagnostic</title>
+  <title>GFCI Self Test Fault Diagnostic</title>
   <style>
     :root {
       --main-orange: #ee7313;
@@ -59,6 +59,7 @@
 
     p {
       font-size: 1.3rem;
+      /* Ensure text wraps within paragraphs */
       word-wrap: break-word;
       overflow-wrap: break-word;
     }
@@ -88,13 +89,16 @@
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
       text-align: left;
+      /* Ensure padding is included in element's total width */
       box-sizing: border-box;
+      /* Allow content to wrap */
       word-wrap: break-word;
       overflow-wrap: break-word;
     }
 
     .solution-box ul {
-        list-style-type: disc;
+        /* Ensure list items also wrap */
+        list-style-type: disc; /* Or circle, square, none */
         word-wrap: break-word;
         overflow-wrap: break-word;
     }
@@ -102,7 +106,7 @@
     .solution-box li {
       word-wrap: break-word;
       overflow-wrap: break-word;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.5rem; /* Add some spacing between list items */
     }
 
     ul {
@@ -155,46 +159,51 @@
   </style>
 </head>
 <body>
-  <header>Relay Stuck Closed Diagnostic</header>
+  <header>GFCI Self Test Fault Diagnostic</header>
   <div class="container">
     <div class="intro-toggle">
-      <button onclick="toggleIntro()">What is Relay Stuck Closed?</button>
+      <button onclick="toggleIntro()">What is GFCI Self Test Fault?</button>
     </div>
     <div class="intro" id="introSection">
-      <h2>Relay Stuck Closed</h2>
-      <p>Relay Stuck Closed indicates that there is a mechanical adhesion in the relays that connect and disconnect the mains power which can prevent J1772 compliant operation. An electrical relay is a sort of electrically operated switch. In this case, it is the "switch" that closes to put power to the connector to charge a car.</p>
-      <p>Relay Stuck Closed faults **do not have a remote fix possible**.</p>
+      <h2>Station Error Code 302-GST</h2>
+      <p><strong>GFCI Self Test Failed:</strong> The station detected a ground fault during power up and is not operational.</p>
+      <p>J1772 compliant EVSEs perform a regular GFCI Self Test to ensure that the GFCI protection system is operating as expected. Should the GFCI protection system fail to operate as expected it will generate a GFCI Self Test Fault.</p>
     </div>
 
     <div id="question1" class="card">
-      <p><strong>Step 1:</strong> Pull the latest status in the Status/Actions tab and check 'outlet' for the status of each port.</p>
-      <p>Example: <code>1,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,OUT_OF_SERVICE,NO_VEHICLE,IDLE,0,NONE,8,NONE,0xA1,NA</code></p>
-      <button onclick="nextStep('question2')">Status checked</button>
+      <p><strong>Step 1:</strong> Have the customer attempt to restart the charging session. Did this resolve the fault?</p>
+      <button onclick="nextStep('question2')">Yes</button>
+      <button onclick="nextStep('question3')">No</button>
       <div class="progress">Step <span class="step-count">1</span> of 3</div>
     </div>
 
     <div id="question2" class="card hidden">
-      <p><strong>Step 2:</strong> Reboot station in NOS. **DO NOT CLEAR THE MAINTENANCE FLAG** as it will falsify NOS to force a green pin. Wait 3-5 minutes for the station to process the reboot.</p>
-      <button onclick="nextStep('question3')">Reboot initiated</button>
+      <p>The fault was resolved by restarting the session. The fault was likely spurious. Monitor for a week for good sessions and then resolve the case.</p>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="question3" class="card hidden">
+      <p><strong>Step 2:</strong> Remotely verify the validity of the fault. Pull the latest status and check 'lcd_state' and "outlet" for Station Error Codes.</p>
+      <p>Example: <code>1,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,OUT_OF_SERVICE,NO_VEHICLE,IDLE,0,NONE,8,NONE,0xA1,NA</code> (Out of Service) or <code>2,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,AVAILABLE,NO_VEHICLE,IDLE,0,NONE,NONE,NONE,0xA1,NA</code> (Available).</p>
+      <button onclick="nextStep('question4')">Verified Station State</button>
       <button onclick="nextStep('question1')">Back</button>
       <div class="progress">Step <span class="step-count">2</span> of 3</div>
     </div>
 
-    <div id="question3" class="card hidden">
-      <p><strong>Step 3:</strong> Pull the latest status again and check if the "outlet" shows a good status "Available" on its port(s).</p>
-      <button onclick="nextStep('solution_cleared')">Fault cleared</button>
-      <button onclick="nextStep('solution_not_cleared')">Fault did NOT clear</button>
-      <button onclick="nextStep('question2')">Back</button>
+    <div id="question4" class="card hidden">
+      <p><strong>Step 3:</strong> Reboot the station in NOS. DO NOT CLEAR THE MAINTENANCE FLAG as it will falsify NOS to force a green pin. Wait 3-5 minutes for the reboot to come back online.</p>
+      <p>After reboot, pull the latest status and verify if the fault has cleared.</p>
+      <button onclick="nextStep('solution_cleared')">Fault Cleared</button>
+      <button onclick="nextStep('solution_not_cleared')">Fault Not Cleared</button>
+      <button onclick="nextStep('question3')">Back</button>
       <div class="progress">Step <span class="step-count">3</span> of 3</div>
     </div>
 
     <div id="solution_cleared" class="card hidden">
       <div class="solution-box">
-        <p><strong>Fault Cleared after Reboot.</strong></p>
+        <p><strong>Fault cleared after reboot.</strong></p>
         <ul>
-          <li>Check the **alarm log**. Scan through recent (approximately 90 days) alarms to see if the station has given a Relay Stuck Closed (RSC) error within that timeframe.</li>
-          <li>If there are other occurrences of the Relay Stuck Closed fault, the **head will need to be replaced.**</li>
-          <li>If no other occurrences, monitor for recurrence.</li>
+          <li>The fault appears spurious. Monitor the station for a week for good sessions and then resolve the case.</li>
         </ul>
       </div>
       <button onclick="resetFlow()">Restart</button>
@@ -202,13 +211,14 @@
 
     <div id="solution_not_cleared" class="card hidden">
       <div class="solution-box">
-        <p><strong>Fault Did NOT Clear.</strong></p>
+        <p><strong>Fault not cleared after reboot.</strong></p>
         <ul>
-          <li>The **head will need to be replaced.**</li>
+          <li>Reach out to the site contact to inquire about any recent electrical/wiring changes and power cycle the station.</li>
+          <li>Once site and station wiring is validated and confirmed, move forward with replacement head unit.</li>
         </ul>
       </div>
       <div class="note">
-        ⚠️ A persistent Relay Stuck Closed fault requires head unit replacement as there is no remote fix.
+        ⚠️ If the issue persists after wiring validation, a replacement head unit will be required.
       </div>
       <button onclick="resetFlow()">Restart</button>
     </div>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blank Screen Diagnostic</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .solution-box ul {
+        list-style-type: disc;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .solution-box li {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .note {
+      background-color: #fff;
+      color: #000;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <header>Blank Screen Diagnostic</header>
+  <div class="container">
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is a Blank Screen?</button>
+    </div>
+    <div class="intro" id="introSection">
+      <h2>Understanding a Blank Screen Issue</h2>
+      <p>A "Blank Screen" issue is different from "No Power." It is noted by the presence of lit LEDs for buttons, station beeps, and the fact that power might still be dispensed.</p>
+      <p>The station might even still be reachable and green-pinned in NOS (Network Operating System), indicating internal functionality despite the display being off.</p>
+    </div>
+
+    <div id="step1_initial_assessment" class="card">
+      <p><strong>Step 1: Initial Assessment & Power Cycle</strong></p>
+      <div class="solution-box">
+        <p>This issue is typically identified by driver or station owner reports, indicating the display is blank while the station is still otherwise usable.</p>
+        <ul>
+          <li>Have the site contact complete a **power cycle** of the affected station.</li>
+          <li>**If this is an Electrician/Dispatch:** Have the technician take **voltage readings** at the breakers and at the station (refer to relevant wiring verification documents for expected voltage ranges, typically 208V to 240V).</li>
+        </ul>
+      </div>
+      <p>Has the station been power cycled? If applicable for a technician, are voltage readings correct (208V to 240V)?</p>
+      <button onclick="nextStep('step2_re_seat_cable')">Yes, power cycled & voltages correct (if applicable)</button>
+      <button onclick="nextStep('solution_site_electrical_issue')">No, voltage readings are bad / issue persists after power cycle</button>
+      <button onclick="toggleIntro()">Back to Understanding</button>
+      <div class="progress">Step <span class="step-count">1</span> of 2</div>
+    </div>
+
+    <div id="step2_re_seat_cable" class="card hidden">
+      <p><strong>Step 2: Re-seat Blue Ribbon Cable</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>**If this is a technician:** Have them re-seat the "Blue ribbon cable" on the main station wiring into the power plate.</li>
+          <li>**Note:** The blue connector may be hidden by a black cover. The connector can be revealed by pressing the tab on the lower portion of the black cover while sliding it upwards.</li>
+          <li>Have the site contact or technician send Support a **picture/video** of the issue via a Salesforce ticket for documentation.</li>
+        </ul>
+        </div>
+      <p>Has the blue ribbon cable been re-seated, and has the screen come on?</p>
+      <button onclick="nextStep('solution_issue_resolved')">Yes, screen is now working</button>
+      <button onclick="nextStep('solution_head_replacement')">No, screen is still blank</button>
+      <button onclick="nextStep('step1_initial_assessment')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 2</div>
+    </div>
+
+    <div id="solution_site_electrical_issue" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Action: Address Site Electrical Issues</strong></p>
+        <ul>
+          <li>If the voltage readings are bad, the station owner will need to **hire a certified electrician** to address the site electrical issues. This must be resolved before further station troubleshooting.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart Diagnostic</button>
+    </div>
+
+    <div id="solution_issue_resolved" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Issue Resolved!</strong></p>
+        <ul>
+          <li>The blank screen issue has been resolved, likely by the power cycle or re-seating the blue ribbon cable. Monitor the station for continued stable operation.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart Diagnostic</button>
+    </div>
+
+    <div id="solution_head_replacement" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Action: Proceed with Head Replacement</strong></p>
+        <ul>
+          <li>If the issue persists (screen remains blank) even after power cycling and re-seating the blue ribbon cable, and voltage readings are confirmed to be good, then proceed with a **head replacement**.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart Diagnostic</button>
+    </div>
+
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+    }
+
+    function resetFlow() {
+      nextStep('step1_initial_assessment'); 
+      document.getElementById('introSection').style.display = 'none'; // Hide intro on reset
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+
+    // Initial state: Show the first step on load
+    document.addEventListener('DOMContentLoaded', () => {
+        resetFlow(); 
+    });
+  </script>
+</body>
+</html>

@@ -198,8 +198,86 @@ async def profile_page(request: Request):
 
 @app.get("/relay-stuck-closed", response_class=HTMLResponse)
 async def profile_page(request: Request):
-    return templates.TemplateResponse("relay_stuck_closed.html", {"request": request})
+    return templates.TemplateResponse("Relay_stuck_diagonosis.html", {"request": request})
 
 @app.get("/egf", response_class=HTMLResponse)
 async def profile_page(request: Request):
     return templates.TemplateResponse("EGF_Complete_Question_Based_202-EF.html", {"request": request})
+
+@app.get("/gfci-hard-trip", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("GFCI_hard_trip.html", {"request": request})
+
+@app.get("/gfci-self-test-fault", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("GFCI_Self_Test_Fault.html", {"request": request})
+
+@app.get("/hardware-fault", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("Hardware_Fault.html", {"request": request})
+
+@app.get("/no-power", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("No_power.html", {"request": request})
+
+@app.get("/pilot-unreachable", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("Pilot_Unreachable.html", {"request": request})
+
+@app.get("/relay-stuck-open", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("Relay_Stuck_Open.html", {"request": request})
+
+@app.get("/sim-card-not-detected", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("SIM_Card_Not_Detected.html", {"request": request})
+
+@app.get("/rfid-unresponsive", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("RFID_Unresponsive.html", {"request": request})
+
+@app.get("/bad-pinpoint", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("Bad_PinPoint.html", {"request": request})
+
+@app.get("/slow-charging-speed", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("Slow_Charging_Speed.html", {"request": request})
+
+@app.get("/unreachable-troubleshooting", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("unreachable.html", {"request": request})
+
+@app.get("/zero-energy-dispensed", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("Zero_Energy_Dispensed.html", {"request": request})
+
+@app.get("/breakaway", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("Breakaway.html", {"request": request})
+
+@app.get("/blank-Screen", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("Blank_Screen.html", {"request": request})
+
+@app.delete("/auth/delete-account/")
+async def delete_account(request: Request, db: Session = Depends(get_db)):
+    user_id = request.cookies.get("user_id")
+    if not user_id:
+        return JSONResponse(content={"status": "error", "message": "User not authenticated"}, status_code=401)
+
+    try:
+        user_id = int(user_id)
+    except ValueError:
+        return JSONResponse(content={"status": "error", "message": "Invalid user ID"}, status_code=400)
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        return JSONResponse(content={"status": "error", "message": "User not found"}, status_code=404)
+
+    db.delete(user)
+    db.commit()
+
+    response = JSONResponse(content={"status": "success", "message": "Account deleted successfully"})
+    response.delete_cookie("user_id")  # Remove session cookie
+    return response

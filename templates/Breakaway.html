@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Relay Stuck Closed Diagnostic</title>
+  <title>Breakaway Fault Diagnostic</title>
   <style>
     :root {
       --main-orange: #ee7313;
@@ -155,62 +155,54 @@
   </style>
 </head>
 <body>
-  <header>Relay Stuck Closed Diagnostic</header>
+  <header>Breakaway Fault Diagnostic</header>
   <div class="container">
     <div class="intro-toggle">
-      <button onclick="toggleIntro()">What is Relay Stuck Closed?</button>
+      <button onclick="toggleIntro()">What is a Breakaway Fault?</button>
     </div>
     <div class="intro" id="introSection">
-      <h2>Relay Stuck Closed</h2>
-      <p>Relay Stuck Closed indicates that there is a mechanical adhesion in the relays that connect and disconnect the mains power which can prevent J1772 compliant operation. An electrical relay is a sort of electrically operated switch. In this case, it is the "switch" that closes to put power to the connector to charge a car.</p>
-      <p>Relay Stuck Closed faults **do not have a remote fix possible**.</p>
+      <h2>Understanding Breakaway Faults</h2>
+      <p><strong>Breakaway faults</strong> occur when a charging cord is pulled with enough force to move the wires internally. This action opens a protective switch within the station, indicating possible damage to the cable or its connection.</p>
     </div>
 
-    <div id="question1" class="card">
-      <p><strong>Step 1:</strong> Pull the latest status in the Status/Actions tab and check 'outlet' for the status of each port.</p>
-      <p>Example: <code>1,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,OUT_OF_SERVICE,NO_VEHICLE,IDLE,0,NONE,8,NONE,0xA1,NA</code></p>
-      <button onclick="nextStep('question2')">Status checked</button>
-      <div class="progress">Step <span class="step-count">1</span> of 3</div>
-    </div>
-
-    <div id="question2" class="card hidden">
-      <p><strong>Step 2:</strong> Reboot station in NOS. **DO NOT CLEAR THE MAINTENANCE FLAG** as it will falsify NOS to force a green pin. Wait 3-5 minutes for the station to process the reboot.</p>
-      <button onclick="nextStep('question3')">Reboot initiated</button>
-      <button onclick="nextStep('question1')">Back</button>
-      <div class="progress">Step <span class="step-count">2</span> of 3</div>
-    </div>
-
-    <div id="question3" class="card hidden">
-      <p><strong>Step 3:</strong> Pull the latest status again and check if the "outlet" shows a good status "Available" on its port(s).</p>
-      <button onclick="nextStep('solution_cleared')">Fault cleared</button>
-      <button onclick="nextStep('solution_not_cleared')">Fault did NOT clear</button>
-      <button onclick="nextStep('question2')">Back</button>
-      <div class="progress">Step <span class="step-count">3</span> of 3</div>
-    </div>
-
-    <div id="solution_cleared" class="card hidden">
+    <div id="step1_initial_assessment" class="card">
+      <p><strong>Step 1: Initial Assessment of the Breakaway Fault</strong></p>
       <div class="solution-box">
-        <p><strong>Fault Cleared after Reboot.</strong></p>
+        <p>A breakaway fault can indicate that the charging cable has been cut or forcibly pulled out of the station.</p>
         <ul>
-          <li>Check the **alarm log**. Scan through recent (approximately 90 days) alarms to see if the station has given a Relay Stuck Closed (RSC) error within that timeframe.</li>
-          <li>If there are other occurrences of the Relay Stuck Closed fault, the **head will need to be replaced.**</li>
-          <li>If no other occurrences, monitor for recurrence.</li>
+          <li>Have the site contact **identify the extent of the damage**.</li>
+          <li>**Note:** There will be times where there is no visible external damage, but the breakaway fault persists due to an internal issue.</li>
+          <li>**Obtain pictures** of the station/cable showing the damage (or lack thereof) for documentation.</li>
         </ul>
       </div>
-      <button onclick="resetFlow()">Restart</button>
+      <button onclick="nextStep('step2_damage_assessment')">Understood, Proceed to Damage Assessment</button>
+      <div class="progress">Step <span class="step-count">1</span> of 2</div>
     </div>
 
-    <div id="solution_not_cleared" class="card hidden">
+    <div id="step2_damage_assessment" class="card hidden">
+      <p><strong>Step 2: Determine Extent of Damage and Next Steps</strong></p>
       <div class="solution-box">
-        <p><strong>Fault Did NOT Clear.</strong></p>
+        <p>Based on your assessment and any pictures obtained, has specific damage (e.g., cut cable, stretched cable, visible internal wire issues) been identified or strongly suspected due to the persistent breakaway fault?</p>
+      </div>
+      <p>What is the damage assessment?</p>
+      <button onclick="nextStep('solution_proceed_replacement')">Visible/Suspected damage found</button>
+      <button onclick="nextStep('solution_proceed_replacement')">No visible damage, but fault persists</button>
+      <button onclick="nextStep('step1_initial_assessment')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 2</div>
+    </div>
+
+    <div id="solution_proceed_replacement" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Action: Proceed with Replacement Options</strong></p>
+        <p>Given the breakaway fault, the cable and/or internal components are compromised. Proceed with the appropriate replacement options:</p>
         <ul>
-          <li>The **head will need to be replaced.**</li>
+          <li>If the charging cable has been identified as cut or pulled out due to the breakaway event, a **cord repair/replacement** is typically required.</li>
+          <li>Even if no further *external* damage beyond the breakaway cable is identified, but the fault persists, it indicates an internal issue with the cable or its connection that necessitates **cord repair/replacement**.</li>
+          <li>For severe internal damage not limited to the cord (e.g., internal wiring to the head unit), a **full head unit replacement** might be necessary, depending on the station model and extent of damage.</li>
+          <li>Quote for **cord repair** if only the cable is affected.</li>
         </ul>
       </div>
-      <div class="note">
-        ⚠️ A persistent Relay Stuck Closed fault requires head unit replacement as there is no remote fix.
-      </div>
-      <button onclick="resetFlow()">Restart</button>
+      <button onclick="resetFlow()">Restart Diagnostic</button>
     </div>
 
   </div>
@@ -222,13 +214,19 @@
     }
 
     function resetFlow() {
-      nextStep('question1');
+      nextStep('step1_initial_assessment'); 
+      document.getElementById('introSection').style.display = 'none'; // Hide intro on reset
     }
 
     function toggleIntro() {
       const intro = document.getElementById('introSection');
       intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
     }
+
+    // Initial state: Show the first step on load
+    document.addEventListener('DOMContentLoaded', () => {
+        resetFlow(); 
+    });
   </script>
 </body>
 </html>

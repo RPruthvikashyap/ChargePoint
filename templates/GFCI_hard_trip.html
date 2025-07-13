@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Relay Stuck Closed Diagnostic</title>
+  <title>GFCI Hard Trip Diagnostic</title>
   <style>
     :root {
       --main-orange: #ee7313;
@@ -59,8 +59,6 @@
 
     p {
       font-size: 1.3rem;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
     }
 
     button {
@@ -88,21 +86,6 @@
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
       text-align: left;
-      box-sizing: border-box;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-
-    .solution-box ul {
-        list-style-type: disc;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
-
-    .solution-box li {
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      margin-bottom: 0.5rem;
     }
 
     ul {
@@ -149,67 +132,64 @@
       border-radius: 12px;
       font-weight: bold;
       text-align: center;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
     }
   </style>
 </head>
 <body>
-  <header>Relay Stuck Closed Diagnostic</header>
+  <header>GFCI Hard Trip Diagnostic</header>
   <div class="container">
     <div class="intro-toggle">
-      <button onclick="toggleIntro()">What is Relay Stuck Closed?</button>
+      <button onclick="toggleIntro()">What is GFCI Hard Trip?</button>
     </div>
     <div class="intro" id="introSection">
-      <h2>Relay Stuck Closed</h2>
-      <p>Relay Stuck Closed indicates that there is a mechanical adhesion in the relays that connect and disconnect the mains power which can prevent J1772 compliant operation. An electrical relay is a sort of electrically operated switch. In this case, it is the "switch" that closes to put power to the connector to charge a car.</p>
-      <p>Relay Stuck Closed faults **do not have a remote fix possible**.</p>
+      <h2>GFCI Hard Trip</h2>
+      <p><strong>Problem:</strong><br>
+      GFCI Hard trips occur when a sufficiently large amount of current "leaks" to ground instead of returning through the expected path or when a smaller amount of current is detected doing so multiple times. This fault occurs at the time of plug in. If this occurs for multiple drivers it can indicate a hardware fault.
+      </p>
+      <p><strong>Identified with:</strong><br>
+      Through Alarms and Session Details showing Ended by "Final GFCI Tripped"<br>
+      NOS will show two GFCI Soft trips prior to throwing a GFCI Hard trip.
+      </p>
     </div>
 
     <div id="question1" class="card">
-      <p><strong>Step 1:</strong> Pull the latest status in the Status/Actions tab and check 'outlet' for the status of each port.</p>
-      <p>Example: <code>1,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,OUT_OF_SERVICE,NO_VEHICLE,IDLE,0,NONE,8,NONE,0xA1,NA</code></p>
-      <button onclick="nextStep('question2')">Status checked</button>
-      <div class="progress">Step <span class="step-count">1</span> of 3</div>
+      <p><strong>Step 1:</strong> Check alarm logs and observe the frequency of the GFCI Hard Trip alarm. Also, verify if the station is dispensing energy.</p>
+      <button onclick="nextStep('question2')">Proceed</button>
+      <div class="progress">Step <span class="step-count">1</span> of 2</div>
     </div>
 
     <div id="question2" class="card hidden">
-      <p><strong>Step 2:</strong> Reboot station in NOS. **DO NOT CLEAR THE MAINTENANCE FLAG** as it will falsify NOS to force a green pin. Wait 3-5 minutes for the station to process the reboot.</p>
-      <button onclick="nextStep('question3')">Reboot initiated</button>
+      <p><strong>Step 2:</strong> Did the alarm logs show frequent GFCI Hard Trips, or is the station not dispensing energy?</p>
+      <button onclick="nextStep('solution_check_site_wiring')">Yes, it's frequent or not dispensing energy</button>
+      <button onclick="nextStep('solution_monitor')">No, it appears spurious or resolved</button>
       <button onclick="nextStep('question1')">Back</button>
-      <div class="progress">Step <span class="step-count">2</span> of 3</div>
+      <div class="progress">Step <span class="step-count">2</span> of 2</div>
     </div>
 
-    <div id="question3" class="card hidden">
-      <p><strong>Step 3:</strong> Pull the latest status again and check if the "outlet" shows a good status "Available" on its port(s).</p>
-      <button onclick="nextStep('solution_cleared')">Fault cleared</button>
-      <button onclick="nextStep('solution_not_cleared')">Fault did NOT clear</button>
-      <button onclick="nextStep('question2')">Back</button>
-      <div class="progress">Step <span class="step-count">3</span> of 3</div>
-    </div>
-
-    <div id="solution_cleared" class="card hidden">
+    <div id="solution_check_site_wiring" class="card hidden">
       <div class="solution-box">
-        <p><strong>Fault Cleared after Reboot.</strong></p>
+        <p><strong>Action: Perform detailed site and station checks.</strong></p>
         <ul>
-          <li>Check the **alarm log**. Scan through recent (approximately 90 days) alarms to see if the station has given a Relay Stuck Closed (RSC) error within that timeframe.</li>
-          <li>If there are other occurrences of the Relay Stuck Closed fault, the **head will need to be replaced.**</li>
-          <li>If no other occurrences, monitor for recurrence.</li>
+          <li>**Perform Wire Verification.**</li>
+          <li>**Provide voltage readings:**
+            <ul>
+              <li>At the breakers.</li>
+              <li>For each phase at the station.</li>
+            </ul>
+          </li>
+          <li>Inspect the charging cable for any physical damage.</li>
+          <li>**If no issues with Wire Verification, please swap the station head.**</li>
+          <li>If the fault persists after these checks, proceed with replacement options below.</li>
         </ul>
+      </div>
+      <div class="note">
+        ⚠️ If the issue persists after these checks, hardware replacement may be necessary.
       </div>
       <button onclick="resetFlow()">Restart</button>
     </div>
 
-    <div id="solution_not_cleared" class="card hidden">
-      <div class="solution-box">
-        <p><strong>Fault Did NOT Clear.</strong></p>
-        <ul>
-          <li>The **head will need to be replaced.**</li>
-        </ul>
-      </div>
-      <div class="note">
-        ⚠️ A persistent Relay Stuck Closed fault requires head unit replacement as there is no remote fix.
-      </div>
+    <div id="solution_monitor" class="card hidden">
+      <p>The GFCI Hard Trip appears spurious or resolved. Continue to monitor the station for future alerts.</p>
       <button onclick="resetFlow()">Restart</button>
     </div>
 

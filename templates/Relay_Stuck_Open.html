@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Relay Stuck Open Diagnostic</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .solution-box ul {
+        list-style-type: disc;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .solution-box li {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .note {
+      background-color: #fff;
+      color: #000;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <header>Relay Stuck Open Diagnostic</header>
+  <div class="container">
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is Relay Stuck Open?</button>
+    </div>
+    <div class="intro" id="introSection">
+      <h2>Relay Stuck Open</h2>
+      <p>Relay Stuck Open indicates an issue where the relay, an electrically operated switch that supplies power to the connector, fails to close properly preventing the station from charging.</p>
+      <p>The two most common causes are:</p>
+      <ul>
+        <li>A poor connection in the wiring supplying power and the ground connection to the station. This can be at the buss bar, circuit breaker, branch circuit, or any splice.</li>
+        <li>The station is connected to an incompatible or improperly grounded power source. All power and ground connections must be clean, tight, and carry the full rated current. Do not connect to ungrounded (floating neutral), corner grounded Delta, or high-leg Delta systems.</li>
+      </ul>
+    </div>
+
+    <div id="question1" class="card">
+      <p><strong>Step 1:</strong> Is this a new station installation, or an existing station that has been operational?</p>
+      <button onclick="nextStep('solution_new_install')">New Installation</button>
+      <button onclick="nextStep('step2_existing_status')">Existing Station</button>
+      <div class="progress">Step <span class="step-count">1</span> of 4</div>
+    </div>
+
+    <div id="solution_new_install" class="card hidden">
+      <div class="solution-box">
+        <p><strong>New Install Troubleshooting (Wiring Issue suspected):</strong></p>
+        <ul>
+          <li>Have a technician or onsite electrician **correct any faulty connections.**</li>
+          [cite_start]<li>**Verify station has proper grounding.** Refer to the "CT4000 Grounding Requirements" document for details on compatible power sources and grounding principles. [cite: 46, 47, 48, 49, 50, 51, 88, 89, 90, 91, 92]</li>
+          [cite_start]<li>Complete a **Station Wiring Verification.** Refer to the "Station Wiring Verification" document for detailed steps. [cite: 1, 8]</li>
+          <li>If site and station wiring is validated and confirmed, but the issue persists, move forward with **replacement station and power plate.**</li>
+        </ul>
+      </div>
+      <div class="note">
+        This error is indicative of a wiring issue and will primarily present itself during initial installs.
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="step2_existing_status" class="card hidden">
+      <p><strong>Step 2 (Existing Station - Remote Verification):</strong></p>
+      <p>Remotely verify the validity of the fault. Pull the latest status in the Status/Actions tab and check "outlet" for Station Error Codes. Pay attention if one port is green and another is red.</p>
+      <p>Example: <code>1,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,IN_USE,PLUGIN,CHARGING,823,CUSTOMER_CARD,NONE,NONE,0x0C,NA</code> (Port 1 in Green) <code>2,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,OUT_OF_SERVICE,PLUGIN,CHARGING,824,CUSTOMER_CARD,7,NONE,0xA2,NA</code> (Port 2 in Red)</p>
+      <button onclick="nextStep('step3_existing_reboot')">Status checked</button>
+      <button onclick="nextStep('question1')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 4</div>
+    </div>
+
+    <div id="step3_existing_reboot" class="card hidden">
+      <p><strong>Step 3 (Existing Station - Reboot):</strong></p>
+      <p>Reboot station in NOS. **DO NOT CLEAR THE MAINTENANCE FLAG** as it will falsify NOS to force a green pin. Wait 3-5 minutes for the station to reboot.</p>
+      <button onclick="nextStep('step4_existing_verify_clear')">Reboot done</button>
+      <button onclick="nextStep('step2_existing_status')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 4</div>
+    </div>
+
+    <div id="step4_existing_verify_clear" class="card hidden">
+      <p><strong>Step 4 (Existing Station - Verify Fault Status):</strong></p>
+      <p>Pull the latest status again and verify if the fault has cleared. For a fixed issue, "outlet" port status should show "ENABLE,IN_USE" or "ENABLE,AVAILABLE".</p>
+      <button onclick="nextStep('solution_existing_cleared')">Fault cleared</button>
+      <button onclick="nextStep('solution_existing_persist_swap')">Fault did NOT clear</button>
+      <button onclick="nextStep('step3_existing_reboot')">Back</button>
+      <div class="progress">Step <span class="step-count">4</span> of 4</div>
+    </div>
+
+    <div id="solution_existing_cleared" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Fault Cleared after Reboot.</strong></p>
+        <ul>
+          <li>The fault appears spurious. Monitor the station for good sessions and then resolve the case.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="solution_existing_persist_swap" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Fault Did NOT Clear after Reboot.</strong></p>
+        <ul>
+          <li>Please **swap station head.**</li>
+        </ul>
+      </div>
+      <div class="note">
+        ⚠️ If the Relay Stuck Open fault persists on an existing station after remote reboot, a head unit replacement is required.
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+    }
+
+    function resetFlow() {
+      nextStep('question1');
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>

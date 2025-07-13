@@ -4,7 +4,6 @@ from sqlalchemy.orm import sessionmaker
 
 # Database connection string
 DATABASE_URL = "postgresql://postgres:root@localhost:5432/postgres"
-
 engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,

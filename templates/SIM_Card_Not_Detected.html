@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Relay Stuck Closed Diagnostic</title>
+  <title>SIM Card Not Detected Diagnostic</title>
   <style>
     :root {
       --main-orange: #ee7313;
@@ -155,60 +155,53 @@
   </style>
 </head>
 <body>
-  <header>Relay Stuck Closed Diagnostic</header>
+  <header>SIM Card Not Detected Diagnostic</header>
   <div class="container">
     <div class="intro-toggle">
-      <button onclick="toggleIntro()">What is Relay Stuck Closed?</button>
+      <button onclick="toggleIntro()">What is SIM Card Not Detected?</button>
     </div>
     <div class="intro" id="introSection">
-      <h2>Relay Stuck Closed</h2>
-      <p>Relay Stuck Closed indicates that there is a mechanical adhesion in the relays that connect and disconnect the mains power which can prevent J1772 compliant operation. An electrical relay is a sort of electrically operated switch. In this case, it is the "switch" that closes to put power to the connector to charge a car.</p>
-      <p>Relay Stuck Closed faults **do not have a remote fix possible**.</p>
+      <h2>SIM Card Not Detected</h2>
+      <p>The "SIM Card Not Detected" fault indicates that the SIM card is either not installed or is incorrectly installed, preventing the station from communicating with the ChargePoint network.</p>
+      <p>This fault is most commonly occurring during initial boot-up on step four of the Set up Wizard for new installs or head swaps.</p>
+      <p>SIM cards are now pre-installed before leaving the CP warehouse in every recent head unit that is shipped out. This fault could therefore indicate that the SIM has failed or been jarred loose during transport.</p>
     </div>
 
     <div id="question1" class="card">
-      <p><strong>Step 1:</strong> Pull the latest status in the Status/Actions tab and check 'outlet' for the status of each port.</p>
-      <p>Example: <code>1,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,OUT_OF_SERVICE,NO_VEHICLE,IDLE,0,NONE,8,NONE,0xA1,NA</code></p>
-      <button onclick="nextStep('question2')">Status checked</button>
-      <div class="progress">Step <span class="step-count">1</span> of 3</div>
+      <p><strong>Step 1:</strong> Disconnect power to the station and re-install the SIM card. Ensure the station is powered off while the SIM is re-seated; otherwise, the SIM Card reader will not reboot, and a power cycle will be necessary.</p>
+      <p>For directions on re-seating the SIM, reference "Directions for reseating (resetting) and cleaning SIM".</p>
+      <p>For directions on removing the connectors from the holster to access the charging head, reference "Manually Releasing Connectors from Holster article".</p>
+      <button onclick="nextStep('solution_check_persistence')">SIM re-seated / Power cycled</button>
+      <div class="progress">Step <span class="step-count">1</span> of 2</div>
     </div>
 
-    <div id="question2" class="card hidden">
-      <p><strong>Step 2:</strong> Reboot station in NOS. **DO NOT CLEAR THE MAINTENANCE FLAG** as it will falsify NOS to force a green pin. Wait 3-5 minutes for the station to process the reboot.</p>
-      <button onclick="nextStep('question3')">Reboot initiated</button>
+    <div id="solution_check_persistence" class="card hidden">
+      <p><strong>Step 2:</strong> Does the "SIM Card Not Detected" fault persist?</p>
+      <button onclick="nextStep('solution_replace_sim')">Yes, fault persists</button>
+      <button onclick="nextStep('solution_cleared')">No, fault cleared</button>
       <button onclick="nextStep('question1')">Back</button>
-      <div class="progress">Step <span class="step-count">2</span> of 3</div>
+      <div class="progress">Step <span class="step-count">2</span> of 2</div>
     </div>
 
-    <div id="question3" class="card hidden">
-      <p><strong>Step 3:</strong> Pull the latest status again and check if the "outlet" shows a good status "Available" on its port(s).</p>
-      <button onclick="nextStep('solution_cleared')">Fault cleared</button>
-      <button onclick="nextStep('solution_not_cleared')">Fault did NOT clear</button>
-      <button onclick="nextStep('question2')">Back</button>
-      <div class="progress">Step <span class="step-count">3</span> of 3</div>
-    </div>
-
-    <div id="solution_cleared" class="card hidden">
+    <div id="solution_replace_sim" class="card hidden">
       <div class="solution-box">
-        <p><strong>Fault Cleared after Reboot.</strong></p>
+        <p><strong>Fault Persists:</strong></p>
         <ul>
-          <li>Check the **alarm log**. Scan through recent (approximately 90 days) alarms to see if the station has given a Relay Stuck Closed (RSC) error within that timeframe.</li>
-          <li>If there are other occurrences of the Relay Stuck Closed fault, the **head will need to be replaced.**</li>
-          <li>If no other occurrences, monitor for recurrence.</li>
+          <li>A replacement SIM card will need to be shipped out.</li>
         </ul>
+      </div>
+      <div class="note">
+        ⚠️ If re-seating the SIM and power cycling does not resolve the issue, the SIM card itself may have failed.
       </div>
       <button onclick="resetFlow()">Restart</button>
     </div>
 
-    <div id="solution_not_cleared" class="card hidden">
+    <div id="solution_cleared" class="card hidden">
       <div class="solution-box">
-        <p><strong>Fault Did NOT Clear.</strong></p>
+        <p><strong>Fault Cleared!</strong></p>
         <ul>
-          <li>The **head will need to be replaced.**</li>
+          <li>The SIM Card Not Detected fault has cleared. Monitor the station for stable communication.</li>
         </ul>
-      </div>
-      <div class="note">
-        ⚠️ A persistent Relay Stuck Closed fault requires head unit replacement as there is no remote fix.
       </div>
       <button onclick="resetFlow()">Restart</button>
     </div>

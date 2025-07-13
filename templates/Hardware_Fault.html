@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hardware Fault Diagnostic</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .solution-box ul {
+        list-style-type: disc;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .solution-box li {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .note {
+      background-color: #fff;
+      color: #000;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <header>Hardware Fault Diagnostic</header>
+  <div class="container">
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is Hardware Fault?</button>
+    </div>
+    <div class="intro" id="introSection">
+      <h2>Fault 307 - Hardware Fault</h2>
+      <p>A Fault 307 - Hardware Fault occurs when the power to the port 1 side of a CT4k station is not present.</p>
+      <p><strong>Related Causes:</strong></p>
+      <ul>
+        <li>The 40 A double pole breaker for this station is in the off position.</li>
+        <li>The 40 A double pole breaker is worn-out and causes frequent tripping of the breaker and/or a lower than required voltage is delivered.</li>
+        <li>The neutral bonding in the electrical system has become un-bonded or marginally bonded (possibly due to corrosion).</li>
+        <li>The electrical connector inside of the charging station is no longer seated properly to allow for a good electrical connection.</li>
+        <li>The electrical connector on the power-plate has been damaged and is not making a solid connection.</li>
+      </ul>
+    </div>
+
+    <div id="question1" class="card">
+      <p><strong>Step 1:</strong> What port is experiencing the fault (if known)? And have you checked the 40A double pole breaker(s)?</p>
+      <p>Also, inquire about the number of breakers used and their size (in Amps) for this station. If Circuit Sharing is Enabled, there will only be 1 Dual Pole breaker for the station (a 3-wire install).</p>
+      <button onclick="nextStep('step2_port1_detailed')">Fault is in Port 1 / Breakers checked, no visible trip</button>
+      <button onclick="nextStep('solution_port2_spurious')">Fault is in Port 2</button>
+      <div class="progress">Step <span class="step-count">1</span> of 5</div>
+    </div>
+
+    <div id="step2_port1_detailed" class="card hidden">
+      <p><strong>Step 2 (Port 1 Troubleshooting - Breaker Cycle & Reboot):</strong></p>
+      <p>Even if it looks on, some breakers can be partially tripped. Have the Technician or Site contact verify that the dual pole breakers are both in the ON position, ensuring they are fully reset (off then on). </p>
+      <p>After this, **reboot the station in NOS (DO NOT CLEAR THE MAINTENANCE FLAG)** as it will falsify NOS to force a green pin. Wait 3-5 minutes and pull the latest status.</p>
+      <button onclick="nextStep('solution_resolved_monitor')">Fault cleared after this</button>
+      <button onclick="nextStep('step3_breaker_worn_or_power_cycle')">Fault still persists</button>
+      <button onclick="nextStep('question1')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 5</div>
+    </div>
+
+    <div id="step3_breaker_worn_or_power_cycle" class="card hidden">
+      <p><strong>Step 3 (Port 1 Troubleshooting - Deeper Breaker Check):</strong></p>
+      <p>If the fault remains, have the breakers powered off for two minutes and then back on (a hardware fault in port one is often consistent with a breaker being powered off or tripped).</p>
+      <p>Confirm if the 40 A double pole breaker is not worn-out.</p>
+      <button onclick="nextStep('solution_resolved_monitor')">Fault cleared after this</button>
+      <button onclick="nextStep('step4_power_sharing_wiring')">Fault still persists</button>
+      <button onclick="nextStep('step2_port1_detailed')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 5</div>
+    </div>
+
+    <div id="step4_power_sharing_wiring" class="card hidden">
+      <p><strong>Step 4 (Circuit Sharing & Wiring Verification):</strong></p>
+      <p>Confirm if the charger is power-shared or using Circuit/Sharing. If the charger is power-shared during a new install or head swap, confirm if the power management kits (jumpers) are installed.</p>
+      <p>Otherwise, or if PM kits are confirmed, proceed with a **wiring verification** (Station Wiring Verification).</p>
+      <button onclick="nextStep('solution_resolved_monitor')">Issue resolved after checks</button>
+      <button onclick="nextStep('step5_final_checks')">Issue still persists after these checks</button>
+      <button onclick="nextStep('step3_breaker_worn_or_power_cycle')">Back</button>
+      <div class="progress">Step <span class="step-count">4</span> of 5</div>
+    </div>
+
+    <div id="step5_final_checks" class="card hidden">
+      <p><strong>Step 5 (Final Electrical & Hardware Checks):</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>Confirm if the electrical connector on the power-plate has not been damaged and/or is not making a solid connection.</li>
+          <li>Confirm that the neutral bonding in the electrical system has not become un-bonded or marginally bonded (possibly due to corrosion).</li>
+          <li>Measure voltage at the power plate (Verification of Voltages).</li>
+          <li>For a **CT4010**, please refer to these steps.</li>
+          <li>If a technician is already on site and has replaced the station head, but the issue persists with both heads, **replace the Power plate.**</li>
+        </ul>
+      </div>
+      <button onclick="nextStep('solution_final_troubleshoot')">Proceed to next steps</button>
+      <button onclick="nextStep('step4_power_sharing_wiring')">Back</button>
+      <div class="progress">Step <span class="step-count">5</span> of 5</div>
+    </div>
+
+    <div id="solution_port2_spurious" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Fault in Port 2 is typically spurious.</strong></p>
+        <ul>
+          <li>Reboot station in NOS, **DO NOT CLEAR THE MAINTENANCE FLAG**.</li>
+          <li>Wait 3-5 minutes and pull the latest status.</li>
+          <li>After station is done rebooting, do a **Get Status** in the Status/Actions tab to verify fault is cleared.</li>
+          <li>Monitor for a week for good sessions and resolve if no recurrence.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="solution_resolved_monitor" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Issue resolved!</strong> The fault appears to be cleared. Monitor the station for a week for good sessions and then resolve the case.</p>
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="solution_final_troubleshoot" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Next Steps:</strong></p>
+        <ul>
+          <li>If the issue persists after all checks (wiring, connectors, neutral bonding, voltages), replacement of the power plate or other hardware components may be necessary.</li>
+          <li>If CT4010, follow comprehensive electrical checks.</li>
+          <li>If a new head unit has already been swapped and the fault remains, the power plate should be replaced.</li>
+        </ul>
+      </div>
+      <div class="note">
+        ⚠️ These advanced checks or part replacements often require a certified technician.
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+    }
+
+    function resetFlow() {
+      nextStep('question1');
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>

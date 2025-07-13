@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Relay Stuck Closed Diagnostic</title>
+  <title>RFID Unresponsive Diagnostic</title>
   <style>
     :root {
       --main-orange: #ee7313;
@@ -155,60 +155,81 @@
   </style>
 </head>
 <body>
-  <header>Relay Stuck Closed Diagnostic</header>
+  <header>RFID Unresponsive Diagnostic</header>
   <div class="container">
     <div class="intro-toggle">
-      <button onclick="toggleIntro()">What is Relay Stuck Closed?</button>
+      <button onclick="toggleIntro()">What is RFID Unresponsive?</button>
     </div>
     <div class="intro" id="introSection">
-      <h2>Relay Stuck Closed</h2>
-      <p>Relay Stuck Closed indicates that there is a mechanical adhesion in the relays that connect and disconnect the mains power which can prevent J1772 compliant operation. An electrical relay is a sort of electrically operated switch. In this case, it is the "switch" that closes to put power to the connector to charge a car.</p>
-      <p>Relay Stuck Closed faults **do not have a remote fix possible**.</p>
+      <h2>RFID Unresponsive</h2>
+      <p>This occurs when a Driver/Fleet user taps their RFID Card on the station, but the station does not respond.</p>
+      <p>This issue can arise even if good sessions with RFID are present in the logs, which might suggest the card itself is the problem.</p>
     </div>
 
-    <div id="question1" class="card">
-      <p><strong>Step 1:</strong> Pull the latest status in the Status/Actions tab and check 'outlet' for the status of each port.</p>
-      <p>Example: <code>1,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,OUT_OF_SERVICE,NO_VEHICLE,IDLE,0,NONE,8,NONE,0xA1,NA</code></p>
-      <button onclick="nextStep('question2')">Status checked</button>
-      <div class="progress">Step <span class="step-count">1</span> of 3</div>
-    </div>
-
-    <div id="question2" class="card hidden">
-      <p><strong>Step 2:</strong> Reboot station in NOS. **DO NOT CLEAR THE MAINTENANCE FLAG** as it will falsify NOS to force a green pin. Wait 3-5 minutes for the station to process the reboot.</p>
-      <button onclick="nextStep('question3')">Reboot initiated</button>
-      <button onclick="nextStep('question1')">Back</button>
-      <div class="progress">Step <span class="step-count">2</span> of 3</div>
-    </div>
-
-    <div id="question3" class="card hidden">
-      <p><strong>Step 3:</strong> Pull the latest status again and check if the "outlet" shows a good status "Available" on its port(s).</p>
-      <button onclick="nextStep('solution_cleared')">Fault cleared</button>
-      <button onclick="nextStep('solution_not_cleared')">Fault did NOT clear</button>
-      <button onclick="nextStep('question2')">Back</button>
-      <div class="progress">Step <span class="step-count">3</span> of 3</div>
-    </div>
-
-    <div id="solution_cleared" class="card hidden">
+    <div id="question1_initial_checks" class="card">
+      <p><strong>Step 1: Check Historical Sessions & Alarm Log</strong></p>
       <div class="solution-box">
-        <p><strong>Fault Cleared after Reboot.</strong></p>
         <ul>
-          <li>Check the **alarm log**. Scan through recent (approximately 90 days) alarms to see if the station has given a Relay Stuck Closed (RSC) error within that timeframe.</li>
-          <li>If there are other occurrences of the Relay Stuck Closed fault, the **head will need to be replaced.**</li>
-          <li>If no other occurrences, monitor for recurrence.</li>
+          <li>Review the "Plug In Event ID" Column in the Historical Sessions tab. Remote Starts (Driver support started, CP App, or Admin started) show 1000000000 starting numbers, while RFID starts begin from 1 and increment up by 1 per each RFID session start.</li>
+          <li>Pull up the Alarm Log in Status/Actions and check for "RFID Unknown" Alarms.</li>
+        </ul>
+      </div>
+      <button onclick="nextStep('question2_resend_config')">Checks Performed</button>
+      <div class="progress">Step <span class="step-count">1</span> of 4</div>
+    </div>
+
+    <div id="question2_resend_config" class="card hidden">
+      <p><strong>Step 2: Resend Config & Review RFID Status</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>Resend Config in the Status/Actions tab.</li>
+          <li>Pull the latest status in the Status/Actions tab. Review the RFID section to see if it's responding. A good status should be similar to: <code>rfidinfo 210326,UIC 68FCA911_V1.1</code> (Note: The RFID version may vary).</li>
+        </ul>
+      </div>
+      <button onclick="nextStep('solution_resolved_monitor')">RFID shows good status</button>
+      <button onclick="nextStep('question3_soft_reboot')">RFID shows "Unknown" or "-----"</button>
+      <button onclick="nextStep('question1_initial_checks')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 4</div>
+    </div>
+
+    <div id="question3_soft_reboot" class="card hidden">
+      <p><strong>Step 3: Soft Reboot</strong></p>
+      <p>If RFID shows "Unknown" or "-----", Soft Reboot the station in the Status/Actions Tab.</p>
+      <p>Wait 5 minutes to make sure the station has rebooted or compare the last time the station made communication under the port status in Status/Actions.</p>
+      <button onclick="nextStep('question4_post_reboot_check')">Reboot Done</button>
+      <button onclick="nextStep('question2_resend_config')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 4</div>
+    </div>
+
+    <div id="question4_post_reboot_check" class="card hidden">
+      <p><strong>Step 4: Check RFID Status After Reboot</strong></p>
+      <p>After the reboot, pull the latest status again. Does the RFID show a good status (not "Unknown" or "-----")?</p>
+      <button onclick="nextStep('solution_resolved_monitor')">RFID now good</button>
+      <button onclick="nextStep('solution_escalate_replace')">RFID still problematic</button>
+      <button onclick="nextStep('question3_soft_reboot')">Back</button>
+      <div class="progress">Step <span class="step-count">4</span> of 4</div>
+    </div>
+
+    <div id="solution_resolved_monitor" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Fault Cleared!</strong></p>
+        <ul>
+          <li>The RFID Unresponsive fault has cleared. Monitor the station for stable communication and RFID responses.</li>
         </ul>
       </div>
       <button onclick="resetFlow()">Restart</button>
     </div>
 
-    <div id="solution_not_cleared" class="card hidden">
+    <div id="solution_escalate_replace" class="card hidden">
       <div class="solution-box">
-        <p><strong>Fault Did NOT Clear.</strong></p>
+        <p><strong>Fault Persists:</strong></p>
         <ul>
-          <li>The **head will need to be replaced.**</li>
+          <li>If the fault remains after the soft reboot, create an escalation to **NETOPS** for further investigation.</li>
+          <li>If the issue persists after the NETOPS Escalation, proceed with replacement options.</li>
         </ul>
       </div>
       <div class="note">
-        ⚠️ A persistent Relay Stuck Closed fault requires head unit replacement as there is no remote fix.
+        <p><strong>NOTE:</strong> Older CT4K stations (SN 13XXXXXXXXX, 14XXXXXXX) with RFID firmware <code>210316,UIC 68T01421_V2.1</code> have a known issue where the hardware is too old to support critical updates for PCI compliance. These head units can be replaced under warranty.</p>
       </div>
       <button onclick="resetFlow()">Restart</button>
     </div>
@@ -222,7 +243,7 @@
     }
 
     function resetFlow() {
-      nextStep('question1');
+      nextStep('question1_initial_checks');
     }
 
     function toggleIntro() {

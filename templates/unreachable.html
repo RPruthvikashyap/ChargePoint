@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Station Unreachable Diagnostic</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .solution-box ul {
+        list-style-type: disc;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .solution-box li {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .note {
+      background-color: #fff;
+      color: #000;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .image-container {
+        margin: 1.5rem 0;
+        text-align: center;
+    }
+    .image-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+  <header>Station Unreachable Diagnostic</header>
+  <div class="container">
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is Unreachable Troubleshooting?</button>
+    </div>
+    <div class="intro" id="introSection">
+      <h2>Unreachable Troubleshooting</h2>
+      <p>A station is considered "unreachable" when it loses its ability to communicate with the ChargePoint network. This prevents remote monitoring, management, and often, charging sessions.</p>
+      <p>This diagnostic guides you through checking network connectivity, signal strength, power status, and other factors contributing to a station being unreachable.</p>
+    </div>
+
+    <div id="step0_station_type_select" class="card">
+        <p><strong>Step 0: Identify Station Type</strong></p>
+        <div class="solution-box">
+            <p>Before proceeding, determine if the unreachable station is a **Gateway** station (communicates directly with cellular network) or a **Non-Gateway** station (communicates via WiFi to a Gateway station).</p>
+        </div>
+        <button onclick="nextStep('step1_gateway_confirm')">It's a Gateway Station</button>
+        <button onclick="nextStep('step1_non_gateway_confirm')">It's a Non-Gateway Station</button>
+    </div>
+
+    <div id="step1_gateway_confirm" class="card hidden">
+      <p><strong>Step 1: Confirm Unreachability & Initial Checks (Gateway Station)</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>Confirm if the gateway station is unreachable in **NOS** or by checking its status onsite.</li>
+          <li>Review the signal level in **NOS** (e.g., from the 'Status' tab). </li>
+          <li>**Note:** Gateway stations or devices without displays (like CPF and CPGW) will show a faulted network indicator LED.</li>
+          <li>Reach out to the site contact for a **power cycle/power check** (the station might be powered down or a breaker tripped).</li>
+        </ul>
+        <p><strong>NOS Example:</strong></p>
+        <div class="image-container">
+            <img src="/static/image2020-3-25_14-43-35.png" alt="Screenshot of NOS status showing station unreachable.">
+        </div>
+        <p><strong>Review signal level in NOS - Example:</strong></p>
+        <div class="image-container">
+            <img src="/static/image2020-3-25_14-45-15.png" alt="Screenshot of NOS signal level.">
+        </div>
+      </div>
+      <p>Has the station been power cycled and is it still unreachable?</p>
+      <button onclick="nextStep('step2_network_test_gateway')">Yes, still unreachable after power cycle</button>
+      <button onclick="resetFlow()">No, it's now reachable</button>
+      <button onclick="nextStep('step0_station_type_select')">Back</button>
+      <div class="progress">Step <span class="step-count">1</span> of 5</div>
+    </div>
+
+    <div id="step2_network_test_gateway" class="card hidden">
+      <p><strong>Step 2: Perform Network Test from Station Menu (Gateway CT4000)</strong></p>
+      <div class="solution-box">
+        <p>Available on SW Ver ENTER SW VERSION or newer. A person performing the test will need the current five-digit **Service Code** from the Station's NOS prop sheet.</p>
+        <p><strong>From in front of a gateway CT4000, follow these steps:</strong></p>
+        <ol>
+          <li>Press the **Question mark (?)** button.</li>
+          <li>Press the **Gear icon (⚙️)** button.</li>
+          <li>Press the **Down arrow (⬇️)**, then select **Service Options (✔️)**.</li>
+          <li>Enter the **five-digit Service Code** from NOS using the corresponding buttons, then **Accept (✔️)**. (The first button resets the code if an error was made.)</li>
+          <li>Press the **Down arrow (⬇️)**, then select **Network Test (✔️)**.</li>
+        </ol>
+        <p>The test runs for 15-20 minutes. Multiple screens will show cellular signal strength for major carriers (AT&T, T-Mobile, Verizon). This must be done by a station owner or facilities person after power cycling.</p>
+        <p><strong>Examples of Network Test screen on a CT4000:</strong></p>
+        <div class="image-container">
+            <img src="/static/1000026970.jpg" alt="Screenshot of Network Test screen showing cellular signal strength.">
+            <img src="/static/1000026979.jpg" alt="Screenshot of Network Test screen showing cellular signal strength.">
+        </div>
+      </div>
+      <p>What are the results of the Network Test?</p>
+      <button onclick="nextStep('step3_sim_carrier_check')">Network test completed, proceeding</button>
+      <button onclick="nextStep('step1_gateway_confirm')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 5</div>
+    </div>
+
+    <div id="step3_sim_carrier_check" class="card hidden">
+      <p><strong>Step 3: Check SIM Status & Carrier Portal (Gateway Station)</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>Verify station network screen (On Station: Menu → Network) - Verify SIM card detected. Refer to "SIM Card Not Detected" troubleshooting if necessary.</li>
+          <li>Check SIM status and data in the related carrier portal (AT&T/Sprint/Sierra). See "Carrier, IP, and Device Environment Information" for details.</li>
+        </ul>
+      </div>
+      <p>Has the SIM card been verified and carrier data checked?</p>
+      <button onclick="nextStep('step4_escalate_or_replace_gateway')">Yes, SIM and carrier data checked</button>
+      <button onclick="nextStep('step2_network_test_gateway')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 5</div>
+    </div>
+
+    <div id="step4_escalate_or_replace_gateway" class="card hidden">
+      <p><strong>Step 4: Address Cellular Environment or Replace Head Unit (Gateway Station)</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>If the station has not returned to reachable, the **site cellular readings and environment need to be addressed**.</li>
+          <li>**Escalate to NetOps** if an issue is found that can be resolved without replacing the head unit (e.g., persistent weak signal requiring a cell repeater installation).</li>
+          <li>**Replace head unit** if all troubleshooting steps have been exhausted and the station remains unreachable.</li>
+        </ul>
+      </div>
+      <p>Has the issue been resolved or requires escalation/replacement?</p>
+      <button onclick="resetFlow()">Issue Resolved / Diagnostic Complete</button>
+      <button onclick="nextStep('step3_sim_carrier_check')">Back</button>
+      <div class="progress">Step <span class="step-count">4</span> of 5</div>
+    </div>
+
+    <div id="step1_non_gateway_confirm" class="card hidden">
+      <p><strong>Step 1: Check Non-Gateway Communication (Non-Gateway Station)</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>Non-gateway stations use WiFi to communicate with a gateway station.</li>
+          <li>Confirm that the non-gateway station is within **100 feet and has line of sight** to its gateway. Obstructions can interfere with WiFi signal.</li>
+          <li>**Verify the gateway unit is reachable** in NOS. If the gateway is unreachable, troubleshoot the gateway first.</li>
+        </ul>
+      </div>
+      <p>Is the associated gateway station reachable and is the non-gateway within range/line of sight?</p>
+      <button onclick="nextStep('step2_resend_configs_non_gateway')">Yes, gateway reachable and within range</button>
+      <button onclick="nextStep('solution_troubleshoot_gateway')">No, gateway unreachable / range issue</button>
+      <button onclick="nextStep('step0_station_type_select')">Back</button>
+      <div class="progress">Step <span class="step-count">1</span> of 3</div>
+    </div>
+
+    <div id="step2_resend_configs_non_gateway" class="card hidden">
+      <p><strong>Step 2: Resend Configurations (Non-Gateway Station)</strong></p>
+      <div class="solution-box">
+        <p>If the gateway is reachable and the non-gateway is within range, try **resending configurations to the (reachable) gateway unit**.</p>
+        <p>This action can remind the gateway that it should be communicating with the non-gateway unit, potentially re-establishing the connection.</p>
+      </div>
+      <p>Has resending configurations been attempted?</p>
+      <button onclick="nextStep('step3_monitor_or_replace_non_gateway')">Yes, configs resent</button>
+      <button onclick="nextStep('step1_non_gateway_confirm')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 3</div>
+    </div>
+
+    <div id="step3_monitor_or_replace_non_gateway" class="card hidden">
+      <p><strong>Step 3: Monitor or Replace (Non-Gateway Station)</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>After resending configurations, monitor the non-gateway station to see if it becomes reachable.</li>
+          <li>If the station frequently goes unreachable after these steps, or if the issue persists despite all troubleshooting, consider a **head replacement**.</li>
+        </ul>
+      </div>
+      <p>Has the issue been resolved or requires replacement?</p>
+      <button onclick="resetFlow()">Issue Resolved / Diagnostic Complete</button>
+      <button onclick="nextStep('step2_resend_configs_non_gateway')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 3</div>
+    </div>
+
+    <div id="solution_troubleshoot_gateway" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Action: Troubleshoot Gateway First</strong></p>
+        <p>The non-gateway station cannot communicate if its associated gateway is unreachable or out of range. Please return to the beginning of the diagnostic and follow the troubleshooting steps for a **Gateway Station** first.</p>
+      </div>
+      <button onclick="resetFlow()">Restart Diagnostic</button>
+    </div>
+
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+      // Update progress if applicable, assuming a fixed number of steps per path for now.
+      // For a more dynamic progress, you'd need to calculate based on the current path.
+    }
+
+    function resetFlow() {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById('step0_station_type_select').classList.remove('hidden');
+      document.getElementById('introSection').style.display = 'none';
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+
+    // Initial state: Show the first step
+    document.addEventListener('DOMContentLoaded', () => {
+        resetFlow();
+    });
+  </script>
+</body>
+</html>
