@@ -1,72 +1,93 @@
-
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
+    background-color: #1a1a2e; /* Dark background, deep purple-blue */
+    color: #e0e0e0; /* Light text color */
     margin: 0;
     padding: 20px;
+    line-height: 1.6; /* Improve readability */
 }
+
 .header {
-text-align: center;
-margin-bottom: 20px;
+    text-align: center;
+    margin-bottom: 20px;
 }
+
 .header img {
-max-width: 200px; /* Adjust size as needed */
+    max-width: 200px; /* Adjust size as needed */
 }
 
 h1 {
-    color: #ee7313;
+    color: #00B050; /* Vibrant Green - ChargePoint accent */
     text-align: center;
     margin-bottom: 40px;
+    font-size: 2.8em; /* Larger heading for more impact */
+    letter-spacing: 0.05em; /* Add some letter spacing */
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4); /* Stronger subtle text shadow */
 }
 
 label {
-    display: inline-block;
-    width: 150px;
+    display: block; /* Make labels block for better stacking on small screens */
+    width: auto; /* Auto width for responsiveness */
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 8px; /* Reduced margin */
+    color: #E0E6EB; /* Light text for labels, slightly off-white */
 }
 
-input, textarea, select{
-    width: 300px;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: border 0.3s ease;
+input, textarea, select {
+    width: calc(100% - 28px); /* Full width minus padding and border */
+    max-width: 400px; /* Max width for larger screens */
+    padding: 14px; /* Increased padding */
+    margin-bottom: 20px; /* Slightly more space */
+    border: 1px solid #3A4A5D; /* Darker border, subtly integrated */
+    border-radius: 10px; /* More rounded corners */
+    background-color: #2B3B4E; /* Dark input background, slight variation */
+    color: #E0E6EB; /* Light text in inputs */
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.25); /* More pronounced inset shadow */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+input::placeholder, textarea::placeholder {
+    color: #AAB9C8; /* Lighter placeholder text */
+    opacity: 0.8; /* Slightly less opaque */
+}
 
 .workScopeCheckbox {
-width: 30px;
-padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: border 0.3s ease;
+    width: 20px; /* Standard size */
+    height: 20px;
+    margin-right: 10px;
+    vertical-align: middle; /* Align with text */
+    accent-color: #00B050; /* Vibrant Green for checkboxes */
 }
 
 input:focus, select:focus, textarea:focus {
-    border-color: #ee7313;
+    border-color: #00B050; /* Accent color on focus */
+    box-shadow: 0 0 0 4px rgba(0, 176, 80, 0.6); /* Stronger glow effect on focus */
     outline: none;
 }
 
 button {
-    margin-top: 10px;
-    padding: 12px 24px;
-    background-color: #ee7313;
+    margin-top: 15px; /* More space */
+    padding: 16px 30px; /* Larger padding */
+    background-color: #00B050; /* Vibrant Green - ChargePoint accent */
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px; /* More rounded */
     cursor: pointer;
     font-weight: bold;
-    transition: background-color 0.3s ease;
+    font-size: 1.2em; /* Slightly larger font */
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Stronger shadow */
 }
 
 button:hover {
-    background-color: #7a9ba9;
+    background-color: #008C40; /* Darker green on hover */
+    transform: translateY(-3px); /* More pronounced lift effect */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+button:active {
+    transform: translateY(0); /* Press effect */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .hidden {
@@ -75,116 +96,356 @@ button:hover {
 
 .container {
     max-width: 800px;
-    margin: 0 auto;
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto; /* Centered with margin */
+    background-color: #1E2C3F; /* Dark Blue - Primary container color */
+    padding: 35px; /* More padding */
+    border-radius: 12px; /* More rounded */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); /* Stronger shadow */
+    border: 1px solid #3A4A5D; /* Subtle border that matches new background */
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    border-radius: 5px;
-    overflow: hidden;
+    margin-top: 30px; /* More space above table */
+    border-radius: 10px; /* Rounded table corners */
+    overflow: hidden; /* Ensures rounded corners apply to content */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 }
 
 table, th, td {
-    border: 1px solid #ddd;
+    border: 1px solid #3A4A5D; /* Darker border for table cells, matches container */
 }
 
 th, td {
-    padding: 15px;
+    padding: 20px; /* More padding in cells */
     text-align: left;
 }
 
 th {
-    background-color: #ee7313;
+    background-color: #00B050; /* Vibrant Green for header */
     color: white;
     text-transform: uppercase;
+    font-size: 1em; /* Slightly larger header font */
+    letter-spacing: 0.08em;
 }
 
 tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: #172230; /* Slightly different shade for even rows, darker blue */
 }
 
 tr:hover {
-    background-color: #ddd;
+    background-color: #2B3B4E; /* Lighter dark on hover, matches input background */
+    transition: background-color 0.2s ease;
 }
 
 .delete-btn {
-    background-color: #ff4d4d;
+    background-color: #E74C3C; /* Red color for delete */
     color: white;
-    padding: 5px;
+    padding: 10px 15px; /* Slightly larger delete button */
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 0.9em;
 }
 
 .delete-btn:hover {
-    background-color: #ff1a1a;
+    background-color: #C0392B; /* Darker red on hover */
+    transform: scale(1.08); /* More pronounced scale */
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 25px; /* More space between form groups */
 }
 
 .action-buttons {
     display: flex;
-    gap: 10px;
-    margin-top: 20px;
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    gap: 20px; /* More space between buttons */
+    margin-top: 30px;
+    justify-content: center; /* Center buttons */
 }
 
-.action-buttons button:hover {
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+.action-buttons button {
+    flex-grow: 1; /* Allow buttons to grow */
+    min-width: 160px; /* Minimum width for buttons */
 }
 
 /* Styling for the work scope checkboxes */
 .workScopeContainer {
     display: flex;
     flex-direction: row;
-    gap: 15px; /* Spacing between checkboxes */
+    flex-wrap: wrap; /* Allow checkboxes to wrap */
+    gap: 18px; /* Increased spacing between checkboxes */
+    margin-bottom: 25px; /* More space below */
 }
 
 .workScopeContainer label {
     display: flex;
     align-items: center;
-    padding: 10px; /* Add padding around each checkbox */
-    border: 2px solid #d1d5db; /* Border around checkbox label */
-    border-radius: 8px; /* Rounded corners */
-    background-color: #fff;
-    font-size: 16px;
+    padding: 14px 20px; /* More padding */
+    border: 2px solid #3A4A5D; /* Darker border, matching container */
+    border-radius: 12px; /* More rounded corners */
+    background-color: #1E2C3F; /* Match container background */
+    font-size: 1em;
     cursor: pointer;
     transition: all 0.3s ease; /* Smooth transition for hover */
+    color: #E0E6EB; /* Light text */
+    flex-grow: 1; /* Allow labels to grow */
+    min-width: fit-content; /* Ensure content fits */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for checkboxes */
 }
 
 .workScopeContainer input[type="checkbox"] {
-    margin-right: 10px; /* Space between checkbox and label text */
-    transform: scale(1.2); /* Slightly increase the checkbox size */
-    accent-color: #ee7313; /* Checkbox color */
+    margin-right: 12px; /* Space between checkbox and label text */
+    transform: scale(1.4); /* Slightly more increase the checkbox size */
+    accent-color: #00B050; /* Checkbox color */
+    width: auto; /* Reset width for checkbox input */
+    max-width: none; /* Reset max-width */
+    margin-bottom: 0; /* Remove bottom margin */
 }
 
 .workScopeContainer label:hover {
-    background-color: #f0f0f0; /* Hover effect for checkbox container */
-    border-color: #ee7313; /* Border color change on hover */
+    background-color: #2B3B4E; /* Hover effect for checkbox container, slightly darker */
+    border-color: #00B050; /* Border color change on hover */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
 }
 
 .workScopeContainer input[type="checkbox"]:checked + label {
-    background-color: #E7F1FF; /* Background color for selected checkbox */
-    border-color: #ee7313; /* Border color for selected checkbox */
+    background-color: #172230; /* Background color for selected checkbox */
+    border-color: #00B050; /* Border color for selected checkbox */
+    box-shadow: 0 3px 8px rgba(0, 176, 80, 0.4); /* Glow for checked state */
 }
 
 #summaryContainer {
-    line-height: 1.4; /* Adjust line spacing */
+    line-height: 1.8; /* Improve line spacing for readability */
+    background-color: #1E2C3F; /* Match primary container background */
+    padding: 30px; /* Increased padding */
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35); /* Stronger shadow */
+    margin-top: 35px; /* More space from previous section */
+    border: 1px solid #3A4A5D; /* Matching border */
+}
+
+#summaryContainer h2 {
+    color: #00B050; /* Vibrant Green */
+    margin-bottom: 20px; /* More space below heading */
+    font-size: 2em; /* Larger summary heading */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+#summaryContainer p {
+    color: #E0E6EB; /* Light text color */
+    margin: 0 0 12px 0; /* Add bottom margin to paragraphs for spacing */
 }
 
 #summaryContainer ul {
-    margin: 5px 0; /* Reduce space between list items */
-    padding-left: 20px; /* Align bullet points correctly */
+    margin: 15px 0 15px 25px; /* Adjust spacing and indentation for lists */
+    padding-left: 0; /* Remove default padding as margin handles it */
+    list-style-type: disc; /* Ensure bullet points are visible */
+    color: #E0E6EB;
 }
 
-#summaryContainer p, #summaryContainer br {
-    margin: 0; /* Remove default margins for paragraphs and line breaks */
+#summaryContainer li {
+    margin-bottom: 8px;
+}
+
+/* Quill editor dark theme adjustments */
+.ql-toolbar.ql-snow {
+    border: 1px solid #3A4A5D; /* Match input border */
+    border-bottom: none;
+    background-color: #2B3B4E; /* Match input background */
+    border-radius: 8px 8px 0 0;
+}
+
+.ql-container.ql-snow {
+    border: 1px solid #3A4A5D;
+    background-color: #172230; /* Darker shade for editor content area */
+    color: #E0E6EB;
+    border-radius: 0 0 8px 8px;
+    min-height: 180px; /* Slightly taller editor */
+}
+
+.ql-editor {
+    color: #E0E6EB;
+}
+
+.ql-editor.ql-blank::before {
+    color: #AAB9C8; /* Placeholder color */
+    font-style: normal;
+}
+
+/* Navbar specific styles - adjusted for dark theme and distinction */
+.navbar {
+    background-color: #172230; /* Even darker blue for distinction */
+    overflow: hidden;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Stronger but refined shadow */
+    border-radius: 8px;
+    margin-bottom: 20px; /* Add some space below navbar */
+    transition: background-color 0.3s ease;
+}
+.navbar a {
+    color: #E0E6EB; /* Lighter text for dark background */
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 18px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 6px; /* Slightly rounded for links */
+}
+.navbar a:hover {
+    background-color: #2B3B4E; /* Lighter hover for dark theme */
+    color: #ffffff;
+}
+.navbar a.active {
+    background-color: #00B050; /* Vibrant Green accent color */
+    color: #ffffff;
+    font-weight: bold;
+}
+.navbar .logo {
+    margin-right: auto;
+    color: #00B050; /* Vibrant Green accent color */
+    font-weight: bold;
+    font-size: 24px;
+    height: 40px; /* Ensure consistent logo size */
+    cursor: pointer;
+}
+
+.user-menu {
+    position: relative;
+    font-weight: bold;
+    color: #E0E6EB; /* Lighter text */
+    cursor: pointer;
+}
+
+.user-menu:hover .dropdown-content {
+    display: block;
+}
+
+/* Dropdown Menu */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #2B3B4E; /* Darker dropdown background */
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4); /* Adjusted shadow */
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 100; /* Ensure dropdown is on top */
+}
+
+.dropdown-content a {
+    color: #E0E6EB; /* Lighter text */
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+}
+
+.dropdown-content a:hover {
+    background-color: #3A4A5D; /* Lighter hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+
+    .container {
+        padding: 20px;
+        margin: 10px auto;
+    }
+
+    label, input, textarea, select {
+        width: calc(100% - 28px); /* Adjust for smaller screens */
+        max-width: 100%; /* Ensure full width on small screens */
+    }
+
+    .workScopeContainer {
+        flex-direction: column; /* Stack checkboxes vertically */
+        gap: 10px;
+    }
+
+    .workScopeContainer label {
+        padding: 12px 18px;
+        min-width: unset;
+    }
+
+    .action-buttons {
+        flex-direction: column; /* Stack buttons vertically */
+        gap: 10px;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 1em;
+    }
+
+    table, th, td {
+        font-size: 0.9em;
+        padding: 10px;
+    }
+
+    /* Hide some columns on smaller screens to improve readability */
+    table thead th:nth-child(4), /* Phone Number */
+    table tbody td:nth-child(4),
+    table thead th:nth-child(5), /* Station Name */
+    table tbody td:nth-child(5),
+    table thead th:nth-child(8), /* SDI */
+    table tbody td:nth-child(8) {
+        display: none;
+    }
+
+    /* Responsive adjustments for navbar */
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+    }
+    .navbar a {
+        width: 100%;
+        text-align: left;
+        padding: 10px 15px;
+    }
+    .navbar .logo {
+        margin-bottom: 10px;
+    }
+    .navbar a.active {
+        border-radius: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.6em;
+        letter-spacing: 0.02em;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    button {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+
+    /* Further hide columns if necessary */
+    table thead th:nth-child(6), /* Customer Name */
+    table tbody td:nth-child(6) {
+        display: none;
+    }
 }

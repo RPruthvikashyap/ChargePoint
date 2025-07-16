@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Team Leader Dashboard</title>
-<link href="static/styles.css" rel="stylesheet"/>
+<link href="static/cpp.css" rel="stylesheet"/> <!-- Changed to cpp.css -->
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
 <!-- XLSX library for Excel export -->
@@ -21,12 +21,13 @@
     }
     body {
       font-family: 'Roboto', sans-serif;
-      background-color: #f9f9f9;
-      color: #333;
+      background-color: #1a1a2e; /* From cpp.css */
+      color: #e0e0e0; /* From cpp.css */
       padding: 20px;
       margin: 0;
+      line-height: 1.6; /* From cpp.css */
     }
-    /* Navbar / Taskbar */
+    /* Navbar / Taskbar - KEPT AS IS FROM ORIGINAL DEMO.HTML AS PER INSTRUCTION */
     .navbar {
       display: flex;
       align-items: center;
@@ -74,29 +75,63 @@
     .dropdown-content a:hover {
       background-color: #f2f2f2;
     }
-    /* Dashboard Container */
+    /* Additional navbar styles from demo.html's second navbar block - KEPT AS IS */
+    .navbar {
+        background-color: #222;
+        overflow: hidden;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 10px 20px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+    }
+    .navbar a {
+        color: #fff;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 18px;
+    }
+    .navbar a:hover {
+        background-color: #575757;
+    }
+    .navbar a.active {
+        background-color: #ff6600;
+    }
+    .navbar .logo {
+        margin-right: auto;
+        color: #ff6600;
+        font-weight: bold;
+        font-size: 24px;
+    }
+
+    /* Dashboard Container - Adapted from cpp.css .container */
     .dashboard-container {
       max-width: 90%;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+      margin: 20px auto; /* Centered with margin, adjusted from cpp.css */
+      background-color: #1E2C3F; /* Dark Blue - Primary container color */
+      padding: 35px; /* More padding */
+      border-radius: 12px; /* More rounded */
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); /* Stronger shadow */
+      border: 1px solid #3A4A5D; /* Subtle border that matches new background */
       animation: fadeIn 0.5s ease-in-out;
     }
-    /* Header */
+    /* Header - From cpp.css */
     h1 {
       text-align: center;
-      color: #ee7313;
+      color: #00B050; /* Vibrant Green - ChargePoint accent */
       font-weight: 600;
-      margin-bottom: 20px;
+      margin-bottom: 40px;
+      font-size: 2.8em; /* Larger heading for more impact */
+      letter-spacing: 0.05em;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
     }
     h2 {
       font-weight: 600;
       margin: 20px 0;
-      color: #333;
+      color: #E0E6EB; /* Light text for labels, slightly off-white */
     }
-    /* Filter container (if any filters added in future) */
+    /* Filter container (if any filters added in future) - Original from demo.html, label color from cpp.css */
     .filter-container {
       display: flex;
       justify-content: center;
@@ -105,33 +140,49 @@
       margin-bottom: 20px;
       gap: 15px;
     }
-    /* Buttons and selects */
-    select, button {
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
+    label { /* From cpp.css */
+        display: block;
+        width: auto;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #E0E6EB; /* Light text for labels, slightly off-white */
+    }
+    /* Buttons and selects - Adapted from cpp.css */
+    select, input[type="date"], input[type="month"] {
+      width: 250px;
+      padding: 14px; /* Increased padding */
+      border-radius: 10px; /* More rounded corners */
+      border: 1px solid #3A4A5D; /* Darker border, subtly integrated */
       font-size: 16px;
       outline: none;
       transition: all 0.3s ease;
-    }
-    select {
-      width: 250px;
-      background: #fff;
+      background-color: #2B3B4E; /* Dark input background, slight variation */
+      color: #E0E6EB; /* Light text in inputs */
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.25); /* More pronounced inset shadow */
     }
     button {
-      background-color: #ee7313;
+      margin-top: 15px; /* More space */
+      padding: 16px 30px; /* Larger padding */
+      background-color: #00B050; /* Vibrant Green - ChargePoint accent */
       color: white;
-      cursor: pointer;
       border: none;
-      font-weight: 600;
-      padding: 12px 24px;
-      border-radius: 5px;
-      transition: background-color 0.3s ease;
+      border-radius: 8px; /* More rounded */
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.2em; /* Slightly larger font */
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Stronger shadow */
     }
     button:hover {
-      background-color: #7a9ba9;
+      background-color: #008C40; /* Darker green on hover */
+      transform: translateY(-3px); /* More pronounced lift effect */
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     }
-    /* Summary Table */
+    button:active {
+      transform: translateY(0); /* Press effect */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    /* Summary Table - Adapted from cpp.css */
     .summary-container {
       overflow-x: auto;
       border-radius: 8px;
@@ -139,42 +190,46 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+      margin-top: 30px; /* More space above table */
+      border-radius: 10px; /* Rounded table corners */
+      overflow: hidden; /* Ensures rounded corners apply to content */
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+      background: #1E2C3F; /* Dark Blue - Primary container color */
     }
     table, th, td {
-      border: 1px solid #ddd;
+      border: 1px solid #3A4A5D; /* Darker border for table cells, matches container */
     }
     th {
-      background: #ee7313;
+      background-color: #00B050; /* Vibrant Green for header */
       color: white;
-      padding: 15px;
+      padding: 20px; /* More padding in cells */
       text-align: left;
-      font-size: 16px;
       text-transform: uppercase;
+      font-size: 1em; /* Slightly larger header font */
+      letter-spacing: 0.08em;
     }
     td {
-      padding: 12px;
+      padding: 20px; /* More padding in cells */
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: background-color 0.3s ease;
+      color: #e0e0e0; /* Light text color */
     }
-    /* Hover and stripe effects */
+    /* Hover and stripe effects - Adapted from cpp.css */
     tr:nth-child(even) {
-      background-color: #f2f2f2;
+      background-color: #172230; /* Slightly different shade for even rows, darker blue */
     }
     tr:hover {
-      background-color: #ddd;
+      background-color: #2B3B4E; /* Lighter dark on hover, matches input background */
     }
-    /* Expandable details rows */
+    /* Expandable details rows - Original from demo.html, but with dark theme colors */
     .user-details {
-      display: none;  /* hidden by default */
+      display: none;
       opacity: 0;
       max-height: 0;
       overflow: hidden;
       visibility: hidden;
-      background-color: white;
+      background-color: #1E2C3F; /* Consistent with dashboard container */
+      color: #e0e0e0; /* Consistent with body text */
       transition: max-height 0.4s ease-out, opacity 0.4s ease-out, visibility 0.4s;
     }
     .user-details.show {
@@ -183,7 +238,7 @@
       visibility: visible;
       max-height: 500px; /* expanded state */
     }
-    /* Fade-in animation for container */
+    /* Fade-in animation for container - Original from demo.html */
     .fade-in {
       animation: fadeIn 0.5s ease-in-out;
     }
@@ -191,25 +246,31 @@
       from { opacity: 0; transform: translateY(-10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    /* Download button (Excel) */
+    /* Download button (Excel) - Adapted from cpp.css button styles */
     .download-btn {
-      display: none;
+      display: block; /* Kept from inline style in demo.html */
       margin-top: 15px;
-      padding: 12px 20px;
-      background-color: #ee7313;
+      padding: 16px 30px; /* Larger padding from cpp.css button */
+      background-color: #00B050; /* Consistent with other buttons */
       color: white;
-      font-size: 14px;
+      font-size: 1.2em; /* Consistent with other buttons */
       border: none;
-      border-radius: 5px;
+      border-radius: 8px; /* Consistent with other buttons */
       cursor: pointer;
-      font-weight: 600;
-      transition: background-color 0.3s ease, transform 0.3s ease;
+      font-weight: bold; /* Consistent with other buttons */
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Consistent with other buttons */
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Consistent with other buttons */
     }
     .download-btn:hover {
-      background-color: #7a9ba9;
-      transform: scale(1.05);
+      background-color: #008C40; /* Consistent with other buttons */
+      transform: translateY(-3px); /* Consistent with other buttons */
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Consistent with other buttons */
     }
-    /* Charts Section */
+    .download-btn:active {
+      transform: translateY(0); /* Consistent with other buttons */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Consistent with other buttons */
+    }
+    /* Charts Section - Adapted from Major_Beta09.html and cpp.css */
     .charts-container {
       margin-top: 40px;
     }
@@ -220,20 +281,66 @@
       align-items: center;
       margin: 20px 0;
     }
-    .chart-grid canvas {
+    .chart-grid canvas { /* Styles applied directly to canvas */
       flex: 1 1 250px;
       max-width: 45%;
       margin: 20px;
+      background-color: #2B3B4E; /* Dark background for charts */
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      transition: transform 0.3s ease; /* Added hover effect */
+    }
+    .chart-grid canvas:hover { /* Added hover effect */
+        transform: scale(1.02);
     }
     .chart-fullwidth {
       text-align: center;
     }
-    .chart-fullwidth canvas {
+    .chart-fullwidth canvas { /* Styles applied directly to canvas */
       width: 100%;
       max-width: 800px;
       margin: 20px 0;
+      background-color: #2B3B4E; /* Dark background for charts */
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      transition: transform 0.3s ease; /* Added hover effect */
     }
-    /* Responsive Design Tweaks */
+    .chart-fullwidth canvas:hover { /* Added hover effect */
+        transform: scale(1.02);
+    }
+    /* Pivot Table - Adapted from cpp.css */
+    .pivot-container {
+      margin-top: 40px;
+      text-align: center;
+    }
+    #pivot-table-wrapper {
+      overflow-x: auto;
+      margin-top: 20px;
+    }
+    #pivot-table-wrapper table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: auto;
+      background-color: #1E2C3F; /* Consistent with dashboard container */
+    }
+    #pivot-table-wrapper th, #pivot-table-wrapper td {
+      border: 1px solid #3A4A5D; /* Consistent with other tables */
+      padding: 8px;
+      font-size: 14px;
+      color: #e0e0e0; /* Consistent with body text */
+    }
+    #pivot-table-wrapper th {
+      background-color: #00B050; /* Consistent with other table headers */
+      color: white;
+      text-transform: uppercase;
+    }
+    #pivot-table-wrapper tr:nth-child(even) {
+      background-color: #172230; /* Consistent with other tables */
+    }
+
+    /* Responsive Design Tweaks - From cpp.css */
     @media (max-width: 1024px) {
       .dashboard-container {
         max-width: 95%;
@@ -268,6 +375,23 @@
       select {
         width: 100%;
       }
+      /* Responsive adjustments for navbar - KEPT AS IS FROM ORIGINAL DEMO.HTML */
+      .navbar {
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 10px;
+      }
+      .navbar a {
+          width: 100%;
+          text-align: left;
+          padding: 10px 15px;
+      }
+      .navbar .logo {
+          margin-bottom: 10px;
+      }
+      .navbar a.active {
+          border-radius: 5px;
+      }
     }
     @media (max-width: 600px) {
       .filter-container {
@@ -282,82 +406,28 @@
         width: 100%;
       }
     }
-  
-    .pivot-container {
-      margin-top: 40px;
-      text-align: center;
-    }
-    #pivot-table-wrapper {
-      overflow-x: auto;
-      margin-top: 20px;
-    }
-    #pivot-table-wrapper table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: auto;
-    }
-    #pivot-table-wrapper th, #pivot-table-wrapper td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      font-size: 14px;
-    }
-    #pivot-table-wrapper th {
-      background-color: #ee7313;
-      color: white;
-      text-transform: uppercase;
-    }
-    #pivot-table-wrapper tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-  
-        .navbar {
-            background-color: #222;
-            overflow: hidden;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            padding: 10px 20px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-        }
-        .navbar a {
-            color: #fff;
-            padding: 14px 16px;
-            text-decoration: none;
-            font-size: 18px;
-        }
-        .navbar a:hover {
-            background-color: #575757;
-        }
-        .navbar a.active {
-            background-color: #ff6600;
-        }
-        .navbar .logo {
-            margin-right: auto;
-            color: #ff6600;
-            font-weight: bold;
-            font-size: 24px;
-        }
-         .chart-box {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            transition: transform 0.3s ease;
+    @media (max-width: 480px) { /* From cpp.css */
+        h1 {
+            font-size: 1.6em;
+            letter-spacing: 0.02em;
         }
 
-        .chart-box:hover {
-            transform: scale(1.02);
+        .dashboard-container { /* Changed from .container */
+            padding: 15px;
         }
 
-        .chart-fullwidth canvas {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            padding: 10px;
-            margin: 20px 0;
+        button {
+            padding: 10px 15px;
+            font-size: 0.9em;
         }
-    </style>
+
+        /* Further hide columns if necessary */
+        table thead th:nth-child(6), /* Customer Name */
+        table tbody td:nth-child(6) {
+            display: none;
+        }
+    }
+</style>
 </head>
 <body>
   <div class="navbar">
@@ -399,29 +469,23 @@
   <label for="filter-month">or Month:</label>
   <input type="month" id="filter-month">
 
-  <button id="download-users-data" class="download-btn" style="display:block; margin-left: 10px;">Download Excel</button>
+  <button id="download-users-data" class="download-btn">Download Excel</button> <!-- Removed inline style -->
 </div>
 </div>
 <!-- Analytics Charts -->
-< <div class="charts-container">
-            <h2>Analytics Overview</h2>
-            <div class="chart-grid">
-                <div class="chart-box">
-                    <canvas id="casesPerUserChart"></canvas>
-                </div>
-                <div class="chart-box">
-                    <canvas id="callTypeDistributionChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-fullwidth">
-                <canvas id="callsPerDayChart"></canvas>
-            </div>
-        </div>
-
-        <div class="pivot-table-container">
-            <h2>Daily Case Distribution (Pivot Table View)</h2>
-            <div id="pivot-table-container"></div>
-        </div>
+<div class="charts-container">
+  <h2>Analytics Overview</h2>
+  <div class="chart-grid">
+    <div class="chart-box">
+      <canvas id="casesPerUserChart" width="400" height="300"></canvas>
+    </div>
+    <div class="chart-box">
+      <canvas id="callTypeDistributionChart" width="400" height="300"></canvas>
+    </div>
+  </div>
+  <div class="chart-fullwidth">
+    <canvas id="callsPerDayChart" width="800" height="300"></canvas>
+  </div>
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", async () => {
@@ -504,7 +568,7 @@
         // 1. Cases per User (Bar Chart)
         const userNames = usersData.map(u => u.username);
         const caseCounts = usersData.map(u => u.call_logs.length);
-        const ctx1 = document.getElementById('casesPerUserChart').getContext('2d');
+        const ctx1 = document.getElementById('casesPerUserChart');
         new Chart(ctx1, {
           type: 'bar',
           data: {
@@ -538,7 +602,7 @@
         const callTypeData = Object.values(callTypeCounts);
         const colors = ['#ee7313', '#f4b619', '#7a9ba9', '#28a745', '#007bff', '#6f42c1', '#17a2b8', '#ffc107', '#20c997', '#ff9f40'];
         const backgroundColors = callTypeLabels.map((_, i) => colors[i % colors.length]);
-        const ctx2 = document.getElementById('callTypesChart').getContext('2d');
+        const ctx2 = document.getElementById('callTypeDistributionChart').getContext('2d');
         new Chart(ctx2, {
           type: 'pie',
           data: {
@@ -571,7 +635,7 @@
           });
         });
         const dayLabels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        const ctx3 = document.getElementById('timeDistributionChart').getContext('2d');
+        const ctx3 = document.getElementById('callsPerDayChart').getContext('2d');
         new Chart(ctx3, {
           type: 'line',
           data: {
@@ -610,7 +674,7 @@
     }
   
 
-        // Generate Pivot Table
+        // Generate Pivot Table (This block targets 'pivot-table-wrapper' which is not in the HTML, thus it will not cause a visible duplicate)
         const pivotMap = {};
         usersData.forEach(user => {
           user.call_logs.forEach(log => {
@@ -640,10 +704,11 @@
         });
 
         html += "</tbody></table>";
-        wrapper.innerHTML = html;
+        if (wrapper) { // Added a check to prevent errors if wrapper is null
+          wrapper.innerHTML = html;
+        }
         </script>
 
-<!-- Pivot Table Rendering -->
 <div class="pivot-table-container">
   <h2>Daily Case Distribution (Pivot Table View)</h2>
   <div id="pivot-table-container" style="overflow-x:auto; margin-top: 20px;"></div>

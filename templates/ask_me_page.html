@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,54 +47,59 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #ffffff;
-      color: #333;
+      font-family: 'Roboto', sans-serif; /* Consistent font with cpp.css */
+      background-color: #1a1a2e; /* Dark background from cpp.css */
+      color: #e0e0e0; /* Light text color from cpp.css */
+      padding: 20px; /* Add padding consistent with other pages */
     }
 
-    .navbar {
-      border-radius: 12px;
-      margin: 16px;
-      gap: 10px;
-      background-color: #222;
-      overflow: hidden;
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      padding: 10px 20px;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-      border-radius: 8px;
+   .navbar {
+        background-color: #12121f; /* Even darker background for distinction */
+        overflow: hidden;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 10px 20px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Stronger but refined shadow */
+        border-radius: 8px;
+        margin-bottom: 20px; /* Added space here */
+        transition: background-color 0.3s ease;
     }
-
     .navbar a {
-      color: #fff;
-      padding: 14px 16px;
-      text-decoration: none;
-      font-size: 18px;
+        color: #e0e0e0; /* Lighter text for dark background */
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 18px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        border-radius: 6px; /* Slightly rounded for links */
     }
-
     .navbar a:hover {
-      background-color: #575757;
+        background-color: #3b3b5c; /* Lighter hover for dark theme */
+        color: #ffffff;
     }
-
     .navbar a.active {
-      background-color: #ff6600;
+        background-color: #ff6600; /* Original accent color */
+        color: #ffffff;
+        font-weight: bold;
     }
-
     .navbar .logo {
-      margin-right: auto;
-      color: #ff6600;
-      font-weight: bold;
-      font-size: 24px;
+        margin-right: auto;
+        color: #ff6600; /* Original accent color for text logo */
+        font-weight: bold;
+        font-size: 24px;
+        height: 40px;
+        cursor: pointer;
     }
-
     header {
-      background-color: #ff6600;
+      background-color: #00B050; /* Green accent from cpp.css */
       color: white;
       padding: 1rem 2rem;
       text-align: center;
-      font-size: 1.5rem;
+      font-size: 2.2em; /* Adjusted to be prominent but not conflicting with h1 */
       font-weight: bold;
+      border-radius: 8px; /* Consistent with other elements */
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
     }
 
     main {
@@ -110,42 +114,45 @@
     a.issue-card {
       display: block;
       text-decoration: none;
-      background-color: #fff8f1;
-      border: 2px solid #ff6600;
+      background-color: #2e3047; /* Darker background for cards */
+      border: 1px solid #3c3f5c; /* Border from cpp.css containers */
       border-radius: 12px;
       padding: 1.2rem;
       text-align: center;
       font-weight: 600;
-      color: #ff6600;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      color: #e0e0e0; /* Light text for cards */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Darker shadow */
       transition: all 0.3s ease-in-out;
     }
 
     a.issue-card:hover {
-      background-color: #ff6600;
+      background-color: #00B050; /* Green accent on hover */
       color: white;
       transform: translateY(-4px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
     }
 
     footer {
       text-align: center;
       padding: 1rem;
-      background-color: #fff0e0;
+      background-color: #2e3047; /* Darker background for footer */
       font-size: 0.9rem;
-      color: #888;
+      color: #b0b0b0; /* Lighter grey for footer text */
+      margin-top: 20px; /* Space above footer */
+      border-radius: 8px; /* Consistent with other elements */
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2); /* Subtle top shadow */
     }
   </style>
 </head>
 <body>
   <div class="navbar">
-    <img alt="Logo" class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/ChargePoint_logo.svg/284px-ChargePoint_logo.svg.png"/>
-    <a href="/call-log">Home</a>
-    <a href="/logs/call-log">Cases</a>
-    <a class="active" href="/ask-me">Ask Me</a>
-    <a href="/auth/logout/">Log Out</a>
-    <a href="/profile" id="userName">{{ username }}</a>
-  </div>
+        <img alt="Logo" class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/ChargePoint_logo.svg/284px-ChargePoint_logo.svg.png"/>
+        <a href="/call-log">Home</a>
+        <a href="/logs/call-log">Cases</a>
+        <a href="/ask-me" class="active">Ask Me</a>
+        <a href="/auth/logout/">Log Out</a>
+        <a href="/profile" id="userName">{{ username }}</a>
+    </div>
 
   <header>
     Ask Me - Troubleshooting Categories

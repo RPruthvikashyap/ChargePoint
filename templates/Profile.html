@@ -7,32 +7,80 @@
     <link rel="stylesheet" href="/static/cpp.css">
 </head>
 <style>
+/* Navbar specific styles - adjusted for dark theme and distinction */
     .navbar {
-        background-color: #222;
+        background-color: #12121f; /* Even darker background for distinction */
         overflow: hidden;
         display: flex;
         justify-content: flex-end;
         align-items: center;
         padding: 10px 20px;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Stronger but refined shadow */
         border-radius: 8px;
+        /* margin-bottom: 20px; Not strictly needed here as it's a profile page, but added for consistency */
+        transition: background-color 0.3s ease;
     }
     .navbar a {
-        color: #fff;
+        color: #e0e0e0; /* Lighter text for dark background */
         padding: 14px 16px;
         text-decoration: none;
         font-size: 18px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        border-radius: 6px; /* Slightly rounded for links */
     }
     .navbar a:hover {
-        background-color: #575757;
+        background-color: #3b3b5c; /* Lighter hover for dark theme */
+        color: #ffffff;
     }
     .navbar a.active {
-        background-color: #ff6600;
+        background-color: #ff6600; /* Original accent color */
+        color: #ffffff;
+        font-weight: bold;
     }
     .navbar .logo {
-    margin-right: auto;
-      height: 40px;
-      cursor: pointer;
+        margin-right: auto;
+        color: #ff6600; /* Original accent color for text logo */
+        font-weight: bold;
+        font-size: 24px;
+        height: 40px;
+        cursor: pointer;
+    }
+    /* Add dropdown styles if Profile.html also uses a dropdown for user menu */
+    .user-menu {
+        position: relative;
+        font-weight: bold;
+        color: #e0e0e0; /* Lighter text */
+        cursor: pointer;
+    }
+
+    .user-menu:hover .dropdown-content {
+        display: block;
+    }
+
+    /* Dropdown Menu */
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        background-color: #2e3047; /* Darker dropdown background */
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4); /* Adjusted shadow */
+        border-radius: 5px;
+        overflow: hidden;
+        z-index: 100; /* Ensure dropdown is on top */
+    }
+
+    .dropdown-content a {
+        color: #e0e0e0; /* Lighter text */
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        font-size: 14px;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #3b3b5c; /* Lighter hover */
     }
 </style>
 <body>
