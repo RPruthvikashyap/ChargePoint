@@ -255,13 +255,13 @@
       border-radius: 8px; /* Consistent with other buttons */
       cursor: pointer;
       font-weight: bold; /* Consistent with other buttons */
-      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Consistent with other buttons */
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Consistent with other buttons */
     }
     .download-btn:hover {
       background-color: #008C40; /* Consistent with other buttons */
       transform: translateY(-3px); /* Consistent with other buttons */
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Consistent with other buttons */
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     }
     .download-btn:active {
       transform: translateY(0); /* Consistent with other buttons */
@@ -329,6 +329,12 @@
     }
     #pivot-table-wrapper tr:nth-child(even) {
       background-color: #172230; /* Consistent with other tables */
+    }
+
+    /* New CSS for highlighting pivot table cells */
+    .highlight-green {
+        background-color: #00B050 !important; /* Green background for 7+ cases */
+        color: white; /* Ensure text is readable */
     }
 
     /* Responsive Design Tweaks - From cpp.css */
@@ -777,7 +783,12 @@
       allDates.forEach(date => {
         html += `<tr><td>${date}</td>`;
         allUsers.forEach(user => {
-          html += `<td>${pivot[date][user] || 0}</td>`;
+          const caseCount = pivot[date][user] || 0;
+          let cellClass = '';
+          if (caseCount >= 7) {
+            cellClass = 'highlight-green'; // Apply green highlight class
+          }
+          html += `<td class="${cellClass}">${caseCount}</td>`; // Add class to td
         });
         html += "</tr>";
       });
@@ -864,6 +875,5 @@
       });
     });
 </script>
-
 </body>
 </html>
