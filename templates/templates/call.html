@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Log Table</title>
+    <!-- Include Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Include External CSS -->
+    <link rel="stylesheet" href="static/cpp.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: orange;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .btn {
+            background-color: orange;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #ff9900;
+        }
+    </style>
+</head>
+<body>
+    <h1>Call Log Table</h1>
+    <table id="callLogTable">
+        <thead>
+            <tr>
+                <th>Remove</th>
+                <th>Timestamp</th>
+                <th>Case Number</th>
+                <th>Phone Number</th>
+                <th>Station Name</th>
+                <th>Customer Name</th>
+                <th>Call Type</th>
+                <th>SDI</th>
+                <th>Issue Description</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button class="btn" onclick="calculateTotalProductivity()">Calculate Total Productivity</button>
+    <p id="productivityOutput" style="font-weight: bold; margin-top: 10px;"></p>
+
+    <!-- Include JavaScript -->
+    <script src="static/cpp.js"></script>
+    <script>
+        // Load table data from backend or localStorage
+        async function loadCallLogTable() {
+            try {
+                const response = await fetch('/logs/call_log/', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!response.ok) throw new Error('Failed to fetch call logs');
+                const callLogs = await response.json();
+
+                const tableBody = document.querySelector('#callLogTable tbody');
+                tableBody.innerHTML = ''; // Clear existing rows
+
+                callLogs.forEach(log => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><button class="delete-btn" onclick="removeRow(this)" data-id="${log.id}">−</button></td>
+                        <td>${log.timestamp || ''}</td>
+                        <td>${log.case_number}</td>
+                        <td>${log.phone_number}</td>
+                        <td>${log.station_name}</td>
+                        <td>${log.customer_name}</td>
+                        <td>${log.call_type}</td>
+                        <td>${log.sdi || ''}</td>
+                        <td>${log.issue_description || ''}</td>
+                        <td>${log.points}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading call logs:', error);
+            }
+        }
+
+        // Calculate total productivity
+        function calculateTotalProductivity() {
+            let totalPoints = 0;
+            const rows = document.querySelectorAll('#callLogTable tbody tr');
+            rows.forEach(row => {
+                const pointsCell = row.querySelector('td:last-child'); // Points column
+                const points = parseFloat(pointsCell.textContent) || 0;
+                totalPoints += points;
+            });
+            document.getElementById('productivityOutput').textContent = `Total Productivity Achieved: ${totalPoints.toFixed(2)}`;
+        }
+
+        // Load table on page load
+        document.addEventListener('DOMContentLoaded', loadCallLogTable);
+    </script>
+</body>
+</html>

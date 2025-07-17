@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RFID Unresponsive Diagnostic</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .solution-box ul {
+        list-style-type: disc;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .solution-box li {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .note {
+      background-color: #fff;
+      color: #000;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <header>RFID Unresponsive Diagnostic</header>
+  <div class="container">
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is RFID Unresponsive?</button>
+    </div>
+    <div class="intro" id="introSection">
+      <h2>RFID Unresponsive</h2>
+      <p>This occurs when a Driver/Fleet user taps their RFID Card on the station, but the station does not respond.</p>
+      <p>This issue can arise even if good sessions with RFID are present in the logs, which might suggest the card itself is the problem.</p>
+    </div>
+
+    <div id="question1_initial_checks" class="card">
+      <p><strong>Step 1: Check Historical Sessions & Alarm Log</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>Review the "Plug In Event ID" Column in the Historical Sessions tab. Remote Starts (Driver support started, CP App, or Admin started) show 1000000000 starting numbers, while RFID starts begin from 1 and increment up by 1 per each RFID session start.</li>
+          <li>Pull up the Alarm Log in Status/Actions and check for "RFID Unknown" Alarms.</li>
+        </ul>
+      </div>
+      <button onclick="nextStep('question2_resend_config')">Checks Performed</button>
+      <div class="progress">Step <span class="step-count">1</span> of 4</div>
+    </div>
+
+    <div id="question2_resend_config" class="card hidden">
+      <p><strong>Step 2: Resend Config & Review RFID Status</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>Resend Config in the Status/Actions tab.</li>
+          <li>Pull the latest status in the Status/Actions tab. Review the RFID section to see if it's responding. A good status should be similar to: <code>rfidinfo 210326,UIC 68FCA911_V1.1</code> (Note: The RFID version may vary).</li>
+        </ul>
+      </div>
+      <button onclick="nextStep('solution_resolved_monitor')">RFID shows good status</button>
+      <button onclick="nextStep('question3_soft_reboot')">RFID shows "Unknown" or "-----"</button>
+      <button onclick="nextStep('question1_initial_checks')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 4</div>
+    </div>
+
+    <div id="question3_soft_reboot" class="card hidden">
+      <p><strong>Step 3: Soft Reboot</strong></p>
+      <p>If RFID shows "Unknown" or "-----", Soft Reboot the station in the Status/Actions Tab.</p>
+      <p>Wait 5 minutes to make sure the station has rebooted or compare the last time the station made communication under the port status in Status/Actions.</p>
+      <button onclick="nextStep('question4_post_reboot_check')">Reboot Done</button>
+      <button onclick="nextStep('question2_resend_config')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 4</div>
+    </div>
+
+    <div id="question4_post_reboot_check" class="card hidden">
+      <p><strong>Step 4: Check RFID Status After Reboot</strong></p>
+      <p>After the reboot, pull the latest status again. Does the RFID show a good status (not "Unknown" or "-----")?</p>
+      <button onclick="nextStep('solution_resolved_monitor')">RFID now good</button>
+      <button onclick="nextStep('solution_escalate_replace')">RFID still problematic</button>
+      <button onclick="nextStep('question3_soft_reboot')">Back</button>
+      <div class="progress">Step <span class="step-count">4</span> of 4</div>
+    </div>
+
+    <div id="solution_resolved_monitor" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Fault Cleared!</strong></p>
+        <ul>
+          <li>The RFID Unresponsive fault has cleared. Monitor the station for stable communication and RFID responses.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="solution_escalate_replace" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Fault Persists:</strong></p>
+        <ul>
+          <li>If the fault remains after the soft reboot, create an escalation to **NETOPS** for further investigation.</li>
+          <li>If the issue persists after the NETOPS Escalation, proceed with replacement options.</li>
+        </ul>
+      </div>
+      <div class="note">
+        <p><strong>NOTE:</strong> Older CT4K stations (SN 13XXXXXXXXX, 14XXXXXXX) with RFID firmware <code>210316,UIC 68T01421_V2.1</code> have a known issue where the hardware is too old to support critical updates for PCI compliance. These head units can be replaced under warranty.</p>
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+    }
+
+    function resetFlow() {
+      nextStep('question1_initial_checks');
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>

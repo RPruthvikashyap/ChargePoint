@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/cpp.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+/* General Styles - Adjusted body background for dark theme consistency */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #1a1a2e; /* Dark background from cpp.css */
+    margin: 0;
+    padding: 20px;
+    color: #e0e0e0; /* Light text color for dark theme */
+}
+
+.navbar {
+        background-color: #12121f; /* Even darker background for distinction */
+        overflow: hidden;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 10px 20px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Stronger but refined shadow */
+        border-radius: 8px;
+        /* margin-bottom: 20px; Not strictly needed here as it's a profile page, but added for consistency */
+        transition: background-color 0.3s ease;
+    }
+    .navbar a {
+        color: #e0e0e0; /* Lighter text for dark background */
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 18px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        border-radius: 6px; /* Slightly rounded for links */
+    }
+    .navbar a:hover {
+        background-color: #3b3b5c; /* Lighter hover for dark theme */
+        color: #ffffff;
+    }
+    .navbar a.active {
+        background-color: #ff6600; /* Original accent color */
+        color: #ffffff;
+        font-weight: bold;
+    }
+    .navbar .logo {
+        margin-right: auto;
+        color: #ff6600; /* Original accent color for text logo */
+        font-weight: bold;
+        font-size: 24px;
+        height: 40px;
+        cursor: pointer;
+    }
+
+.user-menu {
+    position: relative;
+    font-weight: bold;
+    color: #e0e0e0; /* Light text */
+    cursor: pointer;
+}
+
+.user-menu:hover .dropdown-content {
+    display: block;
+}
+
+/* Dropdown Menu */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #2e3047; /* Darker dropdown background */
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4);
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 100; /* Ensure dropdown is above other content */
+}
+
+.dropdown-content a {
+    color: #e0e0e0; /* Light text */
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+}
+
+.dropdown-content a:hover {
+    background-color: #3b3b5c; /* Lighter hover */
+}
+
+/* Call Log Title */
+h2 {
+    color: #00B050; /* Vibrant Green from cpp.css */
+    text-align: center;
+    font-size: 2.8em; /* Adjusted to match h1 style in cpp.css */
+    font-weight: bold;
+    margin-top: 20px;
+    letter-spacing: 0.05em; /* From cpp.css h1 style */
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4); /* From cpp.css h1 style */
+}
+
+/* Date Picker */
+#filterDate {
+    display: inline-block;
+    width: 250px;
+    padding: 10px;
+    border: 1px solid #575971; /* Darker border from cpp.css inputs */
+    border-radius: 6px;
+    font-size: 16px;
+    text-align: center;
+    background-color: #3b3d54; /* Darker input background from cpp.css */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    color: #e0e0e0; /* Light text color for input */
+    margin: 0; /* override default spacing */
+    height: 44px; /* Ensure consistent height with buttons */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+#filterDate:hover {
+    background-color: #4a4d64; /* Slightly lighter dark for hover */
+}
+#filterDate:focus {
+    border-color: #00B050; /* Green focus from cpp.css */
+    box-shadow: 0 0 0 3px rgba(0, 176, 80, 0.3); /* Green shadow from cpp.css */
+    outline: none;
+}
+
+
+/* Table Container */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background-color: #2e3047; /* Darker container background from cpp.css */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Stronger shadow */
+    margin-top: 20px;
+    border: 1px solid #3c3f5c; /* Border from cpp.css containers */
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+    color: #e0e0e0; /* Light text for table */
+}
+
+/* Table Headers */
+th {
+    background-color: #3b3d54; /* Darker table header background from cpp.css */
+    color: #ffffff; /* White text for headers */
+    padding: 15px;
+    text-transform: uppercase;
+    font-size: 15px;
+    text-align: center;
+    border: 1px solid #4a4d64; /* Border from cpp.css table */
+}
+
+/* Table Cells */
+td {
+    padding: 12px;
+    border-bottom: 1px solid #4a4d64; /* Darker border */
+    text-align: center;
+    font-size: 14px;
+    border: 1px solid #4a4d64; /* Consistent border */
+}
+
+/* Alternate Row Colors */
+tr:nth-child(even) {
+    background-color: #2a2c3f; /* Darker alternate row */
+}
+
+/* Hover Effect */
+tr:hover {
+    background-color: #383a50; /* Slightly lighter dark for hover */
+    transition: 0.3s;
+}
+
+/* Remove Button */
+.delete-btn {
+    background-color: #dc3545; /* Red from cpp.css buttons */
+    color: white;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3); /* Shadow for red button */
+}
+
+.delete-btn:hover {
+    background-color: #c82333; /* Darker red on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(220, 53, 69, 0.4);
+}
+.delete-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+}
+
+/* Responsive Table */
+@media screen and (max-width: 768px) {
+    table {
+        font-size: 12px;
+    }
+    th, td {
+        padding: 10px;
+    }
+
+    #filterDate {
+        width: 200px;
+        font-size: 14px;
+    }
+
+    .delete-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+    }
+    .navbar a {
+        width: 100%;
+        text-align: left;
+        padding: 10px 15px;
+    }
+    .navbar .logo {
+        margin-bottom: 10px;
+    }
+    .navbar a.active {
+        border-radius: 5px;
+    }
+}
+
+#filterContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* Combined styling for both buttons to ensure consistent theme */
+#dailyProductivityBtn,
+#generateExcel {
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px; /* Consistent with other buttons in cpp.css */
+    background-color: #00B050; /* Green accent from cpp.css */
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 176, 80, 0.3); /* Green shadow */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    text-align: center;
+    height: 44px;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+#dailyProductivityBtn:hover,
+#generateExcel:hover {
+    background-color: #008f40; /* Darker green on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 176, 80, 0.4);
+}
+#dailyProductivityBtn:active,
+#generateExcel:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 176, 80, 0.2);
+}
+
+#productivityDropdown {
+    display: none;
+    width: 60%;
+    margin: 0 auto;
+    margin-top: 20px;
+    background-color: #2e3047; /* Darker container background */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    border: 1px solid #3c3f5c; /* Border from cpp.css containers */
+    color: #e0e0e0; /* Light text for dropdown */
+}
+#productivityDropdown th {
+    background-color: #3b3d54; /* Darker table header background */
+    color: white;
+}
+#productivityDropdown td {
+    border-bottom: 1px solid #4a4d64; /* Darker border */
+}
+#productivityDropdown tr:nth-child(even) {
+    background-color: #2a2c3f; /* Darker alternate row */
+}
+#productivityDropdown tr:hover {
+    background-color: #383a50; /* Hover effect */
+}
+    </style>
+</head>
+<link rel="stylesheet" href="static/cpp.css">
+<body>
+
+<div class="navbar">
+    <img alt="Logo" class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/ChargePoint_logo.svg/284px-ChargePoint_logo.svg.png"/>
+    <a href="/call-log">Home</a>
+    <a class="active" href="/logs/call-log">Cases</a>
+    <a href="/ask-me">Ask Me</a>
+    <a href="/auth/logout/">Log Out</a>
+    <a href="/profile" id="user-name">{{ username }}</a>
+</div>
+
+<h2>Case Tracker</h2>
+<div id="filterContainer">
+    <input type="date" id="filterDate">
+    <button id="dailyProductivityBtn">Daily Productivity ▼</button>
+    <button id="generateExcel">Generate Excel</button>
+</div>
+
+<div id="productivityDropdown">
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Cases Count</th>
+            </tr>
+        </thead>
+        <tbody id="productivityBody"></tbody>
+    </table>
+</div>
+
+<table id="dataTable" border="1">
+    <thead>
+        <tr>
+            <th>Remove</th>
+            <th>Timestamp</th>
+            <th>Case Number</th>
+            <th>Phone Number</th>
+            <th>Station Name</th>
+            <th>Customer Name</th>
+            <th>Call Type</th>
+            <th>SDI</th>
+            <th>Issue Description</th>
+            <th>Points</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script src="/static/cpp.js"></script>
+
+<script>
+let globalLogs = []; // used globally for productivity dropdown
+
+// 🚀 Load table data when the page loads
+document.addEventListener('DOMContentLoaded', function () {
+    loadTableDataFromDatabase();
+
+    // Fetch username for display in navbar
+    fetch('/auth/current_user/', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.username) {
+            document.getElementById('user-name').textContent = data.username;
+        } else {
+            document.getElementById('user-name').textContent = "Guest";
+        }
+    })
+    .catch(error => {
+        console.error("Error fetching username:", error);
+        document.getElementById('user-name').textContent = "Guest";
+    });
+});
+
+// 🗓 Filter logs by selected date
+document.getElementById('filterDate').addEventListener('change', function () {
+    const selectedDate = this.value;
+    loadTableDataFromDatabase(selectedDate);
+});
+
+// 🎯 Fetch and load call log data dynamically
+async function loadTableDataFromDatabase(selectedDate = null) {
+    try {
+        console.log("Fetching call logs...");
+
+        const response = await fetch('/logs/call_log/', { 
+            method: 'GET', 
+            headers: { 'Content-Type': 'application/json' },
+            cache: "no-cache"
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch call logs");
+
+        globalLogs = await response.json(); // ⬅️ Save to global variable
+        let callLogs = [...globalLogs];
+        const tbody = document.querySelector('#dataTable tbody');
+        tbody.innerHTML = ''; // Clear existing rows
+
+        if (selectedDate) {
+            callLogs = callLogs.filter(log => {
+                const logDate = new Date(log.timestamp).toISOString().split('T')[0];
+                return logDate === selectedDate;
+            });
+        }
+
+        callLogs.forEach(log => {
+            addRowToTable(log);
+        });
+
+        updateProductivityTable(globalLogs); // ⬅️ Always update the dropdown
+
+        console.log("Table updated successfully!");
+    } catch (error) {
+        console.error("Error loading call logs:", error);
+    }
+}
+
+// ✨ Function to add a row to the table without reloading
+function addRowToTable(log) {
+    const tbody = document.querySelector('#dataTable tbody');
+    const row = document.createElement('tr');
+
+    row.innerHTML = `
+        <td><button class="delete-btn" onclick="removeRow(this)" data-id="${log.id}">−</button></td>
+        <td>${log.timestamp || ''}</td>
+        <td>${log.case_number}</td>
+        <td>${log.phone_number}</td>
+        <td>${log.station_name}</td>
+        <td>${log.customer_name}</td>
+        <td>${log.call_type}</td>
+        <td>${log.sdi || ''}</td>
+        <td>${log.issue_description || ''}</td>
+        <td>${log.points}</td>
+    `;
+
+    tbody.prepend(row);
+}
+
+// 📝 Add new call log entry and dynamically update table
+// This part is likely in Major_Beta09.html's script, but keeping it if it's meant to be here too.
+document.getElementById('addToTable')?.addEventListener('click', async function () {
+    const caseNumber = document.getElementById('text1').value.trim();
+    const customerName = document.getElementById('text2').value.trim();
+    const callType = document.getElementById('dropdownCallType').value.trim();
+    const phoneNumber = document.getElementById('phoneNumber').value.trim();
+    const stationName = document.getElementById('stationName').value.trim();
+    let sdi = '';
+    let issueDescription = quill.root.innerHTML.trim();
+
+    if (!caseNumber || !phoneNumber || !stationName || !callType) {
+        alert("Please enter all required fields.");
+        return;
+    }
+
+    const now = new Date();
+    const timestamp = now.toISOString().slice(0, 19).replace("T", " ");
+
+    sdi = (callType === "New" || callType === "Existing") ? document.getElementById('sdi').value : 'N/A';
+    let points = (callType === "New") ? 1 : (callType === "Existing") ? 0.25 : 1;
+
+    const callLogEntry = {
+        timestamp,
+        case_number: caseNumber,
+        phone_number: phoneNumber,
+        station_name: stationName,
+        customer_name: customerName,
+        call_type: callType,
+        sdi: sdi,
+        issue_description: issueDescription,
+        points: points
+    };
+
+    try {
+        const response = await fetch('/logs/call_log/update_or_create/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(callLogEntry)
+        });
+
+        if (response.ok) {
+            alert("Call log entry added successfully");
+
+            const newLog = await response.json();
+            addRowToTable(newLog);
+            globalLogs.unshift(newLog); // Add to globalLogs for dropdown update
+            updateProductivityTable(globalLogs);
+
+            // Clear fields (assuming these elements exist in this page's context)
+            if(document.getElementById('text1')) document.getElementById('text1').value = '';
+            if(document.getElementById('text2')) document.getElementById('text2').value = '';
+            if(document.getElementById('phoneNumber')) document.getElementById('phoneNumber').value = '';
+            if(document.getElementById('stationName')) document.getElementById('stationName').value = '';
+            if(document.getElementById('dropdownCallType')) document.getElementById('dropdownCallType').value = '';
+            if(document.getElementById('sdi')) document.getElementById('sdi').value = 'N/A';
+            // if(quill && quill.root) quill.root.innerHTML = ''; // Quill might not be initialized on this page
+        } else {
+            alert("Failed to add call log entry");
+        }
+    } catch (error) {
+        console.error("Error adding call log entry:", error);
+    }
+});
+
+
+// Function to remove a row from the table and database
+async function removeRow(buttonElement) {
+    const row = buttonElement.closest('tr');
+    const logId = buttonElement.dataset.id; // Get the log ID from data-id attribute
+
+    if (!logId) {
+        console.error("Log ID not found for deletion.");
+        return;
+    }
+
+    if (confirm("Are you sure you want to delete this log entry?")) {
+        try {
+            const response = await fetch(`/logs/call_log/${logId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (response.ok) {
+                row.remove(); // Remove row from the table
+                globalLogs = globalLogs.filter(log => log.id !== logId); // Remove from global logs
+                updateProductivityTable(globalLogs); // Update productivity display
+                alert("Log entry deleted successfully!");
+            } else {
+                alert("Failed to delete log entry.");
+            }
+        } catch (error) {
+            console.error("Error deleting log entry:", error);
+            alert("An error occurred during deletion.");
+        }
+    }
+}
+
+
+// 🟧 Daily Productivity Toggle
+const productivityBtn = document.getElementById('dailyProductivityBtn');
+const productivityDiv = document.getElementById('productivityDropdown');
+productivityBtn.addEventListener('click', () => {
+    updateProductivityTable(globalLogs); // Always update fresh
+    productivityDiv.style.display = productivityDiv.style.display === 'none' ? 'block' : 'none';
+});
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('#dailyProductivityBtn') && !e.target.closest('#productivityDropdown')) {
+        productivityDiv.style.display = 'none';
+    }
+});
+
+// 📊 Populate Daily Productivity Table
+function updateProductivityTable(callLogs) {
+    const dateCounts = {};
+    callLogs.forEach(log => {
+        const dateKey = new Date(log.timestamp).toISOString().split('T')[0];
+        const points = parseFloat(log.points || 0);
+        dateCounts[dateKey] = (dateCounts[dateKey] || 0) + points;
+    });
+
+    const tbody = document.getElementById('productivityBody');
+    tbody.innerHTML = '';
+
+    Object.keys(dateCounts).sort().reverse().forEach(date => {
+        const row = `<tr><td>${date}</td><td>${dateCounts[date].toFixed(2)}</td></tr>`;
+        tbody.innerHTML += row;
+    });
+}
+
+// Excel Export Functionality
+document.getElementById('generateExcel').addEventListener('click', () => {
+    const table = document.getElementById('dataTable');
+    const ws = XLSX.utils.table_to_sheet(table);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Call Log");
+    XLSX.writeFile(wb, "CallLog.xlsx");
+});
+</script>
+</body>
+</html>

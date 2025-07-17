@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Registration</title>
+    
+    <!-- Link to CSS -->
+    <link rel="stylesheet" href="/static/login.css">
+    
+    <!-- Google Fonts (Optional) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Improved TL Email Dropdown Styling to match other fields */
+        .input select {
+            width: 100%;
+            height: 60px;
+            padding: 0 15px;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            background: transparent;
+            font-family: 'Roboto', sans-serif;
+            font-size: 24px;
+            color: white;
+            font-weight: 300;
+            appearance: none;
+            outline: none;
+        }
+        .input select:focus {
+            border-bottom: 1px solid #7a9ba9;
+        }
+        .input select option {
+            background-color: #7a9ba9;
+            color: white;
+            font-size: 18px;
+            padding: 5px;
+        }
+        .input select::placeholder {
+            color: white;
+        }
+        /* Remove extra underline */
+        .input select + .spin {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<h1 style="padding: 40px 15px 40px 5px; text-align: center; color:#607c87; text-shadow:
+                -1px -1px 0 #e4dbdb,
+                1px -1px 0 #e4dbdb,
+                -1px 1px 0 #e4dbdb,
+                1px 1px 0 #e4dbdb,
+                -2px 0px 0 #e4dbdb,
+                2px 0px 0 #e4dbdb,
+                0px -2px 0 #e4dbdb,
+                0px 2px 0 #e4dbdb;
+        ">Case Tracker Login and Registration</h1> 
+<div class="materialContainer">
+    <div class="box">
+        <div class="title">LOGIN</div>
+        
+        <form action="/auth/login/" method="post" id="loginForm">
+            <div class="input">
+                <label for="loginEmail">Email</label>
+                <input type="email" name="email" id="loginEmail" required>
+                <span class="spin"></span>
+            </div>
+
+            <div class="input">
+                <label for="pass">Password</label>
+                <input type="password" name="password" id="pass" required>
+                <span class="spin"></span>
+            </div>
+
+            <div class="button login">
+                <button type="submit"><span>GO</span> <i class="fa fa-check"></i></button>
+            </div>
+        </form>
+
+        <a href="/forgot-password" class="pass-forgot">Forgot your password?</a>
+    </div>
+
+    <div class="overbox">
+        <div class="material-button alt-2"><span class="shape"></span></div>
+
+        <form action="/auth/register/" method="post" id="registerForm">
+            <div class="input">
+                <label for="regname">Username</label>
+                <input type="text" name="username" id="regname" required>
+                <span class="spin"></span>
+            </div>
+            <div class="input">
+                <label for="regEmail">Email Address</label>
+                <input type="email" name="email" id="regEmail" required>
+                <span class="spin"></span>
+            </div>
+            
+            <div class="input">
+                <select name="tl_email" id="tl_email" required>
+                    <option value="" disabled selected>Select TL Email</option>
+                    <option value="vajrala.sadiq@chargepoint.com">vajrala.sadiq@chargepoint.com</option>
+                    <option value="dennis.r@chargepoint.com">dennis.r@chargepoint.com</option>
+                    <option value="ragin.rajan@chargepoint.com">ragin.rajan@chargepoint.com</option>
+                    <option value="c.joseph@chargepoint.com">c.joseph@chargepoint.com</option>
+                    <option value="gowtham.j@chargepoint.com">gowtham.j@chargepoint.com</option>
+                    <option value="shatish.shukla@chargepoint.com">shatish.shukla@chargepoint.com</option>
+                </select>
+            </div>
+            
+            <div class="input">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" required>
+                <span class="spin"></span>
+            </div>
+            <div class="input">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" name="confirm_password" id="confirm_password" required>
+                <span class="spin"></span>
+            </div>
+            <div class="button">
+                <button type="submit"><span>NEXT</span></button>
+            </div>
+        </form>
+        
+    </div>
+</div>
+
+<!-- Link to JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/static/login.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ask Me - Issue Categories</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script src="static/cpp.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/auth/current_user/', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch user data");
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.username) {
+                document.getElementById('userName').textContent = data.username;
+            } else {
+                document.getElementById('userName').textContent = "Guest";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching username:", error);
+            document.getElementById('userName').textContent = "Guest";
+        });
+    });
+</script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const res = await fetch('/auth/current_user/', { method: 'GET' });
+      if (!res.ok) {
+        window.location.href = '/';  // 👈 root is your login page
+      }
+    } catch (err) {
+      window.location.href = '/';  // fallback
+    }
+  });
+</script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif; /* Consistent font with cpp.css */
+      background-color: #1a1a2e; /* Dark background from cpp.css */
+      color: #e0e0e0; /* Light text color from cpp.css */
+      padding: 20px; /* Add padding consistent with other pages */
+    }
+
+   .navbar {
+        background-color: #12121f; /* Even darker background for distinction */
+        overflow: hidden;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 10px 20px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Stronger but refined shadow */
+        border-radius: 8px;
+        margin-bottom: 20px; /* Added space here */
+        transition: background-color 0.3s ease;
+    }
+    .navbar a {
+        color: #e0e0e0; /* Lighter text for dark background */
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 18px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        border-radius: 6px; /* Slightly rounded for links */
+    }
+    .navbar a:hover {
+        background-color: #3b3b5c; /* Lighter hover for dark theme */
+        color: #ffffff;
+    }
+    .navbar a.active {
+        background-color: #ff6600; /* Original accent color */
+        color: #ffffff;
+        font-weight: bold;
+    }
+    .navbar .logo {
+        margin-right: auto;
+        color: #ff6600; /* Original accent color for text logo */
+        font-weight: bold;
+        font-size: 24px;
+        height: 40px;
+        cursor: pointer;
+    }
+    header {
+      background-color: #00B050; /* Green accent from cpp.css */
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+      font-size: 2.2em; /* Adjusted to be prominent but not conflicting with h1 */
+      font-weight: bold;
+      border-radius: 8px; /* Consistent with other elements */
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+    }
+
+    main {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    a.issue-card {
+      display: block;
+      text-decoration: none;
+      background-color: #2e3047; /* Darker background for cards */
+      border: 1px solid #3c3f5c; /* Border from cpp.css containers */
+      border-radius: 12px;
+      padding: 1.2rem;
+      text-align: center;
+      font-weight: 600;
+      color: #e0e0e0; /* Light text for cards */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Darker shadow */
+      transition: all 0.3s ease-in-out;
+    }
+
+    a.issue-card:hover {
+      background-color: #00B050; /* Green accent on hover */
+      color: white;
+      transform: translateY(-4px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #2e3047; /* Darker background for footer */
+      font-size: 0.9rem;
+      color: #b0b0b0; /* Lighter grey for footer text */
+      margin-top: 20px; /* Space above footer */
+      border-radius: 8px; /* Consistent with other elements */
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2); /* Subtle top shadow */
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+        <img alt="Logo" class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/ChargePoint_logo.svg/284px-ChargePoint_logo.svg.png"/>
+        <a href="/call-log">Home</a>
+        <a href="/logs/call-log">Cases</a>
+        <a href="/ask-me" class="active">Ask Me</a>
+        <a href="/auth/logout/">Log Out</a>
+        <a href="/profile" id="userName">{{ username }}</a>
+    </div>
+
+  <header>
+    Ask Me - Troubleshooting Categories
+  </header>
+
+  <main>
+    <a class="issue-card" href="/egf">Earth Ground Faults</a>
+    <a class="issue-card" href="gfci-hard-trip">GFCI Hard Trip</a>
+    <a class="issue-card" href="gfci-self-test-fault">GFCI Self Test Fault</a>
+    <a class="issue-card" href="hardware-fault">Hardware Fault</a>
+    <a class="issue-card" href="no-power">No Power</a>
+    <a class="issue-card" href="pilot-unreachable">Pilot Unreachable</a>
+    <a class="issue-card" href="/relay-stuck-closed">Relay Stuck Closed</a>
+    <a class="issue-card" href="/relay-stuck-open">Relay Stuck Open</a>
+    <a class="issue-card" href="/sim-card-not-detected">SIM Card Not Detected</a>
+    <a class="issue-card" href="/rfid-unresponsive">RFID Unresponsive</a>
+    <a class="issue-card" href="/bad-pinpoint">Bad PinPoint</a>
+    <a class="issue-card" href="/slow-charging-speed">Slow Charging Speed</a>
+    <a class="issue-card" href="/unreachable-troubleshooting">Unreachable Troubleshooting</a>
+    <a class="issue-card" href="/zero-energy-dispensed">Zero Energy Dispensed</a>
+    <a class="issue-card" href="/breakaway">Breakaway</a>
+    <a class="issue-card" href="/blank-Screen">Blank Screen</a>
+  </main>
+
+  <footer>
+    &copy; 2025 ChargePoint Ask Me Portal
+  </footer>
+</body>
+</html>

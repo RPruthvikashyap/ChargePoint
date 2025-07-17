@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Breakaway Fault Diagnostic</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .solution-box ul {
+        list-style-type: disc;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .solution-box li {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .note {
+      background-color: #fff;
+      color: #000;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <header>Breakaway Fault Diagnostic</header>
+  <div class="container">
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is a Breakaway Fault?</button>
+    </div>
+    <div class="intro" id="introSection">
+      <h2>Understanding Breakaway Faults</h2>
+      <p><strong>Breakaway faults</strong> occur when a charging cord is pulled with enough force to move the wires internally. This action opens a protective switch within the station, indicating possible damage to the cable or its connection.</p>
+    </div>
+
+    <div id="step1_initial_assessment" class="card">
+      <p><strong>Step 1: Initial Assessment of the Breakaway Fault</strong></p>
+      <div class="solution-box">
+        <p>A breakaway fault can indicate that the charging cable has been cut or forcibly pulled out of the station.</p>
+        <ul>
+          <li>Have the site contact **identify the extent of the damage**.</li>
+          <li>**Note:** There will be times where there is no visible external damage, but the breakaway fault persists due to an internal issue.</li>
+          <li>**Obtain pictures** of the station/cable showing the damage (or lack thereof) for documentation.</li>
+        </ul>
+      </div>
+      <button onclick="nextStep('step2_damage_assessment')">Understood, Proceed to Damage Assessment</button>
+      <div class="progress">Step <span class="step-count">1</span> of 2</div>
+    </div>
+
+    <div id="step2_damage_assessment" class="card hidden">
+      <p><strong>Step 2: Determine Extent of Damage and Next Steps</strong></p>
+      <div class="solution-box">
+        <p>Based on your assessment and any pictures obtained, has specific damage (e.g., cut cable, stretched cable, visible internal wire issues) been identified or strongly suspected due to the persistent breakaway fault?</p>
+      </div>
+      <p>What is the damage assessment?</p>
+      <button onclick="nextStep('solution_proceed_replacement')">Visible/Suspected damage found</button>
+      <button onclick="nextStep('solution_proceed_replacement')">No visible damage, but fault persists</button>
+      <button onclick="nextStep('step1_initial_assessment')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 2</div>
+    </div>
+
+    <div id="solution_proceed_replacement" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Action: Proceed with Replacement Options</strong></p>
+        <p>Given the breakaway fault, the cable and/or internal components are compromised. Proceed with the appropriate replacement options:</p>
+        <ul>
+          <li>If the charging cable has been identified as cut or pulled out due to the breakaway event, a **cord repair/replacement** is typically required.</li>
+          <li>Even if no further *external* damage beyond the breakaway cable is identified, but the fault persists, it indicates an internal issue with the cable or its connection that necessitates **cord repair/replacement**.</li>
+          <li>For severe internal damage not limited to the cord (e.g., internal wiring to the head unit), a **full head unit replacement** might be necessary, depending on the station model and extent of damage.</li>
+          <li>Quote for **cord repair** if only the cable is affected.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart Diagnostic</button>
+    </div>
+
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+    }
+
+    function resetFlow() {
+      nextStep('step1_initial_assessment'); 
+      document.getElementById('introSection').style.display = 'none'; // Hide intro on reset
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+
+    // Initial state: Show the first step on load
+    document.addEventListener('DOMContentLoaded', () => {
+        resetFlow(); 
+    });
+  </script>
+</body>
+</html>

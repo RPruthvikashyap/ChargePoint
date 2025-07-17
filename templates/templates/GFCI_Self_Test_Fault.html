@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GFCI Self Test Fault Diagnostic</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+      /* Ensure text wraps within paragraphs */
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+      /* Ensure padding is included in element's total width */
+      box-sizing: border-box;
+      /* Allow content to wrap */
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .solution-box ul {
+        /* Ensure list items also wrap */
+        list-style-type: disc; /* Or circle, square, none */
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .solution-box li {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      margin-bottom: 0.5rem; /* Add some spacing between list items */
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .note {
+      background-color: #fff;
+      color: #000;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <header>GFCI Self Test Fault Diagnostic</header>
+  <div class="container">
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is GFCI Self Test Fault?</button>
+    </div>
+    <div class="intro" id="introSection">
+      <h2>Station Error Code 302-GST</h2>
+      <p><strong>GFCI Self Test Failed:</strong> The station detected a ground fault during power up and is not operational.</p>
+      <p>J1772 compliant EVSEs perform a regular GFCI Self Test to ensure that the GFCI protection system is operating as expected. Should the GFCI protection system fail to operate as expected it will generate a GFCI Self Test Fault.</p>
+    </div>
+
+    <div id="question1" class="card">
+      <p><strong>Step 1:</strong> Have the customer attempt to restart the charging session. Did this resolve the fault?</p>
+      <button onclick="nextStep('question2')">Yes</button>
+      <button onclick="nextStep('question3')">No</button>
+      <div class="progress">Step <span class="step-count">1</span> of 3</div>
+    </div>
+
+    <div id="question2" class="card hidden">
+      <p>The fault was resolved by restarting the session. The fault was likely spurious. Monitor for a week for good sessions and then resolve the case.</p>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="question3" class="card hidden">
+      <p><strong>Step 2:</strong> Remotely verify the validity of the fault. Pull the latest status and check 'lcd_state' and "outlet" for Station Error Codes.</p>
+      <p>Example: <code>1,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,OUT_OF_SERVICE,NO_VEHICLE,IDLE,0,NONE,8,NONE,0xA1,NA</code> (Out of Service) or <code>2,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,AVAILABLE,NO_VEHICLE,IDLE,0,NONE,NONE,NONE,0xA1,NA</code> (Available).</p>
+      <button onclick="nextStep('question4')">Verified Station State</button>
+      <button onclick="nextStep('question1')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 3</div>
+    </div>
+
+    <div id="question4" class="card hidden">
+      <p><strong>Step 3:</strong> Reboot the station in NOS. DO NOT CLEAR THE MAINTENANCE FLAG as it will falsify NOS to force a green pin. Wait 3-5 minutes for the reboot to come back online.</p>
+      <p>After reboot, pull the latest status and verify if the fault has cleared.</p>
+      <button onclick="nextStep('solution_cleared')">Fault Cleared</button>
+      <button onclick="nextStep('solution_not_cleared')">Fault Not Cleared</button>
+      <button onclick="nextStep('question3')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 3</div>
+    </div>
+
+    <div id="solution_cleared" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Fault cleared after reboot.</strong></p>
+        <ul>
+          <li>The fault appears spurious. Monitor the station for a week for good sessions and then resolve the case.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="solution_not_cleared" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Fault not cleared after reboot.</strong></p>
+        <ul>
+          <li>Reach out to the site contact to inquire about any recent electrical/wiring changes and power cycle the station.</li>
+          <li>Once site and station wiring is validated and confirmed, move forward with replacement head unit.</li>
+        </ul>
+      </div>
+      <div class="note">
+        ⚠️ If the issue persists after wiring validation, a replacement head unit will be required.
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+    }
+
+    function resetFlow() {
+      nextStep('question1');
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>

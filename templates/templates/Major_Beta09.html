@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<title>Case Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="static/cpp.css" rel="stylesheet"/>
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet"/>
+<style>
+        /* Navbar specific styles - adjusted for dark theme and distinction */
+        .navbar {
+            background-color: #12121f; /* Even darker background for distinction */
+            overflow: hidden;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Stronger but refined shadow */
+            border-radius: 8px;
+            margin-bottom: 20px; /* Add some space below navbar */
+            transition: background-color 0.3s ease;
+        }
+        .navbar a {
+            color: #e0e0e0; /* Lighter text for dark background */
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 18px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            border-radius: 6px; /* Slightly rounded for links */
+        }
+        .navbar a:hover {
+            background-color: #3b3b5c; /* Lighter hover for dark theme */
+            color: #ffffff;
+        }
+        .navbar a.active {
+            background-color: #ff6600; /* Original accent color */
+            color: #ffffff;
+            font-weight: bold;
+        }
+        .navbar .logo {
+            margin-right: auto;
+            color: #ff6600; /* Original accent color */
+            font-weight: bold;
+            font-size: 24px;
+            height: 40px; /* Ensure consistent logo size */
+            cursor: pointer;
+        }
+
+        .user-menu {
+            position: relative;
+            font-weight: bold;
+            color: #e0e0e0; /* Lighter text */
+            cursor: pointer;
+        }
+
+        .user-menu:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Dropdown Menu */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #2e3047; /* Darker dropdown background */
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4); /* Adjusted shadow */
+            border-radius: 5px;
+            overflow: hidden;
+            z-index: 100; /* Ensure dropdown is on top */
+        }
+
+        .dropdown-content a {
+            color: #e0e0e0; /* Lighter text */
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #3b3b5c; /* Lighter hover */
+        }
+
+        /* Responsive adjustments for navbar */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px;
+            }
+            .navbar a {
+                width: 100%;
+                text-align: left;
+                padding: 10px 15px;
+            }
+            .navbar .logo {
+                margin-bottom: 10px;
+            }
+            .navbar a.active {
+                border-radius: 5px;
+            }
+        }
+        /* === FIX Quill Toolbar Icons for Dark Background === */
+.ql-toolbar.ql-snow {
+    background-color: #2B3B4E !important;  /* Darker background */
+    border: 1px solid #3A4A5D !important;
+}
+
+.ql-toolbar.ql-snow .ql-picker,
+.ql-toolbar.ql-snow .ql-stroke {
+    color: #E0E6EB !important;             /* Light text for icons */
+    stroke: #E0E6EB !important;            /* Light stroke for buttons */
+}
+
+.ql-toolbar.ql-snow .ql-fill {
+    fill: #E0E6EB !important;              /* Light fill color for bold/italic icons */
+}
+
+.ql-toolbar.ql-snow .ql-picker-label {
+    color: #E0E6EB !important;
+}
+
+.ql-toolbar.ql-snow .ql-picker-options {
+    background-color: #2B3B4E !important;
+    color: #E0E6EB !important;
+    border: 1px solid #3A4A5D !important;
+}
+</style>
+
+
+
+</head>
+<body>
+    <div class="navbar">
+        <img alt="Logo" class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/ChargePoint_logo.svg/284px-ChargePoint_logo.svg.png"/>
+        <a class="active" href="#">Home</a>
+        <a href="/logs/call-log">Cases</a>
+        <a href="/ask-me">Ask Me</a>
+        <a href="/auth/logout/">Log Out</a>
+        <a href="/profile" id="user-name">{{ username }}</a>
+    </div>
+
+</div>
+<div class="header">
+<h1>Case Tracking System - NA Owner Support</h1>
+</div>
+<div class="container">
+<label for="text1">Case Number:</label>
+<input id="text1" maxlength="8" pattern="\d*" placeholder="8-digit number" type="text"/><br/><br/>
+<label for="phoneNumber">Phone Number:</label>
+<input id="phoneNumber" placeholder="Enter phone number" type="text"/><br/><br/>
+<label for="stationName">Station Name:</label>
+<input id="stationName" placeholder="Enter station name" type="text"/><br/><br/>
+<label for="text2">Customer Name:</label>
+<input id="text2" type="text"/><br/><br/>
+<label for="dropdownCallType">Case Type:</label>
+<select id="dropdownCallType">
+  <option value="">Select Case Type</option>
+  <option value="Assigned Case">Assigned Case</option>
+  <option value="FT Call">FT Call</option>
+  <option value="New">New</option>
+  <option value="Existing">Existing</option>
+</select>
+<br/><br/>
+<div class="hidden" id="newExistingCallFields">
+<label for="sdi">SDI:</label>
+<select id="sdi">
+<option value="N/A">N/A</option>
+<option value="Available">Available</option>
+</select><br/><br/>
+<label for="issueType">Issue Type:</label>
+<select id="issueType">
+<option value="General">General</option>
+<option value="Station Hardware">Station Hardware</option>
+<option value="Station Software">Station Software</option>
+<option value="Configuration Request">Configuration Request</option>
+</select><br/><br/>
+</div>
+<div class="hidden" id="ftCallFields">
+
+<label for="stationType">Select Station Type:</label>
+<select id="stationType">
+  <option value="">-- Select Station Type --</option>
+  <option value="AC">AC Station</option>
+  <option value="DC">DC Station</option>
+</select><br/><br/>
+
+<div class="hidden" id="acStationOptions">
+  <label for="acStationModel">Select AC Station Model:</label>
+  <select id="acStationModel">
+    <option value="">-- Select Model --</option>
+    <option value="CT4000">CT4000</option>
+    <option value="CPF">CPF</option>
+    <option value="CP6000">CP6000</option>
+  </select><br/><br/>
+</div>
+<label>Work Scope:</label>
+<div class="workScopeContainer hidden">
+<label><input class="workScopeCheckbox" type="checkbox" value="Cellular Survey"/> Cellular Survey</label>
+<label><input class="workScopeCheckbox" type="checkbox" value="Wiring and Voltage verification"/> Wiring and Voltage verification</label>
+<label><input class="workScopeCheckbox" type="checkbox" value="Head Swap"/> Head Swap</label>
+</div><br/>
+<div class="hidden" id="countryFields">
+<label for="country">Country:</label>
+<select id="country">
+<option value="">Select the Country</option>
+<option value="US">US</option>
+<option value="Canada">Canada</option>
+</select><br/><br/>
+<div class="hidden" id="usCarriers">
+<label for="tMobileDbm">T-Mobile dBm:</label>
+<input id="tMobileDbm" placeholder="-23 dBm" type="text"/><br/>
+<label for="attDbm">AT&amp;T dBm:</label>
+<input id="attDbm" placeholder="-90 dBm" type="text"/><br/>
+<label for="verizonDbm">Verizon dBm:</label>
+<input id="verizonDbm" placeholder="-80 dBm" type="text"/><br/>
+</div>
+<div class="hidden" id="canadaCarriers">
+<label for="bellDbm">Bell dBm:</label>
+<input id="bellDbm" placeholder="-30 dBm" type="text"/><br/>
+<label for="rogersDbm">Rogers dBm:</label>
+<input id="rogersDbm" placeholder="-85 dBm" type="text"/><br/>
+<label for="telusDbm">Telus dBm:</label>
+<input id="telusDbm" placeholder="-75 dBm" type="text"/><br/>
+</div>
+</div>
+<div class="hidden" id="wiringVoltageFields">
+<label for="wireSetup">Is this a 3-wire or 5-wire setup?</label>
+<select id="wireSetup">
+<option value="">Select wire setup</option>
+<option value="3-wire">3-wire</option>
+<option value="5-wire">5-wire</option>
+</select><br/><br/>
+<div class="hidden" id="threeWireFields">
+<label for="threeBreakers">Condition of Breakers:</label>
+<input id="threeBreakers" type="text"/><br/><br/>
+<label for="threeJumpersConnected">Are Jumpers Connected:</label>
+<select id="threeJumpersConnected">
+<option value="Yes">Yes</option>
+<option value="No">No</option>
+</select><br/><br/>
+<label for="threeConnectorCondition">Condition of Electrical Connector and Power Plate:</label>
+<input id="threeConnectorCondition" type="text"/><br/><br/>
+<h4>Voltage Readings</h4>
+<label for="threeL1RL2R">L1R-L2R:</label>
+<input id="threeL1RL2R" type="text"/><br/><br/>
+<label for="threeL1RGND">L1R-GND:</label>
+<input id="threeL1RGND" type="text"/><br/><br/>
+<label for="threeL2RGND">L2R-GND:</label>
+<input id="threeL2RGND" type="text"/><br/><br/>
+<label for="threeImpedance">Impedance Between Breaker Ground and Station Ground:</label>
+<input id="threeImpedance" type="text"/><br/><br/>
+<label for="threeWireGauge">Wire Gauge Used:</label>
+<input id="threeWireGauge" type="text"/><br/><br/>
+</div>
+<div class="hidden" id="fiveWireFields">
+<label for="fiveBreakers">Condition of Breakers:</label>
+<input id="fiveBreakers" type="text"/><br/><br/>
+<label for="fiveConnectorCondition">Condition of Electrical Connectorand Power Plate:</label>
+<input id="fiveConnectorCondition" type="text"/><br/><br/>
+<h4>Voltage Readings</h4>
+<label for="fiveL1RL2R">L1R-L2R:</label>
+<input id="fiveL1RL2R" type="text"/><br/><br/>
+<label for="fiveL1LL2L">L1L-L2L:</label>
+<input id="fiveL1LL2L" type="text"/><br/><br/>
+<label for="fiveL1RGND">L1R-GND:</label>
+<input id="fiveL1RGND" type="text"/><br/><br/>
+<label for="fiveL2RGND">L2R-GND:</label>
+<input id="fiveL2RGND" type="text"/><br/><br/>
+<label for="fiveL1LGND">L1L-GND:</label>
+<input id="fiveL1LGND" type="text"/><br/><br/>
+<label for="fiveL2LGND">L2L-GND:</label>
+<input id="fiveL2LGND" type="text"/><br/><br/>
+<label for="fiveImpedance">Impedance Between Breaker Ground and Station Ground:</label>
+<input id="fiveImpedance" type="text"/><br/><br/>
+<label for="fiveWireGauge">Wire Gauge Used:</label>
+<input id="fiveWireGauge" type="text"/><br/><br/>
+</div>
+</div>
+<div class="hidden" id="headSwapFields">
+<label for="callerInfo">Caller Info:</label>
+<input id="callerInfo" type="text"/><br/><br/>
+<label for="oldMac">Old MAC:</label>
+<input id="oldMac" type="text"/><br/><br/>
+<label for="newMac">New MAC:</label>
+<input id="newMac" type="text"/><br/><br/>
+<label for="swapCompleted">Swap Completed in NOS?:</label>
+<select id="swapCompleted">
+<option value="Yes">Yes</option>
+<option value="No">No</option>
+</select><br/><br/>
+<label for="simActivated">SIM Activated?:</label>
+<select id="simActivated">
+<option value="Yes">Yes</option>
+<option value="No">No</option>
+</select><br/><br/>
+<label for="stationStatus">Station Status:</label>
+<select id="stationStatus">
+<option value="Unavailable">Unavailable</option>
+<option value="Available">Available</option>
+</select><br/><br/>
+<label for="networkStatus">Network Status:</label>
+<select id="networkStatus">
+<option value="Reachable">Reachable</option>
+<option value="Unreachable">Unreachable</option>
+</select><br/><br/>
+<label for="signalStrength">Signal Strength:</label>
+<input id="signalStrength" type="text"/><br/><br/>
+</div>
+</div>
+<div class="hidden" id="standardCallFields">
+<label for="dropdown1">SDI:</label>
+<input id="dropdown1" type="text"/><br/><br/>
+<label for="dropdownIssueType">Issue Type:</label>
+<input id="dropdownIssueType" type="text"/><br/><br/>
+</div>
+<label for="manualDate">Call Date & Time (PST):</label>
+<input id="manualDate" type="datetime-local"/><br/><br/>
+<label for="issueDescription">Issue Description:</label>
+<div id="issueDescription"></div><br/>
+<button id="addToTable">Add to Table</button>
+<button id="generateSummary">Generate Summary</button>
+<button id="clearFields">Clear Fields</button>
+<button class="hidden" id="doneButton">Done</button> <br/>
+</div>
+<div class="container hidden" id="summaryContainer">
+<h2>Summary</h2>
+<p id="output" style=" word-wrap: break-word; margin-top: 0;"></p>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script src="static/cpp.js"></script>
+<script>
+ var quill = new Quill('#issueDescription', { theme: 'snow' });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const dropdown = document.getElementById('dropdownCallType');
+    if (dropdown.value) {
+      const event = new Event('change');
+      dropdown.dispatchEvent(event);
+    }
+  });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/auth/current_user/', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch user data");
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.username) {
+                document.getElementById('user-name').textContent = data.username; // Corrected ID from userName to user-name
+            } else {
+                document.getElementById('user-name').textContent = "Guest"; // Corrected ID
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching username:", error);
+            document.getElementById('user-name').textContent = "Guest"; // Corrected ID
+        });
+    });
+</script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<script>
+    var quill = new Quill('#issueDescription', {
+        theme: 'snow'
+    });
+
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Team Leader Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="static/cpp.css" rel="stylesheet"/> <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+<style>
+    /* Reset and base styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #1a1a2e; /* From cpp.css */
+      color: #e0e0e0; /* From cpp.css */
+      padding: 20px;
+      margin: 0;
+      line-height: 1.6; /* From cpp.css */
+    }
+    /* Navbar / Taskbar - KEPT AS IS FROM ORIGINAL DEMO.HTML AS PER INSTRUCTION */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 20px;
+      background-color: #222;
+      color: white;
+      font-family: 'Roboto', sans-serif;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .navbar .logo {
+      height: 40px;
+      cursor: pointer;
+    }
+    .user-menu {
+      position: relative;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+    }
+    .user-menu:hover .dropdown-content {
+      display: block;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background-color: #fff;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+      overflow: hidden;
+      z-index: 1000;
+    }
+    .dropdown-content a {
+      color: #333;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      font-size: 14px;
+    }
+    .dropdown-content a:hover {
+      background-color: #f2f2f2;
+    }
+    /* Additional navbar styles from demo.html's second navbar block - KEPT AS IS */
+    .navbar {
+        background-color: #222;
+        overflow: hidden;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 10px 20px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+    }
+    .navbar a {
+        color: #fff;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 18px;
+    }
+    .navbar a:hover {
+        background-color: #575757;
+    }
+    .navbar a.active {
+        background-color: #ff6600;
+    }
+    .navbar .logo {
+        margin-right: auto;
+        color: #ff6600;
+        font-weight: bold;
+        font-size: 24px;
+    }
+
+    /* Dashboard Container - Adapted from cpp.css .container */
+    .dashboard-container {
+      max-width: 90%;
+      margin: 20px auto; /* Centered with margin, adjusted from cpp.css */
+      background-color: #1E2C3F; /* Dark Blue - Primary container color */
+      padding: 35px; /* More padding */
+      border-radius: 12px; /* More rounded */
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); /* Stronger shadow */
+      border: 1px solid #3A4A5D; /* Subtle border that matches new background */
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    /* Header - From cpp.css */
+    h1 {
+      text-align: center;
+      color: #00B050; /* Vibrant Green - ChargePoint accent */
+      font-weight: 600;
+      margin-bottom: 40px;
+      font-size: 2.8em; /* Larger heading for more impact */
+      letter-spacing: 0.05em;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+    }
+    h2 {
+      font-weight: 600;
+      margin: 20px 0;
+      color: #E0E6EB; /* Light text for labels, slightly off-white */
+    }
+    /* Filter container (if any filters added in future) - Original from demo.html, label color from cpp.css */
+    .filter-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      gap: 15px;
+    }
+    label { /* From cpp.css */
+        display: block;
+        width: auto;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #E0E6EB; /* Light text for labels, slightly off-white */
+    }
+    /* Buttons and selects - Adapted from cpp.css */
+    select, input[type="date"], input[type="month"] {
+      width: 250px;
+      padding: 14px; /* Increased padding */
+      border-radius: 10px; /* More rounded corners */
+      border: 1px solid #3A4A5D; /* Darker border, subtly integrated */
+      font-size: 16px;
+      outline: none;
+      transition: all 0.3s ease;
+      background-color: #2B3B4E; /* Dark input background, slight variation */
+      color: #E0E6EB; /* Light text in inputs */
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.25); /* More pronounced inset shadow */
+    }
+    button {
+      margin-top: 15px; /* More space */
+      padding: 16px 30px; /* Larger padding */
+      background-color: #00B050; /* Vibrant Green - ChargePoint accent */
+      color: white;
+      border: none;
+      border-radius: 8px; /* More rounded */
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.2em; /* Slightly larger font */
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+    }
+    button:hover {
+      background-color: #008C40; /* Darker green on hover */
+      transform: translateY(-3px); /* More pronounced lift effect */
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+    button:active {
+      transform: translateY(0); /* Press effect */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    /* Summary Table - Adapted from cpp.css */
+    .summary-container {
+      overflow-x: auto;
+      border-radius: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px; /* More space above table */
+      border-radius: 10px; /* Rounded table corners */
+      overflow: hidden; /* Ensures rounded corners apply to content */
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+      background: #1E2C3F; /* Dark Blue - Primary container color */
+    }
+    table, th, td {
+      border: 1px solid #3A4A5D; /* Darker border for table cells, matches container */
+    }
+    th {
+      background-color: #00B050; /* Vibrant Green for header */
+      color: white;
+      padding: 20px; /* More padding in cells */
+      text-align: left;
+      text-transform: uppercase;
+      font-size: 1em; /* Slightly larger header font */
+      letter-spacing: 0.08em;
+    }
+    td {
+      padding: 20px; /* More padding in cells */
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      color: #e0e0e0; /* Light text color */
+    }
+    /* Hover and stripe effects - Adapted from cpp.css */
+    tr:nth-child(even) {
+      background-color: #172230; /* Slightly different shade for even rows, darker blue */
+    }
+    tr:hover {
+      background-color: #2B3B4E; /* Lighter dark on hover, matches input background */
+    }
+    /* Expandable details rows - Original from demo.html, but with dark theme colors */
+    .user-details {
+      display: none;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      visibility: hidden;
+      background-color: #1E2C3F; /* Consistent with dashboard container */
+      color: #e0e0e0; /* Consistent with body text */
+      transition: max-height 0.4s ease-out, opacity 0.4s ease-out, visibility 0.4s;
+    }
+    .user-details.show {
+      display: table-row;
+      opacity: 1;
+      visibility: visible;
+      max-height: 500px; /* expanded state */
+    }
+    /* Fade-in animation for container - Original from demo.html */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Download button (Excel) - Adapted from cpp.css button styles */
+    .download-btn {
+      display: block; /* Kept from inline style in demo.html */
+      margin-top: 15px;
+      padding: 16px 30px; /* Larger padding from cpp.css button */
+      background-color: #00B050; /* Consistent with other buttons */
+      color: white;
+      font-size: 1.2em; /* Consistent with other buttons */
+      border: none;
+      border-radius: 8px; /* Consistent with other buttons */
+      cursor: pointer;
+      font-weight: bold; /* Consistent with other buttons */
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Consistent with other buttons */
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Consistent with other buttons */
+    }
+    .download-btn:hover {
+      background-color: #008C40; /* Consistent with other buttons */
+      transform: translateY(-3px); /* Consistent with other buttons */
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Consistent with other buttons */
+    }
+    .download-btn:active {
+      transform: translateY(0); /* Consistent with other buttons */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Consistent with other buttons */
+    }
+    /* Charts Section - Adapted from Major_Beta09.html and cpp.css */
+    /* Removed flex properties from .chart-grid as Bootstrap row will handle them */
+    .charts-container {
+      margin-top: 40px;
+    }
+    /* .chart-grid styling for margins; flex properties removed */
+    .chart-grid {
+      margin: 20px 0; /* Keeps vertical spacing */
+    }
+
+    /* Apply common chart styling directly to canvas elements within Bootstrap columns */
+    .col-md-6 .chart-box canvas, .col-12 .chart-fullwidth canvas {
+        width: 100%; /* Important for responsiveness within Bootstrap columns */
+        height: auto; /* Allow Chart.js to manage height */
+        min-height: 350px; /* Increased minimum height for more vertical presence */
+        background-color: #2B3B4E; /* Dark background for charts */
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        transition: transform 0.3s ease; /* Added hover effect */
+        margin-bottom: 20px; /* Spacing between charts and rows */
+    }
+
+    /* Specific styles for hover effect on canvases */
+    .col-md-6 .chart-box canvas:hover, .col-12 .chart-fullwidth canvas:hover {
+        transform: scale(1.02);
+    }
+
+    .chart-fullwidth {
+      text-align: center;
+    }
+    /* The .chart-fullwidth canvas styles are now merged with the general canvas styles above */
+
+
+    /* Pivot Table - Adapted from cpp.css */
+    .pivot-container {
+      margin-top: 40px;
+      text-align: center;
+    }
+    #pivot-table-wrapper {
+      overflow-x: auto;
+      margin-top: 20px;
+    }
+    #pivot-table-wrapper table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: auto;
+      background-color: #1E2C3F; /* Consistent with dashboard container */
+    }
+    #pivot-table-wrapper th, #pivot-table-wrapper td {
+      border: 1px solid #3A4A5D; /* Consistent with other tables */
+      padding: 8px;
+      font-size: 14px;
+      color: #e0e0e0; /* Consistent with body text */
+    }
+    #pivot-table-wrapper th {
+      background-color: #00B050; /* Consistent with other table headers */
+      color: white;
+      text-transform: uppercase;
+    }
+    #pivot-table-wrapper tr:nth-child(even) {
+      background-color: #172230; /* Consistent with other tables */
+    }
+
+    /* Responsive Design Tweaks - From cpp.css */
+    @media (max-width: 1024px) {
+      .dashboard-container {
+        max-width: 95%;
+      }
+      th, td {
+        font-size: 14px;
+        padding: 10px;
+      }
+      select, button {
+        font-size: 14px;
+        padding: 10px;
+      }
+      .filter-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+    @media (max-width: 768px) {
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      th, td {
+        font-size: 13px;
+        padding: 8px;
+      }
+      button {
+        font-size: 14px;
+        padding: 8px 14px;
+      }
+      select {
+        width: 100%;
+      }
+      /* Responsive adjustments for navbar - KEPT AS IS FROM ORIGINAL DEMO.HTML */
+      .navbar {
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 10px;
+      }
+      .navbar a {
+          width: 100%;
+          text-align: left;
+          padding: 10px 15px;
+      }
+      .navbar .logo {
+          margin-bottom: 10px;
+      }
+      .navbar a.active {
+          border-radius: 5px;
+      }
+    }
+    @media (max-width: 600px) {
+      .filter-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      select {
+        width: 100%;
+      }
+      button {
+        width: 100%;
+      }
+    }
+    @media (max-width: 480px) { /* From cpp.css */
+        h1 {
+            font-size: 1.6em;
+            letter-spacing: 0.02em;
+        }
+
+        .dashboard-container { /* Changed from .container */
+            padding: 15px;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 0.9em;
+        }
+
+        /* Further hide columns if necessary */
+        table thead th:nth-child(6), /* Customer Name */
+        table tbody td:nth-child(6) {
+            display: none;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="navbar">
+        <img alt="Logo" class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/ChargePoint_logo.svg/284px-ChargePoint_logo.svg.png"/>
+        <a class="active" href="#">Home</a>
+        <a href="/auth/tl-logout/">Log Out</a>
+        <a href="/tl-profile" id="user-name">{{ name }}</a>
+    </div>
+</div>
+</div>
+<div class="dashboard-container">
+
+<h1>Team Leader Dashboard</h1>
+<div class="summary-container">
+<h2>Summary of Users and Cases</h2>
+<table id="summary-table">
+<thead>
+<tr>
+<th>User</th>
+<th>Email</th>
+<th>Date</th>
+<th>Number of Cases</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<div style="margin-top: 20px; display: flex; gap: 15px; align-items: center;">
+    <label for="filter-date">Filter by Date:</label>
+    <input type="date" id="filter-date">
+
+    <label for="filter-month">or Month:</label>
+    <input type="month" id="filter-month">
+
+    <button id="download-users-data" class="download-btn">Download Excel</button> </div>
+</div>
+<div class="charts-container container-fluid"> <h2>Analytics Overview</h2>
+    <div class="row"> <div class="col-md-6 mb-4"> <div class="chart-box">
+                <canvas id="casesPerUserChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4"> <div class="chart-box">
+                <canvas id="callTypeDistributionChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="row"> <div class="col-12"> <div class="chart-fullwidth">
+                <canvas id="callsPerDayChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const response = await fetch("/logs/team_leader_users/?tl_email=auto");
+        if (!response.ok) throw new Error("Failed to fetch users");
+        const usersData = await response.json();
+        const summaryTableBody = document.querySelector("#summary-table tbody");
+        summaryTableBody.innerHTML = "";
+
+        usersData.forEach(user => {
+          const caseCount = user.call_logs.length;
+          const sanitizedEmail = user.email.replace(/[@.]/g, "_");
+
+          // Master Table Row
+          const summaryRow = document.createElement("tr");
+          summaryRow.classList.add("user-row");
+          summaryRow.dataset.user = sanitizedEmail;
+          summaryRow.innerHTML = `
+                <td>${user.username}</td>
+                <td>${user.email}</td>
+                <td>All Dates</td>
+                <td>${caseCount}</td>
+            `;
+          summaryTableBody.appendChild(summaryRow);
+
+          // User Details Row (hidden by default)
+          const userDetailsRow = document.createElement("tr");
+          userDetailsRow.classList.add("user-details");
+          userDetailsRow.setAttribute("id", `details-${sanitizedEmail}`);
+          userDetailsRow.innerHTML = `
+                <td colspan="4">
+                    <h3>${user.username} (${user.email})</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Case Number</th>
+                                <th>Call Type</th>
+                                <th>Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${user.call_logs.map(log => {
+                                // Format timestamp to DD-MM-YYYY HH:MM:SS
+                                let formattedTimestamp = '';
+                                if (log.timestamp) {
+                                    const logDate = new Date(log.timestamp);
+                                    if (!isNaN(logDate)) {
+                                        const day = String(logDate.getDate()).padStart(2, '0');
+                                        const month = String(logDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+                                        const year = logDate.getFullYear();
+                                        const hours = String(logDate.getHours()).padStart(2, '0');
+                                        const minutes = String(logDate.getMinutes()).padStart(2, '0');
+                                        const seconds = String(logDate.getSeconds()).padStart(2, '0');
+                                        formattedTimestamp = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+                                    }
+                                }
+                                return `
+                                    <tr>
+                                        <td>${formattedTimestamp || ''}</td>
+                                        <td>${log.case_number}</td>
+                                        <td>${log.call_type}</td>
+                                        <td>${log.points}</td>
+                                    </tr>
+                                `;
+                            }).join("")}
+                        </tbody>
+                    </table>
+                    <button class="download-btn" id="download-${sanitizedEmail}" onclick="downloadExcel('${sanitizedEmail}')">Download Excel</button>
+                </td>
+            `;
+          summaryTableBody.appendChild(userDetailsRow);
+
+          // Click event to toggle details
+          summaryRow.addEventListener("click", () => {
+            const downloadBtn = document.getElementById(`download-${sanitizedEmail}`);
+            if (userDetailsRow.classList.contains("show")) {
+              userDetailsRow.classList.remove("show");
+              downloadBtn.style.display = "none";
+              // Using transitionend event listener for smoother hiding
+              userDetailsRow.addEventListener('transitionend', function handler() {
+                userDetailsRow.style.display = "none";
+                userDetailsRow.removeEventListener('transitionend', handler);
+              });
+            } else {
+              userDetailsRow.style.display = "table-row";
+              setTimeout(() => {
+                userDetailsRow.classList.add("show");
+                downloadBtn.style.display = "block";
+              }, 10);
+            }
+          });
+        });
+
+        // === Charts: Analytics of user call logs ===
+
+        // 1. Cases per User (Bar Chart)
+        const userNames = usersData.map(u => u.username);
+        const caseCounts = usersData.map(u => u.call_logs.length);
+        const ctx1 = document.getElementById('casesPerUserChart');
+        new Chart(ctx1, {
+          type: 'bar',
+          data: {
+            labels: userNames,
+            datasets: [{
+              label: 'Cases per User',
+              data: caseCounts,
+              backgroundColor: '#ee7313'
+            }]
+          },
+          options: {
+            responsive: true, // Make charts responsive
+            maintainAspectRatio: false, // Allow charts to resize freely
+            plugins: {
+              title: { display: true, text: 'Cases per User', color: '#e0e0e0' }, // Set title color
+              legend: { display: false },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: { color: '#e0e0e0' }, // Set tick color
+                grid: { color: 'rgba(224, 224, 224, 0.1)' } // Set grid color
+              },
+              x: {
+                ticks: { color: '#e0e0e0' }, // Set tick color
+                grid: { color: 'rgba(224, 224, 224, 0.1)' } // Set grid color
+              }
+            }
+          }
+        });
+
+        // 2. Call Types Distribution (Pie Chart)
+        const callTypeCounts = {};
+        usersData.forEach(user => {
+          user.call_logs.forEach(log => {
+            const type = log.call_type || 'Unknown';
+            callTypeCounts[type] = (callTypeCounts[type] || 0) + 1;
+          });
+        });
+        const callTypeLabels = Object.keys(callTypeCounts);
+        const callTypeData = Object.values(callTypeCounts);
+        const colors = ['#ee7313', '#f4b619', '#7a9ba9', '#28a745', '#007bff', '#6f42c1', '#17a2b8', '#ffc107', '#20c997', '#ff9f40'];
+        const backgroundColors = callTypeLabels.map((_, i) => colors[i % colors.length]);
+        const ctx2 = document.getElementById('callTypeDistributionChart').getContext('2d');
+        new Chart(ctx2, {
+          type: 'pie',
+          data: {
+            labels: callTypeLabels,
+            datasets: [{
+              data: callTypeData,
+              backgroundColor: backgroundColors,
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            responsive: true, // Make charts responsive
+            maintainAspectRatio: false, // Allow charts to resize freely
+            plugins: {
+              title: { display: true, text: 'Call Types Distribution', color: '#e0e0e0' }, // Set title color
+              legend: {
+                position: 'bottom',
+                labels: { color: '#e0e0e0' } // Set legend label color
+              }
+            }
+          }
+        });
+
+        // 3. Cases per Day of Week (Line Chart)
+        const dayCounts = [0, 0, 0, 0, 0, 0, 0];
+        usersData.forEach(user => {
+          user.call_logs.forEach(log => {
+            if (log.timestamp) {
+              const date = new Date(log.timestamp);
+              if (!isNaN(date)) {
+                const day = date.getDay(); // 0 = Sunday, 6 = Saturday
+                dayCounts[day] += 1;
+              }
+            }
+          });
+        });
+        const dayLabels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const ctx3 = document.getElementById('callsPerDayChart').getContext('2d');
+        new Chart(ctx3, {
+          type: 'line',
+          data: {
+            labels: dayLabels,
+            datasets: [{
+              label: 'Calls per Day of Week',
+              data: dayCounts,
+              fill: false,
+              borderColor: '#ee7313',
+              backgroundColor: '#ee7313',
+              tension: 0.1
+            }]
+          },
+          options: {
+            responsive: true, // Make charts responsive
+            maintainAspectRatio: false, // Allow charts to resize freely
+            plugins: {
+              title: { display: true, text: 'Calls per Day of Week', color: '#e0e0e0' }, // Set title color
+              legend: { display: false }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: { precision: 0, color: '#e0e0e0' }, // Set tick color
+                grid: { color: 'rgba(224, 224, 224, 0.1)' } // Set grid color
+              },
+              x: {
+                ticks: { color: '#e0e0e0' }, // Set tick color
+                grid: { color: 'rgba(224, 224, 224, 0.1)' } // Set grid color
+              }
+            }
+          }
+        });
+
+      } catch (error) {
+        console.error("Error loading team leader data:", error);
+        alert("Error fetching data. Please try again.");
+      }
+    });
+
+    // Excel download function for individual user data
+    function downloadExcel(sanitizedEmail) {
+      const table = document.querySelector(`#details-${sanitizedEmail} table`);
+      // We need to re-format the timestamp when converting to Excel to ensure consistency
+      const rows = [];
+      table.querySelectorAll('tbody tr').forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const timestampCell = cells[0];
+        const rawTimestamp = timestampCell.textContent; // This already contains the formatted timestamp
+        
+        rows.push([
+          rawTimestamp, // Use the already formatted timestamp
+          cells[1].textContent, // Case Number
+          cells[2].textContent, // Call Type
+          cells[3].textContent  // Points
+        ]);
+      });
+
+      const ws_data = [
+        ["Timestamp", "Case Number", "Call Type", "Points"],
+        ...rows
+      ];
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(ws_data);
+      XLSX.utils.book_append_sheet(wb, ws, "User Data");
+      XLSX.writeFile(wb, `${sanitizedEmail}_data.xlsx`);
+    }
+  
+        // Generate Pivot Table (This block targets 'pivot-table-wrapper' which is not in the HTML, thus it will not cause a visible duplicate)
+        // This part needs to be inside the DOMContentLoaded as usersData is defined there
+        // or usersData needs to be globally accessible. For now, assuming it's within a script block.
+
+        // This script block should be after the DOMContentLoaded listener or have access to usersData.
+        // Moving it to below the pivot-table-container div for clarity, and ensuring it uses the
+        // usersData that is fetched.
+
+        </script>
+
+<div class="pivot-table-container">
+    <h2>Daily Case Distribution (Pivot Table View)</h2>
+    <div id="pivot-table-container" style="overflow-x:auto; margin-top: 20px;"></div>
+</div>
+<script>
+    function renderPivotTable(usersData) {
+      const pivot = {};
+
+      usersData.forEach(user => {
+        const username = user.username.toUpperCase();
+        user.call_logs.forEach(log => {
+          if (log.timestamp) {
+            const date = new Date(log.timestamp);
+            // Format date for pivot table to DD-MM-YYYY
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const formattedDate = `${day}-${month}-${year}`;
+
+            if (!pivot[formattedDate]) pivot[formattedDate] = {};
+            if (!pivot[formattedDate][username]) pivot[formattedDate][username] = 0;
+            pivot[formattedDate][username]++;
+          }
+        });
+      });
+
+      const allDates = Object.keys(pivot).sort((a, b) => {
+          // Custom sort for DD-MM-YYYY format
+          const [dayA, monthA, yearA] = a.split('-').map(Number);
+          const [dayB, monthB, yearB] = b.split('-').map(Number);
+          const dateA = new Date(yearA, monthA - 1, dayA);
+          const dateB = new Date(yearB, monthB - 1, dayB);
+          return dateA - dateB;
+      });
+      const allUsers = [...new Set(usersData.map(u => u.username.toUpperCase()))];
+
+      let html = "<table><thead><tr><th>DATE</th>";
+      allUsers.forEach(user => {
+        html += `<th>${user}</th>`;
+      });
+      html += "</tr></thead><tbody>";
+
+      allDates.forEach(date => {
+        html += `<tr><td>${date}</td>`;
+        allUsers.forEach(user => {
+          html += `<td>${pivot[date][user] || 0}</td>`;
+        });
+        html += "</tr>";
+      });
+
+      html += "</tbody></table>";
+      document.getElementById("pivot-table-container").innerHTML = html;
+    }
+
+    // Hook into existing usersData
+    document.addEventListener("DOMContentLoaded", async () => {
+      const response = await fetch("/logs/team_leader_users/?tl_email=auto");
+      const usersData = await response.json();
+      renderPivotTable(usersData);
+
+      // This section was moved from the previous script block and modified for the main download button.
+      document.getElementById("download-users-data").addEventListener("click", async () => {
+        const filterDate = document.getElementById("filter-date").value;
+        const filterMonth = document.getElementById("filter-month").value;
+
+        const allUsersResponse = await fetch("/logs/team_leader_users/?tl_email=auto"); // Re-fetch all data for main download
+        if (!allUsersResponse.ok) {
+          alert("Failed to fetch user data for Excel download.");
+          return;
+        }
+
+        const allUsersData = await allUsersResponse.json();
+        const rows = [];
+
+        allUsersData.forEach(user => {
+          user.call_logs.forEach(log => {
+            if (log.timestamp) {
+              const logDate = new Date(log.timestamp);
+              const year = logDate.getFullYear();
+              const month = String(logDate.getMonth() + 1).padStart(2, '0');
+              const day = String(logDate.getDate()).padStart(2, '0');
+              const hours = String(logDate.getHours()).padStart(2, '0');
+              const minutes = String(logDate.getMinutes()).padStart(2, '0');
+              const seconds = String(logDate.getSeconds()).padStart(2, '0');
+
+              const formattedDateForFilter = `${year}-${month}-${day}`; // For internal filtering (YYYY-MM-DD)
+              const formattedTimestampDisplay = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`; // For display/export (DD-MM-YYYY HH:MM:SS)
+
+              const logMonthOnly = formattedDateForFilter.slice(0, 7); // YYYY-MM
+
+              const include =
+                (filterDate && formattedDateForFilter === filterDate) ||
+                (filterMonth && logMonthOnly === filterMonth) ||
+                (!filterDate && !filterMonth);
+
+              if (include) {
+                rows.push([
+                  user.username,
+                  formattedTimestampDisplay, // Use the new formatted timestamp
+                  log.case_number,
+                  log.call_type,
+                  log.points
+                ]);
+              }
+            }
+          });
+        });
+
+        if (rows.length === 0) {
+          alert("No data found for selected filter.");
+          return;
+        }
+
+        const ws_data = [
+          ["Name", "Timestamp", "Case Number", "Call Type", "Points"], // Updated header
+          ...rows
+        ];
+
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(ws_data);
+        XLSX.utils.book_append_sheet(wb, ws, "Filtered Data");
+
+        const fileName = filterDate
+          ? `Data_${filterDate}.xlsx`
+          : filterMonth
+          ? `Data_${filterMonth}.xlsx`
+          : `All_Users_Data.xlsx`;
+
+        XLSX.writeFile(wb, fileName);
+      });
+    });
+</script>
+
+</body>
+</html>

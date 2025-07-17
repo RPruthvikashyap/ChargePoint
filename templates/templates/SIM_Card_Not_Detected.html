@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SIM Card Not Detected Diagnostic</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .solution-box ul {
+        list-style-type: disc;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .solution-box li {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .note {
+      background-color: #fff;
+      color: #000;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <header>SIM Card Not Detected Diagnostic</header>
+  <div class="container">
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is SIM Card Not Detected?</button>
+    </div>
+    <div class="intro" id="introSection">
+      <h2>SIM Card Not Detected</h2>
+      <p>The "SIM Card Not Detected" fault indicates that the SIM card is either not installed or is incorrectly installed, preventing the station from communicating with the ChargePoint network.</p>
+      <p>This fault is most commonly occurring during initial boot-up on step four of the Set up Wizard for new installs or head swaps.</p>
+      <p>SIM cards are now pre-installed before leaving the CP warehouse in every recent head unit that is shipped out. This fault could therefore indicate that the SIM has failed or been jarred loose during transport.</p>
+    </div>
+
+    <div id="question1" class="card">
+      <p><strong>Step 1:</strong> Disconnect power to the station and re-install the SIM card. Ensure the station is powered off while the SIM is re-seated; otherwise, the SIM Card reader will not reboot, and a power cycle will be necessary.</p>
+      <p>For directions on re-seating the SIM, reference "Directions for reseating (resetting) and cleaning SIM".</p>
+      <p>For directions on removing the connectors from the holster to access the charging head, reference "Manually Releasing Connectors from Holster article".</p>
+      <button onclick="nextStep('solution_check_persistence')">SIM re-seated / Power cycled</button>
+      <div class="progress">Step <span class="step-count">1</span> of 2</div>
+    </div>
+
+    <div id="solution_check_persistence" class="card hidden">
+      <p><strong>Step 2:</strong> Does the "SIM Card Not Detected" fault persist?</p>
+      <button onclick="nextStep('solution_replace_sim')">Yes, fault persists</button>
+      <button onclick="nextStep('solution_cleared')">No, fault cleared</button>
+      <button onclick="nextStep('question1')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 2</div>
+    </div>
+
+    <div id="solution_replace_sim" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Fault Persists:</strong></p>
+        <ul>
+          <li>A replacement SIM card will need to be shipped out.</li>
+        </ul>
+      </div>
+      <div class="note">
+        ⚠️ If re-seating the SIM and power cycling does not resolve the issue, the SIM card itself may have failed.
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="solution_cleared" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Fault Cleared!</strong></p>
+        <ul>
+          <li>The SIM Card Not Detected fault has cleared. Monitor the station for stable communication.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+    }
+
+    function resetFlow() {
+      nextStep('question1');
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>

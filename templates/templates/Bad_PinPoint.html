@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bad PinPoint Diagnostic</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .solution-box ul {
+        list-style-type: disc;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .solution-box li {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .note {
+      background-color: #fff;
+      color: #000;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .image-container {
+        margin: 1.5rem 0;
+        text-align: center;
+    }
+    .image-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+  <header>Bad PinPoint Diagnostic</header>
+  <div class="container">
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is Bad PinPoint?</button>
+    </div>
+    <div class="intro" id="introSection">
+      <h2>Bad PinPoint</h2>
+      <p>A "Bad PinPoint" refers to an incorrect geographical location displayed for the station on the map within the Network Operating System (NOS) Prop Sheet. This means the station's pinpoint is not accurately reflecting its physical location.</p>
+    </div>
+
+    <div id="step1_config_edit" class="card">
+      <p><strong>Step 1: Login to NOS and Access Configuration</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>Log in to NOS and pull up the station prop-sheet.</li>
+          <li>Go to the **Configuration** tab.</li>
+          <li>Click on the **Edit** button.</li>
+        </ul>
+      </div>
+      <div class="image-container">
+        <img src="/static/9b6bc473-1953-4961-9e79-4274eefdd6cc.png" alt="Screenshot showing Configuration tab and Edit button in NOS.">
+      </div>
+      <button onclick="nextStep('step2_drag_pin')">Proceed to PinPoint Correction</button>
+      <div class="progress">Step <span class="step-count">1</span> of 3</div>
+    </div>
+
+    <div id="step2_drag_pin" class="card hidden">
+      <p><strong>Step 2: Drag the Pin to the Correct Location</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>In the MAP section where the wrong pinpoint is showing up, **drag the pin to the correct physical location** of the station.</li>
+          <li>Observe that the **Latitude** and **Longitude** values will automatically update as you drag the pin.</li>
+        </ul>
+      </div>
+      <div class="image-container">
+        <img src="/static/3dc50f82-67b7-4515-9e34-dd35e2b25ab2.png" alt="Screenshot showing map with draggable pin and updated Latitude/Longitude fields.">
+      </div>
+      <button onclick="nextStep('step3_save')">PinPoint Corrected</button>
+      <button onclick="nextStep('step1_config_edit')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 3</div>
+    </div>
+
+    <div id="step3_save" class="card hidden">
+      <p><strong>Step 3: Save the Updated Configuration</strong></p>
+      <div class="solution-box">
+        <ul>
+          <li>Scroll down to the bottom of the Configuration page.</li>
+          <li>Click on the **Save** button to apply the changes.</li>
+        </ul>
+      </div>
+      <p>The station's pinpoint should now be correctly updated in the system.</p>
+      <button onclick="resetFlow()">Complete</button>
+      <button onclick="nextStep('step2_drag_pin')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 3</div>
+    </div>
+
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+    }
+
+    function resetFlow() {
+      nextStep('step1_config_edit');
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>

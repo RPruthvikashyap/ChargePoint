@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pilot Unreachable Diagnostic</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .solution-box ul {
+        list-style-type: disc;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .solution-box li {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .note {
+      background-color: #fff;
+      color: #000;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <header>Pilot Unreachable Diagnostic</header>
+  <div class="container">
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is Pilot Unreachable?</button>
+    </div>
+    <div class="intro" id="introSection">
+      <h2>Pilot Unreachable</h2>
+      <p>Pilot Unreachable is thrown on a CT4k station when the firmware monitoring the 12V Pilot signal sees a voltage outside of tolerance. E.g. 14V when it expects 12V.</p>
+    </div>
+
+    <div id="question1" class="card">
+      <p><strong>Step 1:</strong> Pull the latest status in the Status/Actions tab and check 'outlet' for the status of each port. </p>
+      <p>Example of "OUT_OF_SERVICE" state: <code>1,J1772,FwRev=32,SSM1Rev=40,SSM2Rev=40,,ENABLE,OUT_OF_SERVICE,NO_VEHICLE,IDLE,0,NONE,8,NONE,0xA1,NA</code></p>
+      <button onclick="nextStep('question2')">Status checked</button>
+      <div class="progress">Step <span class="step-count">1</span> of 3</div>
+    </div>
+
+    <div id="question2" class="card hidden">
+      <p><strong>Step 2:</strong> Send a Reboot in the Status/Actions tab. Wait 5 minutes to make sure the station has rebooted or compare the last time the station made communication under the port status.</p>
+      <p>After reboot, pull the latest status in the Status/Actions tab again. </p>
+      <button onclick="nextStep('question3')">Reboot done, status re-checked</button>
+      <button onclick="nextStep('question1')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 3</div>
+    </div>
+
+    <div id="question3" class="card hidden">
+      <p><strong>Step 3:</strong> Did the fault clear? (i.e., 'lcd_state' shows "PortState[1,2]=Available,Available" and "outlet" shows "Enabled, Available")</p>
+      <button onclick="nextStep('solution_cleared')">Yes, fault cleared</button>
+      <button onclick="nextStep('solution_persists')">No, fault persists</button>
+      <button onclick="nextStep('question2')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 3</div>
+    </div>
+
+    <div id="solution_cleared" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Fault Cleared!</strong></p>
+        <ul>
+          <li>The error cleared after a reboot, indicating it was likely spurious.</li>
+          <li>Monitor the station for consistent good sessions.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="solution_persists" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Fault Persists. Further investigation required.</strong></p>
+        <ul>
+          <li>Check if it's a **legacy station or a MACAW station**. If it's a MACAW station, check how spurious the fault is.</li>
+          <li>Check when the station was last replaced using the **EVSE ID**.</li>
+          <li>If required, raise an **engineering ticket** for further investigation.</li>
+          <li>If the issue still persists after these steps, proceed with a **head replacement**.</li>
+        </ul>
+      </div>
+      <div class="note">
+        ⚠️ Head replacement should be considered if the issue remains after all software and basic diagnostic steps.
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+    }
+
+    function resetFlow() {
+      nextStep('question1');
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>

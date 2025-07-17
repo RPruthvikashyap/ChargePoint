@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Slow Charging Speed Diagnostic</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .solution-box ul {
+        list-style-type: disc;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .solution-box li {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .note {
+      background-color: #fff;
+      color: #000;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <header>Slow Charging Speed Diagnostic</header>
+  <div class="container">
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is Slow Charging Speed?</button>
+    </div>
+    <div class="intro" id="introSection">
+      <h2>Understanding Charging Capacity & Charging Rate</h2>
+      <p>For a CT4000 station, the output rating for each port is typically **7.2 kW (240V @ 30A)**. Theoretically, if a charger operates at its maximum capacity for one hour, it dispenses 7.2 kilowatt-hours (kWh) of energy.</p>
+      <h3>Breakdown:</h3>
+      <ul>
+        <li>**Power (P) = Voltage (V) × Current (I)**<br>
+        P = 240 volts × 30 amps = 7200 watts = 7.2 kW</li>
+        <li>**Energy (E) = Power (P) × Time (t)**<br>
+        E = 7.2 kW × 1 hour = 7.2 kWh</li>
+      </ul>
+      <p>Therefore, under ideal conditions, the charger would deliver 7.2 kWh of energy in one hour.</p>
+      <h3>Factors Affecting Actual Energy Delivered:</h3>
+      <ul>
+        <li>**Inefficiencies in the charging process:** Some energy is lost as heat during charging.</li>
+        <li>**Battery charging limitations:** The EV battery's maximum charging rate might be lower than the station's output.</li>
+        <li>**Voltage fluctuations:** Variations in voltage supplied to the station can affect the charging rate.</li>
+      </ul>
+    </div>
+
+    <div id="step1_verify_issue" class="card">
+      <p><strong>Step 1: Verify/Validate the Slow Charging Issue</strong></p>
+      <div class="solution-box">
+        <p>Analyze historical session data to identify if the slow charging issue is consistent across all sessions or specific to particular vehicles (Make, Model, Year). This helps determine if the problem originates from the vehicle itself.</p>
+        <p>Pull a session details table for the station and export it with meter data. Analyze the **Peak Power** and **Avg Rolling Power** values for a few sessions of interest.</p>
+        <ul>
+          <li>**Peak Power:** The maximum power output delivered by the charging station during the session (in kW). A higher peak power means faster charging.</li>
+          <li>**Average Rolling Power:** The average power delivered over a specific time period during the charging session (in kW). This reflects the actual charging speed achieved and can fluctuate.</li>
+        </ul>
+      </div>
+      <p>Have you validated a consistent slow charging issue with the station?</p>
+      <button onclick="nextStep('step2_configuration_checks')">Yes, consistent issue found</button>
+      <button onclick="nextStep('solution_monitor_or_no_issue')">No, issue not consistent or not found</button>
+      <button onclick="toggleIntro()">Back to Understanding</button>
+      <div class="progress">Step <span class="step-count">1</span> of 3</div>
+    </div>
+
+    <div id="step2_configuration_checks" class="card hidden">
+      <p><strong>Step 2: Identify Cause - Configuration Checks</strong></p>
+      <p>By this stage, you've validated a slow charging issue. Now, let's look at potential configuration causes:</p>
+      <div class="solution-box">
+        <ul>
+          <li>**Circuit Sharing:** This can drastically affect output. For a CT4000 station with circuit sharing, the output rating for a port would be **3.8 kW (240V AC @ 16A)**.</li>
+          <li>**Power Sharing:** This is used to set a power ceiling on a group of stations, which can reduce the individual charging rate.</li>
+          <li>**Power Select:** If the power select setting in NOS is set to a lower value than the actual breaker capacity, it will cause slow charging.</li>
+        </ul>
+      </div>
+      <p>Have configuration settings been checked and corrected if necessary?</p>
+      <button onclick="nextStep('step3_physical_checks')">Yes, config checked/corrected</button>
+      <button onclick="nextStep('step2_configuration_checks')">No, more config checks needed</button>
+      <button onclick="nextStep('step1_verify_issue')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 3</div>
+    </div>
+
+    <div id="step3_physical_checks" class="card hidden">
+      <p><strong>Step 3: Identify Cause - Physical Checks</strong></p>
+      <p>If configuration is correct, examine physical aspects:</p>
+      <div class="solution-box">
+        <ul>
+          <li>**Wiring:** Improperly configured wiring can cause fluctuations in power output. Verify wiring is done properly according to ChargePoint Standards.</li>
+          <li>**Voltage:** Low voltage or voltage fluctuations can significantly affect the charging rate. It's crucial to verify voltages are within ChargePoint standards.</li>
+          <li>**Distance:** The distance between the electrical panel and the station is related to the charging rate's health. Larger distances cause voltage drop. A station wired with 6 or 8 AWG shouldn’t be more than 125ft from the Electric Service panel.</li>
+        </ul>
+      </div>
+      <p>Have physical aspects (wiring, voltage, distance) been checked and corrected if necessary?</p>
+      <button onclick="nextStep('solution_issue_resolved_or_replace')">Yes, physicals checked/corrected</button>
+      <button onclick="nextStep('step3_physical_checks')">No, more physical checks needed</button>
+      <button onclick="nextStep('step2_configuration_checks')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 3</div>
+    </div>
+
+    <div id="solution_monitor_or_no_issue" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Issue Not Consistent or Not Found:</strong></p>
+        <ul>
+          <li>The slow charging issue does not appear consistent or was not validated based on initial data.</li>
+          <li>Continue to monitor the station, or re-evaluate the initial assessment of the problem. The issue might be intermittent or vehicle-specific.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart Diagnostic</button>
+    </div>
+
+    <div id="solution_issue_resolved_or_replace" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Diagnostic Complete:</strong></p>
+        <p>By now, you should have identified and potentially resolved the cause of the slow charging speed.</p>
+        <ul>
+          <li>If the issue was resolved by correcting a configuration or physical problem, the station should now charge at expected speeds.</li>
+          <li>However, if you have gone through all the above steps and cannot find any possible causes, please proceed with a **head replacement**.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart Diagnostic</button>
+    </div>
+
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+    }
+
+    function resetFlow() {
+      nextStep('step1_verify_issue'); // Start from the verification step
+      // Ensure intro is hidden on reset
+      document.getElementById('introSection').style.display = 'none';
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>

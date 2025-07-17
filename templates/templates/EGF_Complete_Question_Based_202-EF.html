@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Earth Ground Fault Diagnostic (202-EF)</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .note {
+      background-color: #fff;
+      color: #000;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>Earth Ground Fault Diagnostic (202-EF)</header>
+  <div class="container">
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is Earth Ground Fault?</button>
+    </div>
+    <div class="intro" id="introSection">
+      <h2>Fault Code: 202-EF</h2>
+      <p><strong>Status:</strong> Needs Service</p>
+      <p><strong>Reason:</strong> Earth Fault – Station out of service.</p>
+      <p><strong>Description:</strong><br>
+      The station has detected insufficient or poor grounding, typically due to issues in the site's electrical infrastructure (especially transformer grounding). Fault can be confirmed from Alarm Logs.
+      </p>
+    </div>
+
+    <div id="question1" class="card">
+      <p><strong>Step 1:</strong> Check the Alarm Logs in the Station Prop Sheet.<br>Navigate to <em>Status and Actions > Alarms > View</em>.<br>Is Earth Ground Fault (EGF) present?</p>
+      <button onclick="nextStep('question2')">Yes</button>
+      <button onclick="nextStep('solution_monitor')">No</button>
+      <div class="progress">Step <span class="step-count">1</span> of 4</div>
+    </div>
+
+    <div id="question2" class="card hidden">
+      <p><strong>Step 2:</strong> Are there other stations nearby on the site?</p>
+      <button onclick="nextStep('question3_site')">Yes, and they have EGF</button>
+      <button onclick="nextStep('question3_isolated')">No, this is isolated</button>
+      <button onclick="nextStep('question1')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 4</div>
+    </div>
+
+    <div id="question3_site" class="card hidden">
+      <p><strong>Step 3:</strong> Site-level grounding issue suspected. Ask customer to:</p>
+      <ul>
+        <li>Check if secondary neutral bus and ground bus are bonded together at transformer</li>
+        <li>Get impedance between breaker ground and transformer ground</li>
+        <li>Check for any open neutral or floating ground</li>
+      </ul>
+      <button onclick="nextStep('solution_site_resolution')">Proceed</button>
+      <button onclick="nextStep('question2')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 4</div>
+    </div>
+
+    <div id="question3_isolated" class="card hidden">
+      <p><strong>Step 3:</strong> Station-specific issue. Ask customer to:</p>
+      <ul>
+        <li>Check station ground and breaker ground</li>
+        <li>Use ground clamp meter to check impedance values</li>
+        <li>Ensure there are no open lines or improper bonding</li>
+      </ul>
+      <button onclick="nextStep('solution_station_resolution')">Proceed</button>
+      <button onclick="nextStep('question2')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 4</div>
+    </div>
+
+    <div id="solution_monitor" class="card hidden">
+      <p>No EGF in logs. Continue to monitor station for future alerts.</p>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="solution_site_resolution" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Site-wide grounding issue confirmed.</strong></p>
+        <ul>
+          <li>Get pictures of transformer nameplate (WYE config)</li>
+          <li>Get photos showing bonding of neutral to ground bus</li>
+          <li>Get impedance measurements and photos of breaker and station grounding</li>
+        </ul>
+      </div>
+      <div class="note">
+        ⚠️ Customer must hire a certified electrician to carry out these checks. ChargePoint does not dispatch technicians for grounding or impedance validation.
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="solution_station_resolution" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Isolated grounding issue at this station.</strong></p>
+        <ul>
+          <li>Certified electrician must test ground integrity using a clamp meter</li>
+          <li>Check for impedance, open line, or loose bond on station/breaker ground</li>
+          <li>Capture and share ground readings and photographs of grounding connections</li>
+        </ul>
+      </div>
+      <div class="note">
+        ⚠️ Customer must hire a certified electrician to test and validate station-level grounding. ChargePoint support cannot perform on-site grounding fixes.
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+    }
+
+    function resetFlow() {
+      nextStep('question1');
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>

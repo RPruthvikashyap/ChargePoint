@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>No Power Diagnostic</title>
+  <style>
+    :root {
+      --main-orange: #ee7313;
+      --dark-bg: #1c1c1e;
+      --primary: #4682B4;
+      --primary-hover: #5A9FD4;
+      --light: #f4f4f4;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--main-orange), #ff9933);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--dark-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 2rem 1rem;
+      max-width: 960px;
+      margin: auto;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    p {
+      font-size: 1.3rem;
+    }
+
+    button {
+      padding: 0.8rem 1.6rem;
+      margin: 0.5rem;
+      font-size: 1.1rem;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    .solution-box {
+      background-color: var(--light);
+      color: #222;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-toggle {
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .intro {
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+
+    .progress {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      color: #ffe;
+      opacity: 0.9;
+    }
+
+    .step-count {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .note {
+      background-color: #fff;
+      color: #000;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>No Power Diagnostic</header>
+  <div class="container">
+    <div class="intro-toggle">
+      <button onclick="toggleIntro()">What is No Power?</button>
+    </div>
+    <div class="intro" id="introSection">
+      <h2>No Power</h2>
+      <p><strong>Description:</strong><br>
+      Station last reported as unreachable in NOS; Station does not respond to card taps; Station Display and button LED's are dark.
+      </p>
+    </div>
+
+    <div id="question1" class="card">
+      <p><strong>Step 1:</strong> Have the customer power cycle the station breakers. Turn off breakers for 2 minutes, then turn them back on.</p>
+      <button onclick="nextStep('question2')">Done</button>
+      <div class="progress">Step <span class="step-count">1</span> of 4</div>
+    </div>
+
+    <div id="question2" class="card hidden">
+      <p><strong>Step 2:</strong> Did the station power on after the breaker cycle?</p>
+      <button onclick="nextStep('solution_resolved')">Yes</button>
+      <button onclick="nextStep('question3')">No</button>
+      <button onclick="nextStep('question1')">Back</button>
+      <div class="progress">Step <span class="step-count">2</span> of 4</div>
+    </div>
+
+    <div id="question3" class="card hidden">
+      <p><strong>Step 3:</strong> Is it possible to swap the head unit with another bollard on site?</p>
+      <button onclick="nextStep('question4_head_swap')">Yes</button>
+      <button onclick="nextStep('question4_no_head_swap')">No</button>
+      <button onclick="nextStep('question2')">Back</button>
+      <div class="progress">Step <span class="step-count">3</span> of 4</div>
+    </div>
+
+    <div id="question4_head_swap" class="card hidden">
+      <p><strong>Step 4:</strong> After swapping the head, did the station power on?</p>
+      <button onclick="nextStep('solution_head_issue')">Yes (Original head is faulty)</button>
+      <button onclick="nextStep('solution_wiring_voltage')">No (Issue is with wiring/voltage)</button>
+      <button onclick="nextStep('question3')">Back</button>
+      <div class="progress">Step <span class="step-count">4</span> of 4</div>
+    </div>
+
+    <div id="question4_no_head_swap" class="card hidden">
+      <p><strong>Step 4:</strong> You'll need to check the wiring and take voltage readings. Are you an Electrician/Dispatch?</p>
+      <button onclick="nextStep('solution_electrician_voltage')">Yes</button>
+      <button onclick="nextStep('solution_no_electrician')">No</button>
+      <button onclick="nextStep('question3')">Back</button>
+      <div class="progress">Step <span class="step-count">4</span> of 4</div>
+    </div>
+
+    <div id="solution_resolved" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Issue resolved!</strong> Station powered on after breaker cycle.</p>
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="solution_head_issue" class="card hidden">
+      <div class="solution-box">
+        <p><strong>The original head unit is likely faulty.</strong></p>
+        <ul>
+          <li>Proceed with replacement of the head unit and power plate.</li>
+        </ul>
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="solution_wiring_voltage" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Issue is with wiring or voltage.</strong></p>
+        <ul>
+          <li>Get an electrician to validate wiring (CT4000 Station Wiring Verification).</li>
+          <li>Have them take voltage readings at the Breakers and at the Station.</li>
+          <li>If voltages are correct (208V to 240V), proceed with replacement options (head and power-plate).</li>
+          <li>If voltage readings are bad, the owner needs to hire an electrician to address site electrical issues.</li>
+        </ul>
+      </div>
+      <div class="note">
+        ⚠️ ChargePoint does not dispatch technicians for electrical work. Customer must hire a certified electrician.
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="solution_electrician_voltage" class="card hidden">
+      <div class="solution-box">
+        <p><strong>Proceed with voltage readings and wiring validation.</strong></p>
+        <ul>
+          <li>Validate wiring (CT4000 Station Wiring Verification).</li>
+          <li>Take voltage readings at the Breakers and at the Station.</li>
+          <li>If the Voltages are correct (208V to 240V), proceed with replacement options (head and power-plate).</li>
+          <li>If the Voltage readings are bad, the owner will need to hire an electrician and address the site electrical issues.</li>
+        </ul>
+      </div>
+      <div class="note">
+        ⚠️ If issue persists after voltages are checked, the head and power-plate will need to be replaced.
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+    <div id="solution_no_electrician" class="card hidden">
+      <div class="solution-box">
+        <p><strong>A certified electrician is required.</strong></p>
+        <ul>
+          <li>The owner will need to hire a certified electrician to validate wiring and take voltage readings at the breakers and the station.</li>
+          <li>They should verify correct voltages (208V to 240V).</li>
+          <li>If voltages are good but issue persists, replacement of head and power-plate may be needed.</li>
+          <li>If voltages are bad, site electrical issues must be addressed.</li>
+        </ul>
+      </div>
+      <div class="note">
+        ⚠️ ChargePoint does not dispatch technicians for electrical work.
+      </div>
+      <button onclick="resetFlow()">Restart</button>
+    </div>
+
+  </div>
+
+  <script>
+    function nextStep(nextId) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById(nextId).classList.remove('hidden');
+    }
+
+    function resetFlow() {
+      nextStep('question1');
+    }
+
+    function toggleIntro() {
+      const intro = document.getElementById('introSection');
+      intro.style.display = intro.style.display === 'none' || intro.style.display === '' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>
