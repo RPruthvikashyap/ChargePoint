@@ -5,12 +5,9 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Team Leader Dashboard</title>
-<link href="static/cpp.css" rel="stylesheet"/> <!-- Changed to cpp.css -->
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<!-- XLSX library for Excel export -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="static/cpp.css" rel="stylesheet"/> <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<!-- Chart.js library for charts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
 <style>
     /* Reset and base styling */
@@ -271,45 +268,39 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Consistent with other buttons */
     }
     /* Charts Section - Adapted from Major_Beta09.html and cpp.css */
+    /* Removed flex properties from .chart-grid as Bootstrap row will handle them */
     .charts-container {
       margin-top: 40px;
     }
+    /* .chart-grid styling for margins; flex properties removed */
     .chart-grid {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      align-items: center;
-      margin: 20px 0;
+      margin: 20px 0; /* Keeps vertical spacing */
     }
-    .chart-grid canvas { /* Styles applied directly to canvas */
-      flex: 1 1 250px;
-      max-width: 45%;
-      margin: 20px;
-      background-color: #2B3B4E; /* Dark background for charts */
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      transition: transform 0.3s ease; /* Added hover effect */
+
+    /* Apply common chart styling directly to canvas elements within Bootstrap columns */
+    .col-md-6 .chart-box canvas, .col-12 .chart-fullwidth canvas {
+        width: 100%; /* Important for responsiveness within Bootstrap columns */
+        height: auto; /* Allow Chart.js to manage height */
+        min-height: 350px; /* Increased minimum height for more vertical presence */
+        background-color: #2B3B4E; /* Dark background for charts */
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        transition: transform 0.3s ease; /* Added hover effect */
+        margin-bottom: 20px; /* Spacing between charts and rows */
     }
-    .chart-grid canvas:hover { /* Added hover effect */
+
+    /* Specific styles for hover effect on canvases */
+    .col-md-6 .chart-box canvas:hover, .col-12 .chart-fullwidth canvas:hover {
         transform: scale(1.02);
     }
+
     .chart-fullwidth {
       text-align: center;
     }
-    .chart-fullwidth canvas { /* Styles applied directly to canvas */
-      width: 100%;
-      max-width: 800px;
-      margin: 20px 0;
-      background-color: #2B3B4E; /* Dark background for charts */
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      padding: 10px;
-      transition: transform 0.3s ease; /* Added hover effect */
-    }
-    .chart-fullwidth canvas:hover { /* Added hover effect */
-        transform: scale(1.02);
-    }
+    /* The .chart-fullwidth canvas styles are now merged with the general canvas styles above */
+
+
     /* Pivot Table - Adapted from cpp.css */
     .pivot-container {
       margin-top: 40px;
@@ -430,23 +421,17 @@
 </style>
 </head>
 <body>
-  <div class="navbar">
+    <div class="navbar">
         <img alt="Logo" class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/ChargePoint_logo.svg/284px-ChargePoint_logo.svg.png"/>
         <a class="active" href="#">Home</a>
-        <!--a href="/ask-me">Ask Me</a-->
         <a href="/auth/tl-logout/">Log Out</a>
         <a href="/tl-profile" id="user-name">{{ name }}</a>
     </div>
-<!-- Taskbar / Navbar -->
-<!-- div class="navbar" -->
 </div>
 </div>
-<!-- /div -->
 <div class="dashboard-container">
 
 <h1>Team Leader Dashboard</h1>
-<!-- TL Email Dropdown (if needed in future) -->
-<!-- Master Summary Table -->
 <div class="summary-container">
 <h2>Summary of Users and Cases</h2>
 <table id="summary-table">
@@ -459,33 +444,32 @@
 </tr>
 </thead>
 <tbody>
-<!-- Rows will be populated dynamically -->
 </tbody>
 </table>
 <div style="margin-top: 20px; display: flex; gap: 15px; align-items: center;">
-  <label for="filter-date">Filter by Date:</label>
-  <input type="date" id="filter-date">
+    <label for="filter-date">Filter by Date:</label>
+    <input type="date" id="filter-date">
 
-  <label for="filter-month">or Month:</label>
-  <input type="month" id="filter-month">
+    <label for="filter-month">or Month:</label>
+    <input type="month" id="filter-month">
 
-  <button id="download-users-data" class="download-btn">Download Excel</button> <!-- Removed inline style -->
+    <button id="download-users-data" class="download-btn">Download Excel</button> </div>
 </div>
-</div>
-<!-- Analytics Charts -->
-<div class="charts-container">
-  <h2>Analytics Overview</h2>
-  <div class="chart-grid">
-    <div class="chart-box">
-      <canvas id="casesPerUserChart" width="400" height="300"></canvas>
+<div class="charts-container container-fluid"> <h2>Analytics Overview</h2>
+    <div class="row"> <div class="col-md-6 mb-4"> <div class="chart-box">
+                <canvas id="casesPerUserChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4"> <div class="chart-box">
+                <canvas id="callTypeDistributionChart"></canvas>
+            </div>
+        </div>
     </div>
-    <div class="chart-box">
-      <canvas id="callTypeDistributionChart" width="400" height="300"></canvas>
+    <div class="row"> <div class="col-12"> <div class="chart-fullwidth">
+                <canvas id="callsPerDayChart"></canvas>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="chart-fullwidth">
-    <canvas id="callsPerDayChart" width="800" height="300"></canvas>
-  </div>
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", async () => {
@@ -529,14 +513,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            ${user.call_logs.map(log => `
-                                <tr>
-                                    <td>${log.timestamp || ''}</td>
-                                    <td>${log.case_number}</td>
-                                    <td>${log.call_type}</td>
-                                    <td>${log.points}</td>
-                                </tr>
-                            `).join("")}
+                            ${user.call_logs.map(log => {
+                                // Format timestamp to DD-MM-YYYY HH:MM:SS
+                                let formattedTimestamp = '';
+                                if (log.timestamp) {
+                                    const logDate = new Date(log.timestamp);
+                                    if (!isNaN(logDate)) {
+                                        const day = String(logDate.getDate()).padStart(2, '0');
+                                        const month = String(logDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+                                        const year = logDate.getFullYear();
+                                        const hours = String(logDate.getHours()).padStart(2, '0');
+                                        const minutes = String(logDate.getMinutes()).padStart(2, '0');
+                                        const seconds = String(logDate.getSeconds()).padStart(2, '0');
+                                        formattedTimestamp = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+                                    }
+                                }
+                                return `
+                                    <tr>
+                                        <td>${formattedTimestamp || ''}</td>
+                                        <td>${log.case_number}</td>
+                                        <td>${log.call_type}</td>
+                                        <td>${log.points}</td>
+                                    </tr>
+                                `;
+                            }).join("")}
                         </tbody>
                     </table>
                     <button class="download-btn" id="download-${sanitizedEmail}" onclick="downloadExcel('${sanitizedEmail}')">Download Excel</button>
@@ -550,9 +550,11 @@
             if (userDetailsRow.classList.contains("show")) {
               userDetailsRow.classList.remove("show");
               downloadBtn.style.display = "none";
-              setTimeout(() => {
+              // Using transitionend event listener for smoother hiding
+              userDetailsRow.addEventListener('transitionend', function handler() {
                 userDetailsRow.style.display = "none";
-              }, 400);
+                userDetailsRow.removeEventListener('transitionend', handler);
+              });
             } else {
               userDetailsRow.style.display = "table-row";
               setTimeout(() => {
@@ -580,12 +582,22 @@
             }]
           },
           options: {
+            responsive: true, // Make charts responsive
+            maintainAspectRatio: false, // Allow charts to resize freely
             plugins: {
-              title: { display: true, text: 'Cases per User' },
-              legend: { display: false }
+              title: { display: true, text: 'Cases per User', color: '#e0e0e0' }, // Set title color
+              legend: { display: false },
             },
             scales: {
-              y: { beginAtZero: true }
+              y: {
+                beginAtZero: true,
+                ticks: { color: '#e0e0e0' }, // Set tick color
+                grid: { color: 'rgba(224, 224, 224, 0.1)' } // Set grid color
+              },
+              x: {
+                ticks: { color: '#e0e0e0' }, // Set tick color
+                grid: { color: 'rgba(224, 224, 224, 0.1)' } // Set grid color
+              }
             }
           }
         });
@@ -614,9 +626,14 @@
             }]
           },
           options: {
+            responsive: true, // Make charts responsive
+            maintainAspectRatio: false, // Allow charts to resize freely
             plugins: {
-              title: { display: true, text: 'Call Types Distribution' },
-              legend: { position: 'bottom' }
+              title: { display: true, text: 'Call Types Distribution', color: '#e0e0e0' }, // Set title color
+              legend: {
+                position: 'bottom',
+                labels: { color: '#e0e0e0' } // Set legend label color
+              }
             }
           }
         });
@@ -650,12 +667,22 @@
             }]
           },
           options: {
+            responsive: true, // Make charts responsive
+            maintainAspectRatio: false, // Allow charts to resize freely
             plugins: {
-              title: { display: true, text: 'Calls per Day of Week' },
+              title: { display: true, text: 'Calls per Day of Week', color: '#e0e0e0' }, // Set title color
               legend: { display: false }
             },
             scales: {
-              y: { beginAtZero: true, ticks: { precision: 0 } }
+              y: {
+                beginAtZero: true,
+                ticks: { precision: 0, color: '#e0e0e0' }, // Set tick color
+                grid: { color: 'rgba(224, 224, 224, 0.1)' } // Set grid color
+              },
+              x: {
+                ticks: { color: '#e0e0e0' }, // Set tick color
+                grid: { color: 'rgba(224, 224, 224, 0.1)' } // Set grid color
+              }
             }
           }
         });
@@ -666,158 +693,176 @@
       }
     });
 
-    // Excel download function
+    // Excel download function for individual user data
     function downloadExcel(sanitizedEmail) {
       const table = document.querySelector(`#details-${sanitizedEmail} table`);
-      const wb = XLSX.utils.table_to_book(table, { sheet: "User Data" });
+      // We need to re-format the timestamp when converting to Excel to ensure consistency
+      const rows = [];
+      table.querySelectorAll('tbody tr').forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const timestampCell = cells[0];
+        const rawTimestamp = timestampCell.textContent; // This already contains the formatted timestamp
+        
+        rows.push([
+          rawTimestamp, // Use the already formatted timestamp
+          cells[1].textContent, // Case Number
+          cells[2].textContent, // Call Type
+          cells[3].textContent  // Points
+        ]);
+      });
+
+      const ws_data = [
+        ["Timestamp", "Case Number", "Call Type", "Points"],
+        ...rows
+      ];
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(ws_data);
+      XLSX.utils.book_append_sheet(wb, ws, "User Data");
       XLSX.writeFile(wb, `${sanitizedEmail}_data.xlsx`);
     }
   
-
         // Generate Pivot Table (This block targets 'pivot-table-wrapper' which is not in the HTML, thus it will not cause a visible duplicate)
-        const pivotMap = {};
-        usersData.forEach(user => {
+        // This part needs to be inside the DOMContentLoaded as usersData is defined there
+        // or usersData needs to be globally accessible. For now, assuming it's within a script block.
+
+        // This script block should be after the DOMContentLoaded listener or have access to usersData.
+        // Moving it to below the pivot-table-container div for clarity, and ensuring it uses the
+        // usersData that is fetched.
+
+        </script>
+
+<div class="pivot-table-container">
+    <h2>Daily Case Distribution (Pivot Table View)</h2>
+    <div id="pivot-table-container" style="overflow-x:auto; margin-top: 20px;"></div>
+</div>
+<script>
+    function renderPivotTable(usersData) {
+      const pivot = {};
+
+      usersData.forEach(user => {
+        const username = user.username.toUpperCase();
+        user.call_logs.forEach(log => {
+          if (log.timestamp) {
+            const date = new Date(log.timestamp);
+            // Format date for pivot table to DD-MM-YYYY
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const formattedDate = `${day}-${month}-${year}`;
+
+            if (!pivot[formattedDate]) pivot[formattedDate] = {};
+            if (!pivot[formattedDate][username]) pivot[formattedDate][username] = 0;
+            pivot[formattedDate][username]++;
+          }
+        });
+      });
+
+      const allDates = Object.keys(pivot).sort((a, b) => {
+          // Custom sort for DD-MM-YYYY format
+          const [dayA, monthA, yearA] = a.split('-').map(Number);
+          const [dayB, monthB, yearB] = b.split('-').map(Number);
+          const dateA = new Date(yearA, monthA - 1, dayA);
+          const dateB = new Date(yearB, monthB - 1, dayB);
+          return dateA - dateB;
+      });
+      const allUsers = [...new Set(usersData.map(u => u.username.toUpperCase()))];
+
+      let html = "<table><thead><tr><th>DATE</th>";
+      allUsers.forEach(user => {
+        html += `<th>${user}</th>`;
+      });
+      html += "</tr></thead><tbody>";
+
+      allDates.forEach(date => {
+        html += `<tr><td>${date}</td>`;
+        allUsers.forEach(user => {
+          html += `<td>${pivot[date][user] || 0}</td>`;
+        });
+        html += "</tr>";
+      });
+
+      html += "</tbody></table>";
+      document.getElementById("pivot-table-container").innerHTML = html;
+    }
+
+    // Hook into existing usersData
+    document.addEventListener("DOMContentLoaded", async () => {
+      const response = await fetch("/logs/team_leader_users/?tl_email=auto");
+      const usersData = await response.json();
+      renderPivotTable(usersData);
+
+      // This section was moved from the previous script block and modified for the main download button.
+      document.getElementById("download-users-data").addEventListener("click", async () => {
+        const filterDate = document.getElementById("filter-date").value;
+        const filterMonth = document.getElementById("filter-month").value;
+
+        const allUsersResponse = await fetch("/logs/team_leader_users/?tl_email=auto"); // Re-fetch all data for main download
+        if (!allUsersResponse.ok) {
+          alert("Failed to fetch user data for Excel download.");
+          return;
+        }
+
+        const allUsersData = await allUsersResponse.json();
+        const rows = [];
+
+        allUsersData.forEach(user => {
           user.call_logs.forEach(log => {
             if (log.timestamp) {
-              const date = new Date(log.timestamp).toISOString().split("T")[0];
-              if (!pivotMap[date]) pivotMap[date] = {};
-              if (!pivotMap[date][user.username]) pivotMap[date][user.username] = 0;
-              pivotMap[date][user.username]++;
+              const logDate = new Date(log.timestamp);
+              const year = logDate.getFullYear();
+              const month = String(logDate.getMonth() + 1).padStart(2, '0');
+              const day = String(logDate.getDate()).padStart(2, '0');
+              const hours = String(logDate.getHours()).padStart(2, '0');
+              const minutes = String(logDate.getMinutes()).padStart(2, '0');
+              const seconds = String(logDate.getSeconds()).padStart(2, '0');
+
+              const formattedDateForFilter = `${year}-${month}-${day}`; // For internal filtering (YYYY-MM-DD)
+              const formattedTimestampDisplay = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`; // For display/export (DD-MM-YYYY HH:MM:SS)
+
+              const logMonthOnly = formattedDateForFilter.slice(0, 7); // YYYY-MM
+
+              const include =
+                (filterDate && formattedDateForFilter === filterDate) ||
+                (filterMonth && logMonthOnly === filterMonth) ||
+                (!filterDate && !filterMonth);
+
+              if (include) {
+                rows.push([
+                  user.username,
+                  formattedTimestampDisplay, // Use the new formatted timestamp
+                  log.case_number,
+                  log.call_type,
+                  log.points
+                ]);
+              }
             }
           });
         });
 
-        const wrapper = document.getElementById("pivot-table-wrapper");
-        const users = [...new Set(usersData.map(u => u.username))];
-        const dates = Object.keys(pivotMap).sort();
-
-        let html = "<table><thead><tr><th>DATE</th>";
-        users.forEach(u => html += `<th>${u.toUpperCase()}</th>`);
-        html += "</tr></thead><tbody>";
-
-        dates.forEach(date => {
-          html += `<tr><td>${date}</td>`;
-          users.forEach(user => {
-            html += `<td>${pivotMap[date]?.[user] || 0}</td>`;
-          });
-          html += "</tr>";
-        });
-
-        html += "</tbody></table>";
-        if (wrapper) { // Added a check to prevent errors if wrapper is null
-          wrapper.innerHTML = html;
+        if (rows.length === 0) {
+          alert("No data found for selected filter.");
+          return;
         }
-        </script>
 
-<div class="pivot-table-container">
-  <h2>Daily Case Distribution (Pivot Table View)</h2>
-  <div id="pivot-table-container" style="overflow-x:auto; margin-top: 20px;"></div>
-</div>
-<script>
-  function renderPivotTable(usersData) {
-    const pivot = {};
+        const ws_data = [
+          ["Name", "Timestamp", "Case Number", "Call Type", "Points"], // Updated header
+          ...rows
+        ];
 
-    usersData.forEach(user => {
-      const username = user.username.toUpperCase();
-      user.call_logs.forEach(log => {
-        if (log.timestamp) {
-          const date = new Date(log.timestamp).toISOString().split("T")[0];
-          if (!pivot[date]) pivot[date] = {};
-          if (!pivot[date][username]) pivot[date][username] = 0;
-          pivot[date][username]++;
-        }
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(ws_data);
+        XLSX.utils.book_append_sheet(wb, ws, "Filtered Data");
+
+        const fileName = filterDate
+          ? `Data_${filterDate}.xlsx`
+          : filterMonth
+          ? `Data_${filterMonth}.xlsx`
+          : `All_Users_Data.xlsx`;
+
+        XLSX.writeFile(wb, fileName);
       });
     });
-
-    const allDates = Object.keys(pivot).sort();
-    const allUsers = [...new Set(usersData.map(u => u.username.toUpperCase()))];
-
-    let html = "<table><thead><tr><th>DATE</th>";
-    allUsers.forEach(user => {
-      html += `<th>${user}</th>`;
-    });
-    html += "</tr></thead><tbody>";
-
-    allDates.forEach(date => {
-      html += `<tr><td>${date}</td>`;
-      allUsers.forEach(user => {
-        html += `<td>${pivot[date][user] || 0}</td>`;
-      });
-      html += "</tr>";
-    });
-
-    html += "</tbody></table>";
-    document.getElementById("pivot-table-container").innerHTML = html;
-  }
-
-  // Hook into existing usersData
-  document.addEventListener("DOMContentLoaded", async () => {
-    const response = await fetch("/logs/team_leader_users/?tl_email=auto");
-    const usersData = await response.json();
-    renderPivotTable(usersData);
-  });
-
-  document.getElementById("download-users-data").addEventListener("click", async () => {
-  const filterDate = document.getElementById("filter-date").value;
-  const filterMonth = document.getElementById("filter-month").value;
-
-  const response = await fetch("/logs/team_leader_users/?tl_email=auto");
-  if (!response.ok) {
-    alert("Failed to fetch user data.");
-    return;
-  }
-
-  const usersData = await response.json();
-  const rows = [];
-
-  usersData.forEach(user => {
-    user.call_logs.forEach(log => {
-      if (log.timestamp) {
-        const logDate = new Date(log.timestamp);
-        const logISO = logDate.toISOString().split("T")[0];
-        const logMonth = logISO.slice(0, 7); // YYYY-MM
-
-        const include =
-          (filterDate && logISO === filterDate) ||
-          (filterMonth && logMonth === filterMonth) ||
-          (!filterDate && !filterMonth);
-
-        if (include) {
-          rows.push([
-            user.username,
-            user.email,
-            log.timestamp,
-            log.case_number,
-            log.call_type,
-            log.points
-          ]);
-        }
-      }
-    });
-  });
-
-  if (rows.length === 0) {
-    alert("No data found for selected filter.");
-    return;
-  }
-
-  const ws_data = [
-    ["Username", "Email", "Timestamp", "Case Number", "Call Type", "Points"],
-    ...rows
-  ];
-
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet(ws_data);
-  XLSX.utils.book_append_sheet(wb, ws, "Filtered Data");
-
-  const fileName = filterDate
-    ? `Data_${filterDate}.xlsx`
-    : filterMonth
-    ? `Data_${filterMonth}.xlsx`
-    : `All_Users_Data.xlsx`;
-
-  XLSX.writeFile(wb, fileName);
-});
 </script>
 
 </body>
